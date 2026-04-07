@@ -1,0 +1,45 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Forzar explícitamente todas las clases stone que usamos */
+@layer utilities {
+    .bg-stone-50 { background-color: rgb(250 250 249) !important; }
+    .bg-stone-100 { background-color: rgb(245 245 244) !important; }
+    .bg-stone-200 { background-color: rgb(231 229 228) !important; }
+    .bg-stone-300 { background-color: rgb(214 211 209) !important; }
+    .bg-stone-400 { background-color: rgb(168 162 158) !important; }
+    .bg-stone-500 { background-color: rgb(120 113 108) !important; }
+    .bg-stone-600 { background-color: rgb(87 83 78) !important; }
+    .bg-stone-700 { background-color: rgb(68 64 60) !important; }
+    .bg-stone-800 { background-color: rgb(41 37 36) !important; }
+    .bg-stone-900 { background-color: rgb(28 25 23) !important; }
+    .bg-stone-950 { background-color: rgb(12 10 9) !important; }
+    
+    .text-stone-50 { color: rgb(250 250 249) !important; }
+    .text-stone-100 { color: rgb(245 245 244) !important; }
+    .text-stone-200 { color: rgb(231 229 228) !important; }
+    .text-stone-300 { color: rgb(214 211 209) !important; }
+    .text-stone-400 { color: rgb(168 162 158) !important; }
+    .text-stone-500 { color: rgb(120 113 108) !important; }
+    .text-stone-600 { color: rgb(87 83 78) !important; }
+    .text-stone-700 { color: rgb(68 64 60) !important; }
+    .text-stone-800 { color: rgb(41 37 36) !important; }
+    .text-stone-900 { color: rgb(28 25 23) !important; }
+    .text-stone-950 { color: rgb(12 10 9) !important; }
+    
+    .border-stone-50 { border-color: rgb(250 250 249) !important; }
+    .border-stone-100 { border-color: rgb(245 245 244) !important; }
+    .border-stone-200 { border-color: rgb(231 229 228) !important; }
+    .border-stone-300 { border-color: rgb(214 211 209) !important; }
+    .border-stone-400 { border-color: rgb(168 162 158) !important; }
+    .border-stone-500 { border-color: rgb(120 113 108) !important; }
+    .border-stone-600 { border-color: rgb(87 83 78) !important; }
+    .border-stone-700 { border-color: rgb(68 64 60) !important; }
+    .border-stone-800 { border-color: rgb(41 37 36) !important; }
+    .border-stone-900 { border-color: rgb(28 25 23) !important; }
+    .border-stone-950 { border-color: rgb(12 10 9) !important; }
+    
+    .hover\:bg-stone-950:hover { background-color: rgb(12 10 9) !important; }
+    .hover\:text-amber-600:hover { color: rgb(217 119 6) !important; }
+}

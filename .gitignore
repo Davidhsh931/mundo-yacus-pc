@@ -1,0 +1,60 @@
+*.log
+.DS_Store
+.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+/auth.json
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+Homestead.json
+Homestead.yaml
+Thumbs.db
+
+# --- Extensiones para Python e IA ---
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# --- Modelos de IA y archivos pesados ---
+*.pt
+*.pth
+*.onnx
+*.h5
+*.pkl
+*.joblib
+/public/yolov8n.pt
+/yolov8n.pt
+
+# --- Datasets de entrenamiento (mantener estructura pero excluir archivos pesados) ---
+/datasets/cuyes/train/images/
+/datasets/cuyes/train/labels/
+/datasets/cuyes/val/images/
+/datasets/cuyes/val/labels/
+
+# --- Ignorar resultados de entrenamiento pesados ---
+/runs/
+/nltk_data/
+
+# --- Archivos temporales y de compilación ---
+*.tmp
+*.temp
+.cache/
+composer.phar
+
+# --- Logs y debug ---
+/storage/logs/*.log
+/storage/logs/laravel.log
