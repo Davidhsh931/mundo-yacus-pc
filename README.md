@@ -1,59 +1,265 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Mundo Yacus-PC
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![Laravel](https://img.shields.io/badge/Laravel-10-red)
+![Vue.js](https://img.shields.io/badge/Vue.js-3-green)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-blue)
+![OpenAI](https://img.shields.io/badge/OpenAI-API-purple)
 
-## About Laravel
+> Sistema agropecuario moderno con IA clasificadora inteligente para gestión de productos, pedidos y eventos.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## **Características Principales**
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### **IA Clasificadora**
+- **OpenAI GPT-3.5 Turbo** para clasificación automática de productos
+- **Jerarquía inteligente**: Nombre > Descripción > Ficha técnica
+- **Panel de entrenamiento** dinámico sin tocar código
+- **Sistema de fallback** automático
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### **Gestión de Productos**
+- **CRUD completo** con imágenes múltiples
+- **Especificaciones técnicas** en formato JSON
+- **Control de stock** y activación
+- **Categorías dinámicas** con training data
 
-## Learning Laravel
+### **Panel de Administración**
+- **Dashboard analytics** con gráficos
+- **Gestión de pedidos** y estados
+- **Sistema de eventos** y calendario
+- **Entrenamiento IA** en tiempo real
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### **Experiencia de Usuario**
+- **Diseño responsive** mobile-first
+- **UX premium** con animaciones suaves
+- **Componentes reutilizables** Vue 3
+- **Navegación intuitiva** con breadcrumbs
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## **Tech Stack**
 
-## Laravel Sponsors
+### **Backend**
+- **Laravel 10** - Framework PHP
+- **PHP 8+** - Lenguaje principal
+- **MySQL** - Base de datos
+- **OpenAI API** - Clasificación IA
+- **Eloquent ORM** - Modelos de datos
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### **Frontend**
+- **Vue 3** - Framework JavaScript
+- **Inertia.js** - SPA sin API separada
+- **TailwindCSS** - Framework CSS
+- **Vite** - Build tool
+- **Componentes personalizados**
 
-### Premium Partners
+### **Infraestructura**
+- **Docker** - Contenerización
+- **Docker Compose** - Orquestación
+- **Nginx** - Servidor web
+- **PHP-FPM** - Procesamiento PHP
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## **Instalación**
 
-## Contributing
+### **Requisitos Previos**
+- PHP 8.1+
+- Composer
+- Node.js 16+
+- MySQL 8.0+
+- Docker (opcional)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### **Pasos de Instalación**
 
-## Code of Conduct
+1. **Clonar el repositorio**
+```bash
+git clone https://github.com/Davidhsh931/mundo-yacus-pc.git
+cd mundo-yacus-pc
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+2. **Instalar dependencias**
+```bash
+composer install
+npm install
+```
 
-## Security Vulnerabilities
+3. **Configurar entorno**
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+4. **Configurar base de datos**
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=mundo_yacus
+DB_USERNAME=root
+DB_PASSWORD=
 
-## License
+OPENAI_API_KEY=your_openai_api_key_here
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+5. **Migrar y seedear**
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+6. **Compilar assets**
+```bash
+npm run build
+```
+
+7. **Iniciar servidor**
+```bash
+php artisan serve
+```
+
+### **Instalación con Docker**
+
+```bash
+docker-compose up -d
+docker-compose exec php bash
+composer install
+php artisan migrate
+php artisan db:seed
+php artisan serve --host=0.0.0.0
+```
+
+## **Configuración de IA**
+
+### **OpenAI API**
+1. Obtener API key en [OpenAI Platform](https://platform.openai.com/)
+2. Configurar en `.env`:
+```env
+OPENAI_API_KEY=sk-your-api-key-here
+```
+
+### **Entrenamiento de Categorías**
+1. Acceder a `/admin/ai-training`
+2. Editar palabras clave por categoría
+3. Sincronizar modelo con "SINCRONIZAR MODELO"
+
+## **Estructura del Proyecto**
+
+```
+mundo-yacus-pc/
+|
+app/
+|-- Http/Controllers/
+|   |-- Admin/
+|   |   |-- GuineaPigAdminController.php  # CRUD + IA
+|   |   |-- AiTrainingController.php      # Entrenamiento IA
+|   |   |-- OrdersController.php          # Pedidos
+|   |   |-- EventsController.php          # Eventos
+|   |-- Auth/                            # Autenticación
+|
+resources/js/
+|-- Pages/
+|   |-- Admin/
+|   |   |-- GuineaPigs/Index.vue          # Listado productos
+|   |   |-- AiTraining.vue                # Panel IA
+|   |   |-- CreateProduct.vue             # Crear productos
+|   |   |-- EditPig.vue                   # Editar productos
+|   |   |-- Orders/Index.vue              # Pedidos
+|   |   |-- Events/Index.vue              # Eventos
+|   |-- Auth/                             # Autenticación
+|
+database/
+|-- migrations/                           # Estructura BD
+|-- seeders/                             # Datos iniciales
+|
+storage/
+|-- app/public/images/                   # Imágenes productos
+```
+
+## **Funcionalidades Detalladas**
+
+### **Clasificación IA**
+- **Análisis jerárquico**: Prioridad al nombre del producto
+- **Contexto secundario**: Descripción y especificaciones
+- **Reglas dinámicas**: Training data editable
+- **Fallback automático**: Primera categoría disponible
+
+### **Gestión de Categorías**
+- **Animales**: Productos vivos (cuyes, gallinas, etc.)
+- **Procesados**: Carnes y derivados (chicharrón, charqui, etc.)
+- **Otros**: Forraje, herramientas, insumos (alfalfa, monturas, etc.)
+
+### **Sistema de Imágenes**
+- **Upload múltiple** con drag & drop
+- **Optimización automática** de tamaño
+- **Gestión de almacenamiento** con Storage facade
+- **Eliminación automática** al borrar producto
+
+## **API Endpoints**
+
+### **Productos**
+- `GET /admin/guinea-pigs` - Listar productos
+- `POST /admin/guinea-pigs` - Crear producto
+- `PUT /admin/guinea-pigs/{id}` - Actualizar producto
+- `DELETE /admin/guinea-pigs/{id}` - Eliminar producto
+
+### **Categorías (IA Training)**
+- `GET /admin/ai-training` - Listar categorías
+- `POST /admin/ai-training` - Crear categoría
+- `PUT /admin/ai-training/{id}` - Actualizar training data
+- `DELETE /admin/ai-training/{id}` - Eliminar categoría
+
+## **Testing**
+
+### **Ejecutar Tests**
+```bash
+php artisan test
+```
+
+### **Tests Disponibles**
+- Autenticación de usuarios
+- CRUD de productos
+- Clasificación IA
+- Gestión de categorías
+
+## **Deployment**
+
+### **Producción**
+1. Configurar variables de entorno
+2. Optimizar aplicación:
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+3. Setear permisos:
+```bash
+chmod -R 755 storage
+chmod -R 755 bootstrap/cache
+```
+
+### **Docker Production**
+```bash
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+## **Contribuir**
+
+1. Fork del proyecto
+2. Crear feature branch: `git checkout -b feature/amazing-feature`
+3. Commit cambios: `git commit -m 'Add amazing feature'`
+4. Push: `git push origin feature/amazing-feature`
+5. Pull Request
+
+## **Licencia**
+
+Este proyecto está bajo licencia MIT. Ver [LICENSE](LICENSE) para más detalles.
+
+## **Autor**
+
+- **David H.** - *Desarrollador principal* - [Davidhsh931](https://github.com/Davidhsh931)
+
+## **Agradecimientos**
+
+- **Laravel Team** - Framework increíble
+- **Vue.js Team** - Framework frontend reactivo
+- **OpenAI** - API de clasificación
+- **TailwindCSS** - Framework CSS utilitario
+
+---
+
+**Mundo Yacus-PC** © 2024 - Sistema agropecuario moderno con IA integrada
