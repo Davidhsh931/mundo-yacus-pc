@@ -1,5 +1,5 @@
-# PHP 8.2 es más estable y consume menos CPU que 8.4 en Intel i5
-FROM php:8.2-fpm-bookworm
+# PHP 8.4 requerido por las dependencias bloqueadas en composer.lock
+FROM php:8.4-fpm-bookworm
 
 # Evitamos que las instalaciones pidan interacción (ahorra tiempo y procesos)
 ENV DEBIAN_FRONTEND=noninteractive
