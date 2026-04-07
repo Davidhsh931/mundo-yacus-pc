@@ -39,4 +39,16 @@ WORKDIR /var/www
 COPY package*.json ./
 RUN npm install --quiet
 
+# Copy application code
+COPY . .
+
+# Install PHP dependencies with Composer
+RUN composer install --no-dev --optimize-autoloader
+
+# Generate Laravel app key if not exists
+RUN if [ ! -f .env ]; then cp .env.example .env; fi
+
+# Build frontend assets
+RUN npm run build
+
 EXPOSE 9000
