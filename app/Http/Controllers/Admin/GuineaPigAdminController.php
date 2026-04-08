@@ -36,25 +36,36 @@ class GuineaPigAdminController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'breed_or_model' => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif,bmp,tiff|max:2048',
-            'specifications' => 'nullable|string'
-        ]);
+        // 1. Limpia los datos: convierte strings vacíos en null
+        $data = $request->all();
+        if (isset($data['species']) && empty($data['species'])) {
+            $data['species'] = null; 
+        }
+        if (isset($data['breed_or_model']) && empty($data['breed_or_model'])) {
+            $data['breed_or_model'] = null;
+        }
 
-        // Obtener categorías disponibles dinámicamente
-        $categories = Category::all();
-        $rules = $categories->map(fn($c) => "- ID {$c->id}: {$c->training_data}")->implode("\n");
-        
-        // Fallback automático: usar la primera categoría disponible
-        $fallbackCategoryId = $categories->first()->id ?? 1;
+        try {
+            // 2. Validar datos del formulario
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'required|string',
+                'price' => 'required|numeric|min:0',
+                'stock' => 'required|integer|min:0',
+                'breed_or_model' => 'nullable|string|max:255',
+                'image' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif,bmp,tiff|max:2048',
+                'specifications' => 'nullable|string'
+            ]);
 
-        // Clasificación con IA usando jerarquía inteligente
-        $prompt = "Eres un clasificador experto. Analiza el producto con JERARQUÍA:
+            // Obtener categorías disponibles dinámicamente
+            $categories = Category::all();
+            $rules = $categories->map(fn($c) => "- ID {$c->id}: {$c->training_data}")->implode("\n");
+            
+            // Fallback automático: usar la primera categoría disponible
+            $fallbackCategoryId = $categories->first()->id ?? 1;
+
+            // Clasificación con IA usando jerarquía inteligente
+            $prompt = "Eres un clasificador experto. Analiza el producto con JERARQUÍA:
 
 REGLAS:
 {$rules}
@@ -68,55 +79,65 @@ REGLA DE ORO: El NOMBRE define la categoría principal. La descripción solo acl
 
 Responde SOLO el número del ID:";
 
-        try {
-            $response = Http::withToken(env('OPENAI_API_KEY'))->post('https://api.openai.com/v1/chat/completions', [
-                'model' => 'gpt-3.5-turbo',
-                'messages' => [['role' => 'user', 'content' => $prompt]],
-                'temperature' => 0,
-            ]);
+            try {
+                $response = Http::withToken(env('OPENAI_API_KEY'))->post('https://api.openai.com/v1/chat/completions', [
+                    'model' => 'gpt-3.5-turbo',
+                    'messages' => [['role' => 'user', 'content' => $prompt]],
+                    'temperature' => 0,
+                ]);
 
-            $responseData = $response->json();
-            $aiResponse = trim($responseData['choices'][0]['message']['content'] ?? '');
-            
-            // Validar que la respuesta sea un ID de categoría existente
-            $categoryId = (int) $aiResponse;
-            if (!$categories->pluck('id')->contains($categoryId)) {
+                $responseData = $response->json();
+                $aiResponse = trim($responseData['choices'][0]['message']['content'] ?? '');
+                
+                // Validar que la respuesta sea un ID de categoría existente
+                $categoryId = (int) $aiResponse;
+                if (!$categories->pluck('id')->contains($categoryId)) {
+                    $categoryId = $fallbackCategoryId;
+                }
+            } catch (\Exception $e) {
                 $categoryId = $fallbackCategoryId;
             }
-        } catch (\Exception $e) {
-            $categoryId = $fallbackCategoryId;
-        }
 
-        $specificationsArray = json_decode($request->specifications, true) ?: [];
+            $specificationsArray = json_decode($request->specifications, true) ?: [];
 
-        $guineaPig = GuineaPig::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'category_id' => $categoryId, 
-            'price' => $request->price,
-            'stock' => $request->stock,
-            'breed' => $request->breed_or_model ?? 'No especificada',
-            'average_weight' => 0,
-            'specifications' => $specificationsArray,
-            'ia_verification' => json_encode([
-                'status' => 'classified',
-                'confidence' => 'high',
-                'date' => now()
-            ])
-        ]);
-
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $imagePath = $image->storeAs('images', $imageName, 'public');
-            
-            GuineaPigImage::create([
-                'guinea_pig_id' => $guineaPig->id,
-                'image_path' => $imagePath,
+            // 3. Intenta crear el registro
+            $guineaPig = GuineaPig::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'category_id' => $categoryId, 
+                'price' => $request->price,
+                'stock' => $request->stock,
+                'breed' => $request->breed_or_model ?? 'No especificada',
+                'average_weight' => 0,
+                'specifications' => $specificationsArray,
+                'ia_verification' => json_encode([
+                    'status' => 'classified',
+                    'confidence' => 'high',
+                    'date' => now()
+                ])
             ]);
-        }
 
-        return redirect()->route('guinea-pigs.index');
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $imagePath = $image->storeAs('images', $imageName, 'public');
+                
+                GuineaPigImage::create([
+                    'guinea_pig_id' => $guineaPig->id,
+                    'image_path' => $imagePath,
+                ]);
+            }
+
+            return redirect()->route('guinea-pigs.index');
+
+        } catch (\Exception $e) {
+            // 4. Si falla, esto capturará el error real en los logs
+            \Log::error("Error al crear producto en Mundo Yacus: " . $e->getMessage());
+            return response()->json([
+                'error' => 'Error interno',
+                'detail' => $e->getMessage() // OJO: Quita esto antes de que los clientes lo vean
+            ], 500);
+        }
     }
 
     public function edit($id)
