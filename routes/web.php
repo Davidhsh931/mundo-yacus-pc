@@ -230,13 +230,16 @@ Route::post('/register', function (Request $request) {
         'password' => ['required', 'string', 'min:8', 'confirmed'],
     ]);
 
-    $emailDomain = substr(strrchr($validated['email'], "@"), 1);
+    // Extraer y limpiar el dominio del email (robusto a mayúsculas/espacios)
+    $emailDomain = strtolower(trim(substr(strrchr($validated['email'], "@"), 1)));
     
-    // Asignación de rol automática por dominio
-    $role = ($emailDomain === 'admin.com') ? 'admin' : (($emailDomain === 'cliente.com') ? 'cliente' : null);
-
-    if (!$role) {
-        return back()->withErrors(['email' => 'Solo dominios @cliente.com o @admin.com permitidos.']);
+    // Asignación de rol automática por dominio (lógica clara y explícita)
+    if ($emailDomain === 'admin.com') {
+        $role = 'admin';
+    } elseif ($emailDomain === 'cliente.com') {
+        $role = 'cliente';
+    } else {
+        return back()->withErrors(['email' => 'Dominio no autorizado. Solo @admin.com o @cliente.com permitidos.']);
     }
 
     $user = User::create([
