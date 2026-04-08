@@ -125,9 +125,7 @@ Route::delete('/admin/ai-training/{id}/force', [AiTrainingController::class, 'fo
 });
 
 // --- 4. TIENDA Y EXPERIENCIA PÚBLICA ---
-Route::get('/', function () {
-    return '<h1>Mundo Yacus está vivo y funcionando</h1>';
-})->name('home');
+Route::get('/', [GuineaPigController::class, 'index'])->name('home');
 
 // Detalle del producto (Detección de rol corregida)
 Route::get('/product/{id}', function($id){
