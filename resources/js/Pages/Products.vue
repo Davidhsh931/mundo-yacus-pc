@@ -122,142 +122,199 @@ function filterByCategory(categoryId) {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-950 p-8 rounded-3xl shadow-2xl border-b-8 border-yellow-500">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-2">
+                <!-- Left: identity -->
                 <div>
-                    <span class="inline-block px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-200 text-[10px] font-black uppercase tracking-widest mb-2 border border-yellow-500/20">
+                    <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-gray-500 tracking-wide mb-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-600 inline-block"></span>
                         {{ selectedCategory ? 'Categoría Seleccionada' : 'Todos los Productos' }}
                     </span>
-                    <h2 class="font-black text-4xl text-white leading-none tracking-tighter">
+                    <h2 class="text-2xl font-medium text-gray-900 leading-tight">
                         {{ selectedCategory ? selectedCategory.name : 'Catálogo Completo' }}
                     </h2>
-                    <p class="text-gray-400 text-sm mt-1">
+                    <p class="text-sm text-gray-400 mt-0.5">
                         {{ selectedCategory 
                             ? `${selectedCategory.guinea_pigs_count || 0} productos disponibles` 
                             : 'Explora toda nuestra selección de la región' }}
                     </p>
                 </div>
-                <div class="text-left md:text-right border-l-4 md:border-l-0 md:border-r-4 border-yellow-500 pl-4 md:pl-0 md:pr-4">
-                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Altitud Actual</span>
-                    <div class="flex items-center gap-2">
-                        <svg class="w-6 h-6 text-yellow-500 transition-transform duration-1000 ease-in-out" 
-                             :style="{ transform: `translateY(${-currentAltitude/1000}px)` }" 
-                             viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M7 18l4-6 4 6H7zm10-8l-3-4-3 4h6zm-8-4l-2-3-2 3h4z"/>
-                        </svg>
-                        <p class="text-3xl font-black text-yellow-400 leading-none">
-                            {{ currentAltitude }} <span class="text-xs text-yellow-600">m s. n. m.</span>
-                        </p>
-                    </div>
+
+                <!-- Right: altitude -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 text-right shrink-0">
+                    <p class="text-[11px] font-medium text-amber-700 tracking-wide">Altitud actual</p>
+                    <p class="text-xl font-medium text-amber-900 leading-tight">
+                        {{ currentAltitude.toLocaleString() }}
+                        <span class="text-xs text-amber-600">m s. n. m.</span>
+                    </p>
                 </div>
             </div>
         </template>
 
-        <div class="py-12 bg-gray-100/50">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-12">
-                
-                <!-- Filtro de Categorías -->
-                <section class="relative p-6 bg-white rounded-[3rem] shadow-xl border border-gray-100 overflow-hidden">
-                    <div class="relative z-10">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-xl font-black text-gray-950 italic tracking-tighter">Filtrar por Categoría</h3>
-                            <button 
-                                v-if="categoryId"
-                                @click="filterByCategory(null)"
-                                class="text-sm text-gray-600 hover:text-gray-900 font-semibold">
-                                × Limpiar filtro
-                            </button>
-                        </div>
+        <div class="py-10 bg-gray-50 min-h-screen">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-10">
 
-                        <div class="flex flex-wrap gap-3">
-                            <button 
-                                v-for="category in categories" 
-                                :key="category.id"
-                                @click="filterByCategory(category.id)"
-                                :class="[
-                                    'px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300 border',
-                                    categoryId == category.id 
-                                        ? 'bg-yellow-500 text-gray-950 border-yellow-400 shadow-lg' 
-                                        : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-yellow-50 hover:border-yellow-300 hover:text-yellow-700'
-                                ]">
-                                {{ category.name }}
-                                <span class="ml-1 text-xs opacity-75">({{ category.guinea_pigs_count || 0 }})</span>
-                            </button>
+                <!-- Section heading -->
+                <div class="flex justify-between items-baseline px-4 sm:px-0">
+                    <span class="text-sm font-medium text-gray-700">Productos disponibles</span>
+                    <span class="text-xs text-gray-400">{{ guineaPigs.length }} producto{{ guineaPigs.length !== 1 ? 's' : '' }}</span>
+                </div>
+
+                <!-- Filtro de Categorías - Diseño Home.vue -->
+                <section v-if="categories && categories.length > 0" class="relative p-6 bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">🏷️</span>
+                            <div>
+                                <h3 class="text-lg font-medium text-gray-900">Filtrar por Categoría</h3>
+                                <p class="text-sm text-gray-500">Selecciona una variedad</p>
+                            </div>
+                        </div>
+                        <button 
+                            v-if="categoryId"
+                            @click="filterByCategory(null)"
+                            class="text-xs text-amber-600 border border-amber-200 bg-amber-50 rounded-lg px-3 py-1.5 hover:bg-amber-100 transition-colors">
+                            Limpiar filtro
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                        <div v-for="category in categories" :key="category.id" 
+                             class="group bg-gray-50 border border-gray-100 rounded-xl p-3 text-center transition-all duration-200 hover:bg-amber-50 hover:border-amber-200 hover:shadow-sm cursor-pointer transform hover:-translate-y-0.5"
+                             @click="filterByCategory(category.id)"
+                             :class="{ 'bg-amber-50 border-amber-200': categoryId == category.id }">
+                            <div class="w-10 h-10 mx-auto mb-2 bg-amber-100 rounded-lg flex items-center justify-center group-hover:bg-amber-200 transition-colors"
+                                 :class="{ 'bg-amber-200': categoryId == category.id }">
+                                <span class="text-lg">🏷️</span>
+                            </div>
+                            <h4 class="text-xs font-medium text-gray-900 mb-1 group-hover:text-amber-700 transition-colors">{{ category.name }}</h4>
+                            <p class="text-[10px] text-gray-500">{{ category.guinea_pigs_count || 0 }} productos</p>
                         </div>
                     </div>
                 </section>
-                
-                <!-- Productos -->
-                <div v-if="guineaPigs.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-                    <div v-for="pig in guineaPigs" :key="pig.id" 
-                         class="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 flex flex-col transform hover:-translate-y-2 hover:border-yellow-100 relative">
-                        
-                        <div class="absolute inset-0 opacity-[0.03] pointer-events-none rounded-[2rem]" 
-                             style="background-image: url('data:image/svg+xml,%3Csvg width=%2740%27 height=%2740%27 xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cdefs%3E%3Cpattern id=%27paper%27 patternUnits=%27userSpaceOnUse%27 width=%274%27 height=%274%27%3E%3Cpath d=%27M0 0h4v4H0z%27 fill=%27%238B4513%27/%3E%3Cpath d=%27M0 2h4v2H0z%27 fill=%27%23D2691E%27/%3E%3C/pattern%3E%3C/defs%3E%3Crect width=%2740%27 height=%2740%27 fill=%27url(%23paper)%27/%3E%3C/svg%3E'); background-size: 40px 40px;">
-                        </div>
-                        
-                        <div @click="router.visit('/product/' + pig.id)" class="relative cursor-pointer overflow-hidden aspect-[4/3]">
-                            <div class="absolute top-4 left-4 z-10">
-                                <div class="bg-yellow-500/90 backdrop-blur-sm text-gray-950 text-[10px] font-black px-3 py-1 rounded-lg shadow-lg flex items-center gap-1 border border-yellow-400">
-                                    <span>**</span>
-                                    DIRECTO DE YACUS
-                                </div>
-                            </div>
-                            
+
+                <!-- Product grid - Diseño Home.vue -->
+                <div v-if="guineaPigs.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div
+                        v-for="pig in guineaPigs"
+                        :key="pig.id"
+                        class="group bg-white border border-gray-100 rounded-2xl overflow-hidden flex flex-col transition-all duration-200 hover:border-gray-200 hover:-translate-y-0.5 hover:shadow-sm"
+                        :class="{ 'opacity-60': pig.stock <= 0 }"
+                    >
+                        <!-- Image -->
+                        <div
+                            @click="router.visit('/product/' + pig.id)"
+                            class="relative cursor-pointer overflow-hidden"
+                            style="aspect-ratio: 4/3"
+                        >
                             <template v-if="pig.images && pig.images.length > 0">
-                                <img :src="getSafeProductImageSrc(pig)" 
-                                     class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                                     @error="(e) => { e.target.removeAttribute('src'); e.target.src = FALLBACK_IMAGE; }" />
+                                <img
+                                    :src="getSafeProductImageSrc(pig)"
+                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    @error="(e) => { e.target.removeAttribute('src'); e.target.src = FALLBACK_IMAGE; }"
+                                />
                             </template>
-                            <div v-else class="w-full h-full bg-indigo-50 flex flex-col items-center justify-center text-indigo-200 border-b-4 border-yellow-500">
-                                <span class="text-5xl mb-2">**</span>
-                                <p class="text-[9px] font-black uppercase tracking-widest text-indigo-300">Esencia Visual</p>
+                            <div v-else class="w-full h-full bg-amber-50 flex flex-col items-center justify-center gap-2">
+                                <svg class="w-8 h-8 text-amber-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                                    <path d="M21 15l-5-5L5 21"/>
+                                </svg>
+                                <p class="text-[10px] font-medium text-amber-300 tracking-wide uppercase">Sin imagen</p>
+                            </div>
+
+                            <!-- Origin badge -->
+                            <div class="absolute top-2.5 left-2.5">
+                                <span class="bg-amber-50 border border-amber-200 text-amber-800 text-[10px] font-medium px-2 py-0.5 rounded-md">
+                                    Directo de Yacus
+                                </span>
+                            </div>
+
+                            <!-- Low stock badge -->
+                            <div v-if="pig.stock <= 5 && pig.stock > 0" class="absolute top-2.5 right-2.5">
+                                <span class="bg-red-50 border border-red-200 text-red-700 text-[10px] font-medium px-2 py-0.5 rounded-md">
+                                    Solo {{ pig.stock }} disponibles
+                                </span>
                             </div>
                         </div>
 
-                        <div class="p-8 flex flex-col flex-1 bg-white">
-                            <h2 class="text-xl font-black text-gray-950 mb-1 capitalize group-hover:text-yellow-600 transition-colors tracking-tight">{{ pig.name }}</h2>
-                            <p class="text-xs text-gray-400 mb-6 font-semibold italic flex items-center gap-1">
-                                <span class="text-green-500">**</span>
-                                {{ getProductLocation(pig) }}  {{ pig.seller?.name || 'Comunidad Yacus' }}
-                                <span class="text-green-500 ml-1">**</span>
-                            </p>
-                            
-                            <div class="grid grid-cols-2 gap-3 mb-8">
-                                <div v-for="(attr, index) in pig.specifications?.slice(0, 2)" :key="index" 
-                                     class="bg-gray-50/70 border border-gray-100 p-4 rounded-xl transition-colors group-hover:bg-gray-100/50">
-                                    <p class="text-[9px] text-gray-400 font-bold uppercase mb-1 tracking-wider">{{ attr.key }}</p>
-                                    <p class="text-xs text-gray-800 font-black truncate">{{ attr.value }}</p>
+                        <!-- Body -->
+                        <div class="p-4 flex flex-col flex-1 gap-3">
+                            <!-- Name & location -->
+                            <div>
+                                <h3 class="text-[15px] font-medium text-gray-900 capitalize leading-snug group-hover:text-amber-700 transition-colors">
+                                    {{ pig.name }}
+                                </h3>
+                                <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
+                                    <svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                                        <circle cx="12" cy="9" r="2.5"/>
+                                    </svg>
+                                    {{ getProductLocation(pig) }}
+                                    <span class="text-gray-200">·</span>
+                                    {{ pig.seller?.name || 'Comunidad Yacus' }}
+                                </p>
+                            </div>
+
+                            <!-- Specs -->
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <div
+                                    v-for="(attr, index) in pig.specifications?.slice(0, 2)"
+                                    :key="index"
+                                    class="bg-gray-50 rounded-lg px-2.5 py-2"
+                                >
+                                    <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">{{ attr.key }}</p>
+                                    <p class="text-xs font-medium text-gray-800 truncate">{{ attr.value }}</p>
                                 </div>
                             </div>
 
-                            <div class="flex items-center justify-between mt-auto pt-5 border-t border-gray-100">
-                                <div class="flex flex-col">
-                                    <span class="text-[9px] text-gray-400 font-black uppercase tracking-tighter leading-none">Inversión</span>
-                                    <span class="text-3xl font-black text-gray-950">S/ {{ pig.price }}</span>
-                                    
-                                    <p v-if="pig.stock <= 5 && pig.stock > 0" class="text-[10px] text-red-500 font-bold animate-pulse mt-1">
-                                        ** ¡Solo quedan {{ pig.stock }} disponibles!
+                            <!-- Price & CTA -->
+                            <div class="flex items-center justify-between pt-3 border-t border-gray-100 mt-auto">
+                                <div>
+                                    <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wide leading-none mb-1">Precio</p>
+                                    <p class="text-xl font-medium text-gray-900 leading-none">
+                                        <span class="text-sm text-gray-500">S/ </span>{{ pig.price }}
                                     </p>
                                 </div>
-                                
-                                <button @click.stop="addToCart(pig)" 
-                                        :disabled="pig.stock <= 0" 
-                                        :class="[
-                                            'bg-yellow-500 text-gray-950 w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-lg hover:shadow-yellow-100 active:scale-90',
-                                            cartAnimating ? 'animate-bounce bg-gray-950 text-yellow-400' : 'hover:bg-gray-950 hover:text-yellow-400 disabled:bg-gray-200'
-                                        ]">
-                                    <span v-if="pig.stock > 0" class="text-2xl">**</span>
-                                    <span v-else class="text-[10px] font-extrabold text-gray-400">FIN</span>
+
+                                <button
+                                    v-if="pig.stock > 0"
+                                    @click.stop="addToCart(pig)"
+                                    :class="[
+                                        'w-9 h-9 rounded-lg border flex items-center justify-center transition-all duration-200',
+                                        cartAnimating
+                                            ? 'bg-gray-900 border-gray-900'
+                                            : 'bg-amber-50 border-amber-200 hover:bg-amber-100'
+                                    ]"
+                                    title="Agregar al carrito"
+                                >
+                                    <svg
+                                        class="w-4 h-4 transition-colors"
+                                        :class="cartAnimating ? 'stroke-amber-400' : 'stroke-amber-700'"
+                                        viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                                    >
+                                        <circle cx="9" cy="21" r="1"/>
+                                        <circle cx="20" cy="21" r="1"/>
+                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                        <line x1="12" y1="10" x2="12" y2="16"/>
+                                        <line x1="9" y1="13" x2="15" y2="13"/>
+                                    </svg>
                                 </button>
+
+                                <div v-else class="w-9 h-9 rounded-lg border border-gray-100 bg-gray-50 flex items-center justify-center" title="Sin stock">
+                                    <svg class="w-4 h-4 stroke-gray-300" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round">
+                                        <line x1="18" y1="6" x2="6" y2="18"/>
+                                        <line x1="6" y1="6" x2="18" y2="18"/>
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Mensaje si no hay productos -->
-                <div v-else class="text-center py-20 bg-white rounded-[3rem] shadow-xl border border-gray-100">
-                    <div class="text-6xl mb-4">**</div>
-                    <h3 class="text-2xl font-black text-gray-950 mb-2">No hay productos disponibles</h3>
+                <div v-else class="text-center py-20 bg-white rounded-[2rem] shadow-sm border border-gray-100">
+                    <div class="text-6xl mb-4">📦</div>
+                    <h3 class="text-2xl font-medium text-gray-900 mb-2">No hay productos disponibles</h3>
                     <p class="text-gray-600 mb-6">
                         {{ selectedCategory 
                             ? `No encontramos productos en la categoría "${selectedCategory.name}"` 
@@ -266,22 +323,23 @@ function filterByCategory(categoryId) {
                     <button 
                         v-if="categoryId"
                         @click="filterByCategory(null)"
-                        class="bg-yellow-500 text-gray-950 px-6 py-3 rounded-xl font-black hover:bg-gray-950 hover:text-yellow-400 transition-colors">
+                        class="bg-amber-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-amber-700 transition-colors">
                         Ver todos los productos
                     </button>
                 </div>
 
                 <!-- Footer -->
-                <footer class="mt-20 text-center pb-12 border-t border-gray-100 pt-12">
-                    <div class="flex justify-center gap-2.5 mb-6">
-                        <span class="w-3 h-3 rounded-full bg-red-600 shadow-md"></span>
-                        <span class="w-3 h-3 rounded-full bg-white border border-gray-200"></span>
-                        <span class="w-3 h-3 rounded-full bg-red-600 shadow-md"></span>
+                <footer class="pt-8 border-t border-gray-100 text-center pb-4">
+                    <div class="flex justify-center gap-2 mb-3">
+                        <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                        <span class="w-2 h-2 rounded-full bg-gray-200"></span>
+                        <span class="w-2 h-2 rounded-full bg-red-500"></span>
                     </div>
-                    <p class="text-[11px] text-gray-400 font-black uppercase tracking-widest leading-none">
-                        Mundo Yacus  25 Años  Huánuco  Perú
+                    <p class="text-[11px] text-gray-400 tracking-widest uppercase">
+                        Mundo Yacus · 25 años · Huánuco · Perú
                     </p>
                 </footer>
+
             </div>
         </div>
     </AuthenticatedLayout>

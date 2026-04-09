@@ -79,90 +79,115 @@ const cartItemsCount = computed(() => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-950 p-8 rounded-3xl shadow-2xl border-b-8 border-yellow-500">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-2">
+                <!-- Left: cart info -->
                 <div>
-                    <span class="inline-block px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-200 text-[10px] font-black uppercase tracking-widest mb-2 border border-yellow-500/20">
+                    <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-gray-500 tracking-wide mb-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-600 inline-block"></span>
                         Tu Selección
                     </span>
-                    <h2 class="font-black text-4xl text-white leading-none tracking-tighter">
-                        Mi Carrito
-                    </h2>
-                    <p class="text-gray-400 text-sm mt-1">Productos seleccionados de la chacra.</p>
+                    <h2 class="text-2xl font-medium text-gray-900 leading-tight">Mi Carrito</h2>
+                    <p class="text-sm text-gray-400 mt-0.5">Productos seleccionados de la chacra.</p>
                 </div>
-                <div class="text-left md:text-right border-l-4 md:border-l-0 md:border-r-4 border-yellow-500 pl-4 md:pl-0 md:pr-4">
-                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Total Items</span>
-                    <p class="text-3xl font-black text-yellow-400 leading-none">{{ cartItemsCount }} <span class="text-xs text-yellow-600">productos</span></p>
+
+                <!-- Right: items count -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 text-right shrink-0">
+                    <p class="text-[11px] font-medium text-amber-700 tracking-wide">Total Items</p>
+                    <p class="text-xl font-medium text-amber-900 leading-tight">
+                        {{ cartItemsCount.toLocaleString() }}
+                        <span class="text-xs text-amber-600">productos</span>
+                    </p>
                 </div>
             </div>
         </template>
 
-        <div class="py-12 bg-gray-100/50">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-12">
+        <div class="py-10 bg-gray-50 min-h-screen">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-10">
                 
                 <!-- Header del carrito -->
-                <div class="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-gray-100 p-8">
+                <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm p-6">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-6">
-                            <div class="bg-gray-950 text-white w-16 h-16 rounded-2xl flex items-center justify-center text-3xl">🛒</div>
+                        <div class="flex items-center gap-4">
+                            <div class="bg-amber-100 w-12 h-12 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="9" cy="21" r="1"/>
+                                    <circle cx="20" cy="21" r="1"/>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                </svg>
+                            </div>
                             <div>
-                                <h3 class="text-2xl font-black text-gray-950 tracking-tighter leading-none">TUS PRODUCTOS</h3>
-                                <p class="text-yellow-600 font-bold text-xs uppercase tracking-widest mt-1">
+                                <h3 class="text-lg font-medium text-gray-900 leading-tight">Tus Productos</h3>
+                                <p class="text-amber-600 text-xs font-medium mt-1">
                                     {{ cartItemsCount }} producto{{ cartItemsCount !== 1 ? 's' : '' }}
                                 </p>
                             </div>
                         </div>
-                        <Link href="/" class="bg-yellow-500 text-gray-950 px-6 py-3 rounded-xl font-black hover:bg-gray-950 hover:text-yellow-400 transition-all">
+                        <Link href="/" class="text-amber-600 border border-amber-200 bg-amber-50 rounded-lg px-4 py-2 text-sm font-medium hover:bg-amber-100 transition-colors">
                             Seguir Comprando
                         </Link>
                     </div>
                 </div>
 
                 <!-- Carrito vacío -->
-                <div v-if="!cart || Object.keys(cart).length === 0" class="text-center py-20">
-                    <div class="text-6xl mb-4">🛒</div>
-                    <h3 class="text-2xl font-black text-gray-950 mb-2">Tu carrito está vacío</h3>
-                    <p class="text-gray-600 mb-8">Agrega algunos productos del mercado de Yacus</p>
-                    <Link href="/" class="bg-yellow-500 text-gray-950 px-8 py-3 rounded-xl font-black hover:bg-gray-950 hover:text-yellow-400 transition-all">
-                        Ir al Mercado 🛍️
+                <div v-if="!cart || Object.keys(cart).length === 0" class="text-center py-16 bg-white border border-gray-100 rounded-2xl shadow-sm">
+                    <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"/>
+                            <circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-medium text-gray-900 mb-2">Tu carrito está vacío</h3>
+                    <p class="text-gray-500 text-sm mb-6">Agrega algunos productos del mercado de Yacus</p>
+                    <Link href="/" class="text-amber-600 border border-amber-200 bg-amber-50 rounded-lg px-4 py-2 text-sm font-medium hover:bg-amber-100 transition-colors">
+                        Ir al Mercado
                     </Link>
                 </div>
 
                 <!-- Items del carrito -->
-                <div v-else class="space-y-6">
+                <div v-else class="space-y-4">
                     <div v-for="(item, id) in cart" :key="id" 
-                         class="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100">
+                         class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200">
                         
-                        <div class="p-8 flex gap-6">
+                        <div class="p-4 flex gap-4">
                             <!-- Imagen del producto -->
-                            <div class="w-32 h-32 bg-gray-100 rounded-2xl overflow-hidden flex-shrink-0 relative">
-                                <img v-if="item.product?.images?.[0]" 
-                                     :src="getSafeProductImageSrc(item.product.images[0].image_path)" 
+                            <div class="w-24 h-24 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0">
+                                <img v-if="item.image" 
+                                     :src="getSafeProductImageSrc(item.image)" 
                                      class="w-full h-full object-cover"
                                      @error="(e) => { e.target.removeAttribute('src'); e.target.src = FALLBACK_IMAGE; }" />
-                                <div v-else class="w-full h-full bg-gray-50 flex items-center justify-center text-gray-300">
-                                    <span class="text-4xl">📷</span>
+                                <div v-else class="w-full h-full bg-gray-100 flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                                        <path d="M21 15l-5-5L5 21"/>
+                                    </svg>
                                 </div>
                             </div>
                             
                             <!-- Información del producto -->
                             <div class="flex-1">
-                                <h3 class="text-xl font-black text-gray-950 mb-2">{{ item.product.name }}</h3>
-                                <p class="text-xs text-gray-400 mb-4 font-semibold italic">
-                                    📍 {{ item.product.seller?.name || 'Comunidad Yacus' }}
+                                <h3 class="text-base font-medium text-gray-900 mb-1">{{ item.name || 'Producto sin nombre' }}</h3>
+                                <p class="text-xs text-gray-400 mb-3 flex items-center gap-1">
+                                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                                        <circle cx="12" cy="9" r="2.5"/>
+                                    </svg>
+                                    Comunidad Yacus
                                 </p>
                                 
                                 <!-- Controles de cantidad -->
-                                <div class="flex items-center gap-4 mb-4">
-                                    <span class="text-[9px] text-gray-400 font-black uppercase tracking-widest">Cantidad</span>
+                                <div class="flex items-center gap-3 mb-3">
+                                    <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Cantidad</span>
                                     <div class="flex items-center gap-2">
                                         <button @click="updateQuantity(id, item.quantity - 1)" 
-                                                class="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center hover:bg-gray-300 transition-colors">
-                                            <span class="text-sm font-bold">−</span>
+                                                class="w-7 h-7 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors">
+                                            <span class="text-xs font-medium">-</span>
                                         </button>
-                                        <span class="w-12 text-center font-black text-gray-950">{{ item.quantity }}</span>
+                                        <span class="w-8 text-center text-sm font-medium">{{ item.quantity }}</span>
                                         <button @click="updateQuantity(id, item.quantity + 1)" 
-                                                class="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center hover:bg-gray-950 hover:text-yellow-400 transition-colors">
-                                            <span class="text-sm font-bold">+</span>
+                                                class="w-7 h-7 bg-amber-100 rounded-lg flex items-center justify-center hover:bg-amber-200 transition-colors">
+                                            <span class="text-xs font-medium">+</span>
                                         </button>
                                     </div>
                                 </div>
@@ -170,11 +195,13 @@ const cartItemsCount = computed(() => {
                                 <!-- Precio y eliminar -->
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <span class="text-[9px] text-gray-400 font-black uppercase tracking-widest">Subtotal</span>
-                                        <p class="text-2xl font-black text-gray-950">S/ {{ (item.product.price * item.quantity).toFixed(2) }}</p>
+                                        <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Subtotal</span>
+                                        <p class="text-lg font-medium text-gray-900 leading-none">
+                                            <span class="text-sm text-gray-500">S/ </span>{{ ((item.price || 0) * item.quantity).toFixed(2) }}
+                                        </p>
                                     </div>
                                     <button @click="removeFromCart(id)" 
-                                            class="bg-red-500 text-white px-4 py-2 rounded-xl text-sm font-black hover:bg-red-600 transition-all">
+                                            class="text-red-500 hover:text-red-600 transition-colors text-sm font-medium">
                                         Eliminar
                                     </button>
                                 </div>
@@ -184,14 +211,16 @@ const cartItemsCount = computed(() => {
                 </div>
 
                 <!-- Total y Checkout -->
-                <div v-if="cart && Object.keys(cart).length > 0" class="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-gray-100 p-8">
+                <div v-if="cart && Object.keys(cart).length > 0" class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <span class="text-[9px] text-gray-400 font-black uppercase tracking-widest">Total General</span>
-                            <p class="text-3xl font-black text-gray-950">S/ {{ cartTotal.toFixed(2) }}</p>
+                            <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Total General</span>
+                            <p class="text-2xl font-medium text-gray-900 leading-none">
+                                <span class="text-sm text-gray-500">S/ </span>{{ cartTotal.toFixed(2) }}
+                            </p>
                         </div>
-                        <Link href="/checkout" class="bg-yellow-500 text-gray-950 px-8 py-4 rounded-xl font-black hover:bg-gray-950 hover:text-yellow-400 transition-all shadow-lg">
-                            Proceder al Pago 💳
+                        <Link href="/checkout" class="bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors">
+                            Proceder al Pago
                         </Link>
                     </div>
                 </div>
