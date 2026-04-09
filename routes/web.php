@@ -127,6 +127,9 @@ Route::delete('/admin/ai-training/{id}/force', [AiTrainingController::class, 'fo
 // --- 4. TIENDA Y EXPERIENCIA PÚBLICA ---
 Route::get('/', [GuineaPigController::class, 'index'])->name('home');
 
+// Productos filtrados por categoría
+Route::get('/products', [GuineaPigController::class, 'productsByCategory'])->name('products.category');
+
 // Detalle del producto (Detección de rol corregida)
 Route::get('/product/{id}', function($id){
     $pig = GuineaPig::with(['images', 'seller', 'comments.user', 'category'])->findOrFail($id);
