@@ -51,12 +51,18 @@ const formattedImages = computed(() => {
         }];
     }
 
+    // Helper asset() para generar rutas correctas como en Laravel
+    const asset = (path) => {
+        if (!path) return FALLBACK_IMAGE;
+        if (path.startsWith('http')) return path;
+        if (path.startsWith('/storage/')) return path;
+        return '/storage/' + path.replace(/^\/?storage\/?/, '');
+    };
+
     return props.pig.images.map(img => {
         let path = img.image_path;
         if (isInvalidImageValue(path)) path = FALLBACK_IMAGE;
-        else if (typeof path === 'string' && path.startsWith('http')) path = path;
-        else if (typeof path === 'string') path = path.startsWith('/storage/') ? path : '/storage/' + path.replace(/^\/?storage\/?/, '');
-        else path = FALLBACK_IMAGE;
+        else path = asset(path);
         return { ...img, image_path: path };
     });
 });

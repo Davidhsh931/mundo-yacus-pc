@@ -58,16 +58,19 @@ const currentAltitude = computed(() => {
     return 3226;
 });
 
+// Helper asset() para generar rutas correctas como en Laravel
+const asset = (path) => {
+    if (!path) return FALLBACK_IMAGE;
+    if (path.startsWith('http')) return path;
+    if (path.startsWith('/storage/')) return path;
+    return '/storage/' + path.replace(/^\/?storage\/?/, '');
+};
+
 const getProductImage = (pig) => {
     if (!pig?.images?.length) return FALLBACK_IMAGE;
     const path = pig.images[0]?.image_path;
     if (isInvalidImageValue(path)) return FALLBACK_IMAGE;
-    if (path.startsWith('http')) return path;
-    let fixedPath = path.startsWith('/') ? path : '/' + path;
-    if (!fixedPath.startsWith('/storage/')) {
-        fixedPath = '/storage/' + fixedPath.replace(/^\/?storage\/?/, '');
-    }
-    return fixedPath;
+    return asset(path);
 };
 
 const getSafeProductImageSrc = (pig) => {

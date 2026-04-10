@@ -113,13 +113,18 @@ const selectedIndex = ref(0);
 const zoomVisible = reactive({});
 const zoomStyle = reactive({});
 
+// Helper asset() para generar rutas correctas como en Laravel
+const asset = (path) => {
+  if (!path) return FALLBACK_IMAGE;
+  if (path.startsWith('http')) return path;
+  if (path.startsWith('/storage/')) return path;
+  return '/storage/' + path.replace(/^\/?storage\/?/, '');
+};
+
 // Formateador inteligente de rutas (Previene duplicados de /storage/)
 const formatPath = (path) => {
   if (isInvalidImageValue(path)) return FALLBACK_IMAGE;
-  if (typeof path === 'string' && path.startsWith('http')) return path;
-  const str = typeof path === 'string' ? path : String(path);
-  if (str.startsWith('/storage/')) return str;
-  return '/storage/' + str.replace(/^\/?storage\/?/, '');
+  return asset(path);
 };
 
 function goToSlide(index) {
