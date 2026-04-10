@@ -148,6 +148,9 @@ Responde SOLO el número del ID:";
 
     public function update(Request $request, $id)
     {
+        // DEBUG: Verificar todos los campos que llegan
+        dd("Campos recibidos:", $request->all());
+        
         $pig = GuineaPig::findOrFail($id);
 
         // 1. Manejo de la imagen
