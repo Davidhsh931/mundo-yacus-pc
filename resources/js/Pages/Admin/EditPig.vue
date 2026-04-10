@@ -91,9 +91,8 @@ const submit = () => {
 
     form.transform((data) => ({
         ...data,
-        _method: 'PUT', // Mantener para que Laravel lo trate como Update
         specifications: JSON.stringify(specsToSubmit),
-    })).post(`/admin/guinea-pigs/${props.pig.id}`, { // <--- Asegúrate del /admin/ inicial
+    })).put(`/admin/guinea-pigs/${props.pig.id}`, { // <--- Cambiado a .put y quitado _method
         forceFormData: true, 
         preserveScroll: true,
         onSuccess: () => alert("¡Éxito!"),
