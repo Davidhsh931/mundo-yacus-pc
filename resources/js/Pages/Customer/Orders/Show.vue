@@ -28,7 +28,7 @@ const formatStatus = (status) => {
         'pending': 'Pendiente de Pago',
         'paid': 'Pago Confirmado',
         'shipped': 'En Camino a Destino',
-        'delivered': 'Entregado en Mano',
+        'delivered': 'Entregado',
         'canceled': 'Trato Cancelado'
     };
     return statusMap[status] || status;

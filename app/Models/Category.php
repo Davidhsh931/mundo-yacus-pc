@@ -10,9 +10,10 @@ class Category extends Model
     use SoftDeletes; // Activa el borrado lógico
     
     protected $fillable = [
+        'id',
         'name',
-        'training_data',
-        'id'
+        'description',
+        'training_data'
     ];
 
     public function guineaPigs()
