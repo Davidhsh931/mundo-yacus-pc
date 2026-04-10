@@ -93,11 +93,16 @@ const submit = () => {
         ...data,
         ai_context: `PRODUCTO: ${data.name}. DESCRIPCIÓN: ${data.description}. FICHA TÉCNICA: ${specsSummary}. RAZA/MODELO: ${data.breed_or_model}.`.replace(/\s+/g, ' '),
         specifications: JSON.stringify(specsToSubmit),
-        _method: 'PUT', // Spoofing para compatibilidad con archivos y PUT
-    })).post(`/admin/guinea-pigs/${props.pig.id}`, {
+        _method: 'PUT', // Esto es clave
+    })).post(`/admin/guinea-pigs/${props.pig.id}`, { // Usamos .post
         preserveScroll: true,
-        forceFormData: true,
-        onSuccess: () => { /* Manejar éxito si es necesario */ },
+        forceFormData: true, // Esto obliga a enviar la imagen correctamente
+        onSuccess: () => { 
+            alert("¡Cambios guardados con éxito!");
+        },
+        onError: (errors) => {
+            console.error("Errores del servidor:", errors);
+        }
     });
 };
 </script>

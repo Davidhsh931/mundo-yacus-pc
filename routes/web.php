@@ -88,7 +88,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function(){
     Route::get('/guinea-pigs/create', [GuineaPigAdminController::class, 'create'])->name('guinea-pigs.create');
     Route::post('/guinea-pigs', [GuineaPigAdminController::class, 'store'])->name('guinea-pigs.store');
     Route::get('/guinea-pigs/{id}/edit', [GuineaPigAdminController::class, 'edit'])->name('guinea-pigs.edit');
-    Route::put('/guinea-pigs/{id}', [GuineaPigAdminController::class, 'update'])->name('guinea-pigs.update');
+    Route::post('/guinea-pigs/{id}', [GuineaPigAdminController::class, 'update'])->name('guinea-pigs.update');
     Route::delete('/guinea-pigs/{id}', [GuineaPigAdminController::class, 'destroy'])->name('guinea-pigs.destroy');
     
     // Centro de Entrenamiento IA
