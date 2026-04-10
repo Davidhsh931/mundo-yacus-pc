@@ -146,44 +146,36 @@ Responde SOLO el número del ID:";
         return Inertia::render('Admin/EditPig', ['pig' => $pig]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id) 
     {
-        // DEBUG: Verificar todos los campos que llegan
-        dd("Campos recibidos:", $request->all());
-        
         $pig = GuineaPig::findOrFail($id);
 
-        // 1. Manejo de la imagen
+        // 1. Mapeo manual de campos (Para que coincidan con tu BD)
+        $pig->name = $request->name;
+        $pig->breed = $request->breed_or_model; 
+        $pig->price = $request->price;
+        $pig->stock = $request->stock;
+        $pig->active = $request->active == "1" ? true : false;
+        $pig->description = $request->description;
+        
+        // 2. Manejo de Specifications (Decodificar el JSON que llega como string)
+        $pig->specifications = json_decode($request->specifications, true);
+
+        // 3. Manejo de Imagen (Si llega una nueva)
         if ($request->hasFile('image')) {
-            // Guardamos en 'public/images' dentro del volumen persistente
             $path = $request->file('image')->store('images', 'public');
             
-            // Si ya tenía una imagen, opcionalmente podrías borrar la vieja aquí
-            foreach ($pig->images as $oldImage) {
-                Storage::disk('public')->delete($oldImage->image_path);
-                $oldImage->delete();
-            }
-            
-            // Actualizamos la relación o el campo de imagen
-            // Asumiendo que usas una relación 'images' como en tu onMounted de Vue
+            // Actualizar o crear la relación de imagen
             $pig->images()->updateOrCreate(
                 ['guinea_pig_id' => $pig->id],
                 ['image_path' => $path]
             );
         }
 
-        // 2. Actualización de datos básicos
-        $pig->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'breed' => $request->breed_or_model ?? $pig->breed,
-            'price' => $request->price,
-            'stock' => $request->stock,
-            'active' => $request->active ?? true,
-            'specifications' => json_decode($request->specifications, true) ?: [] // Decodificar el JSON
-        ]);
+        // 4. Guardado final
+        $pig->save();
 
-        return back()->with('success', 'Producto actualizado correctamente');
+        return back()->with('success', '¡Actualizado con éxito!');
     }
 
     public function destroy($id)
