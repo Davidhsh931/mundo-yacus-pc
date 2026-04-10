@@ -91,18 +91,13 @@ const submit = () => {
 
     form.transform((data) => ({
         ...data,
-        ai_context: `PRODUCTO: ${data.name}. DESCRIPCIÓN: ${data.description}. FICHA TÉCNICA: ${specsSummary}. RAZA/MODELO: ${data.breed_or_model}.`.replace(/\s+/g, ' '),
+        _method: 'PUT', // Mantener para que Laravel lo trate como Update
         specifications: JSON.stringify(specsToSubmit),
-        _method: 'PUT', // Esto es clave
-    })).post(`/admin/guinea-pigs/${props.pig.id}`, { // Usamos .post
+    })).post(`/admin/guinea-pigs/${props.pig.id}`, { // <--- Asegúrate del /admin/ inicial
+        forceFormData: true, 
         preserveScroll: true,
-        forceFormData: true, // Esto obliga a enviar la imagen correctamente
-        onSuccess: () => { 
-            alert("¡Cambios guardados con éxito!");
-        },
-        onError: (errors) => {
-            console.error("Errores del servidor:", errors);
-        }
+        onSuccess: () => alert("¡Éxito!"),
+        onError: (e) => console.log("Errores:", e)
     });
 };
 </script>

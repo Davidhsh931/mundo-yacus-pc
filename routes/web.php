@@ -81,8 +81,6 @@ Route::get('/admin/dashboard', function () {
 use App\Http\Controllers\Admin\AiTrainingController;
 
 // --- 3. MÓDULO ADMINISTRATIVO (BLOQUEO TOTAL PARA CLIENTES) ---
-Route::post('/admin/guinea-pigs/{id}', [GuineaPigAdminController::class, 'update'])->name('guinea-pigs.update');
-
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function(){
     
     // Gestión de Guinea Pigs
@@ -284,6 +282,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 // --- RUTA DE PRUEBA PARA NOTIFICACIONES (TEMPORAL) ---
 Route::get('/api/notifications/test', [App\Http\Controllers\Admin\NotificationController::class, 'test']);
+
+// --- RUTA ESPECIAL PARA EDITAR GUINEA PIGS (Fuera de grupos para evitar conflictos) ---
+Route::post('/admin/guinea-pigs/{id}', [GuineaPigAdminController::class, 'update'])->name('guinea-pigs.update.post');
 
 // --- RUTAS DE COMENTARIOS ---
 Route::middleware('auth')->group(function () {

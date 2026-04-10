@@ -148,6 +148,8 @@ Responde SOLO el número del ID:";
 
     public function update(Request $request, $id)
     {
+        return response()->json($request->all()); // Descomenta esto para probar si llegan los datos
+        
         // Validar datos del formulario
         $request->validate([
             'name' => 'required|string|max:255',
