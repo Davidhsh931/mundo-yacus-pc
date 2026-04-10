@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const props = defineProps({
     order: Object,
@@ -8,6 +9,12 @@ const props = defineProps({
     yapeNumber: String,     // Número Yape dinámico
     plinNumber: String,      // Número Plin dinámico
     timestamp: Number        // Forzar recarga cuando cambia
+});
+
+const formattedTotal = computed(() => {
+    // Si order o total no existen, devuelve 0.00
+    const total = props.order?.total || 0;
+    return Number(total).toFixed(2);
 });
 
 const sendWhatsApp = (order) => {
@@ -55,7 +62,7 @@ const sendWhatsApp = (order) => {
                 <div class="bg-green-50 border border-green-200 rounded-xl px-4 py-2.5 text-right shrink-0">
                     <p class="text-[11px] font-medium text-green-700 tracking-wide">Total</p>
                     <p class="text-xl font-medium text-green-900 leading-tight">
-                        S/. {{ order.total.toFixed(2) }}
+                        Total: S/ {{ Number(order.total).toFixed(2) }}
                     </p>
                 </div>
             </div>
