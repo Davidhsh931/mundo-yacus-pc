@@ -148,99 +148,39 @@ Responde SOLO el número del ID:";
 
     public function update(Request $request, $id)
     {
-        dd("¡La petición llegó al controlador!", $request->all());
-        
-        // Validar datos del formulario
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'breed_or_model' => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif,bmp,tiff|max:2048',
-            'specifications' => 'nullable|string'
-        ]);
-
         $pig = GuineaPig::findOrFail($id);
 
-        // Obtener categorías y configurar clasificación IA
-        $categories = Category::all();
-        $rules = $categories->map(fn($c) => "- ID {$c->id}: {$c->training_data}")->implode("\n");
-        $fallbackCategoryId = $categories->first()->id ?? 1;
-
-        // Clasificación con IA usando jerarquía inteligente
-        $prompt = "Eres un clasificador experto. Analiza el producto con JERARQUÍA:
-
-REGLAS:
-{$rules}
-
-ANÁLISIS JERÁRQUICO:
-1. NOMBRE (Prioridad ALTA): '{$request->name}' - Define la naturaleza principal del producto
-2. DESCRIPCIÓN (Contexto): '{$request->description}' - Da información secundaria
-3. FICHA TÉCNICA (Detalles): '{$request->ai_context}' - Complementa la clasificación
-
-REGLA DE ORO: El NOMBRE define la categoría principal. La descripción solo aclara el uso o contexto, pero no cambia la naturaleza del producto.
-
-Responde SOLO el número del ID:";
-
-        try {
-            $response = Http::withToken(env('OPENAI_API_KEY'))->post('https://api.openai.com/v1/chat/completions', [
-                'model' => 'gpt-3.5-turbo',
-                'messages' => [['role' => 'user', 'content' => $prompt]],
-                'temperature' => 0,
-            ]);
-
-            $responseData = $response->json();
-            $aiResponse = trim($responseData['choices'][0]['message']['content'] ?? '');
-            
-            // Validar que la respuesta sea un ID de categoría existente
-            $categoryId = (int) $aiResponse;
-            if (!$categories->pluck('id')->contains($categoryId)) {
-                $categoryId = $fallbackCategoryId;
-            }
-        } catch (\Exception $e) {
-            $categoryId = $fallbackCategoryId;
-        }
-
-        // Actualizar datos del producto
-        $specifications = json_decode($request->specifications, true) ?: [];
-        $activeValue = filter_var($request->input('active'), FILTER_VALIDATE_BOOLEAN);
-        
-        $pig->update([
-            'name'           => $request->name,
-            'description'    => $request->description,
-            'category_id'    => $categoryId,
-            'price'          => $request->price,
-            'stock'          => $request->stock,
-            'breed'          => $request->breed_or_model ?? $pig->breed,
-            'specifications' => $specifications,
-            'active'         => $activeValue,
-            'ia_verification' => json_encode([
-                'status' => 'reclassified',
-                'date' => now()
-            ])
-        ]);
-
-        // Gestionar imagen si se proporciona
+        // 1. Manejo de la imagen
         if ($request->hasFile('image')) {
-            // Eliminar imágenes anteriores
+            // Guardamos en 'public/images' dentro del volumen persistente
+            $path = $request->file('image')->store('images', 'public');
+            
+            // Si ya tenía una imagen, opcionalmente podrías borrar la vieja aquí
             foreach ($pig->images as $oldImage) {
                 Storage::disk('public')->delete($oldImage->image_path);
                 $oldImage->delete();
             }
-
-            // Guardar nueva imagen
-            $image = $request->file('image');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $imagePath = $image->storeAs('images', $imageName, 'public');
             
-            GuineaPigImage::create([
-                'guinea_pig_id' => $pig->id,
-                'image_path'    => $imagePath,
-            ]);
+            // Actualizamos la relación o el campo de imagen
+            // Asumiendo que usas una relación 'images' como en tu onMounted de Vue
+            $pig->images()->updateOrCreate(
+                ['guinea_pig_id' => $pig->id],
+                ['image_path' => $path]
+            );
         }
 
-        return redirect("/product/{$id}")->with('success', 'Producto actualizado con éxito');
+        // 2. Actualización de datos básicos
+        $pig->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'breed' => $request->breed_or_model ?? $pig->breed,
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'active' => $request->active ?? true,
+            'specifications' => json_decode($request->specifications, true) ?: [] // Decodificar el JSON
+        ]);
+
+        return back()->with('success', 'Producto actualizado correctamente');
     }
 
     public function destroy($id)
