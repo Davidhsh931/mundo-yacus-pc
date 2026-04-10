@@ -17,6 +17,9 @@ use App\Models\GuineaPig;
 use App\Models\Order;
 use App\Models\User;
 
+// FUERA de cualquier Route::group o Route::prefix
+Route::match(['post', 'put'], '/admin/guinea-pigs/{id}', [GuineaPigAdminController::class, 'update']);
+
 /*
 |--------------------------------------------------------------------------
 | MUNDO YACUS AI - RUTAS PROTEGIDAS Y SEGREGADAS 2026
