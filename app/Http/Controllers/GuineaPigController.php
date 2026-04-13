@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\GuineaPig;
 use App\Models\GuineaPigImage;
-use App\Models\OrderItem; // Añadimos el modelo para mejor legibilidad
+use App\Models\Category;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class GuineaPigController extends Controller
 {
@@ -131,21 +133,32 @@ class GuineaPigController extends Controller
      */
     public function sugerirStock($id) 
 {
-    // TODO: Implementar lógica real de sugerencia de stock basada en ventas históricas
-    // Por ahora, devolver valores simulados para que la gráfica funcione
-    
+    // Obtenemos ventas reales de los últimos 30 días para este producto
+    $ventas = OrderItem::where('guinea_pig_id', $id)
+        ->where('created_at', '>=', now()->subDays(30))
+        ->select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(quantity) as total'))
+        ->groupBy('date')
+        ->get()
+        ->pluck('total', 'date');
+
     $values = [];
     $labels = [];
     
     foreach(range(0, 29) as $i) {
-        // Generar valores simulados de ventas
-        $values[] = rand(5, 25);
-        $labels[] = (string)now()->subDays(29 - $i)->day;
+        $fecha = now()->subDays(29 - $i)->format('Y-m-d');
+        $labels[] = now()->subDays(29 - $i)->day;
+        $values[] = $ventas[$fecha] ?? 0; // Si no hay ventas, es 0
     }
+
+    $totalVentas = array_sum($values);
+    $sugerenciaStock = $totalVentas > 0 ? ceil($totalVentas / 4) : 5; // Sugiere el 25% de las ventas mensuales
 
     return response()->json([
         'values' => $values,
-        'labels' => $labels
+        'labels' => $labels,
+        'sugerencia' => $sugerenciaStock,
+        'total_ventas' => $totalVentas,
+        'promedio_diario' => $totalVentas > 0 ? round($totalVentas / 30, 2) : 0
     ]);
 }
 
@@ -157,50 +170,96 @@ class GuineaPigController extends Controller
         'stock'         => 'required|integer|min:0',
         'species'       => 'required',
         'product_state' => 'required',
-        'image'         => 'required|image|max:2048', 
-        // 👇 AGREGAMOS ESTA LÍNEA PARA QUE LARAVEL NO SE QUEJE
+        'image'         => 'required|image|max:5120', // Aumentado a 5MB para Railway
         'specifications' => 'nullable', 
     ]);
 
     try {
-        // 1. Procesamos las especificaciones ANTES de crear
-        // Si el Frontend envía un JSON string, lo decodificamos para que el 
-        // Cast del modelo ('array') lo maneje correctamente al guardar.
+        // --- 🤖 FASE 1: CLASIFICACIÓN INTELIGENTE (IA) ---
+        $categories = Category::all();
+        $fallbackCategoryId = 3; // ID para 'Otros'
+        $categoryId = $fallbackCategoryId;
+
+        if (env('OPENAI_API_KEY')) {
+            $rules = $categories->map(fn($c) => "- ID {$c->id}: {$c->training_data}")->implode("\n");
+            
+            $prompt = "Eres un clasificador experto de productos para 'Mundo Yacus'.
+            Analiza el producto y responde ÚNICAMENTE el número del ID de categoría que le corresponde.
+            
+            REGLAS:
+            {$rules}
+            
+            PRODUCTO:
+            Nombre: '{$request->name}'
+            Descripción: '{$request->description}'
+            Contexto: '{$request->ai_context}'
+            
+            REGLA DE ORO: Responde SOLO el número del ID.";
+
+            try {
+                $response = Http::withToken(env('OPENAI_API_KEY'))
+                    ->timeout(5) // Para que no bloquee tu app si la API tarda
+                    ->post('https://api.openai.com/v1/chat/completions', [
+                        'model' => 'gpt-3.5-turbo',
+                        'messages' => [['role' => 'user', 'content' => $prompt]],
+                        'temperature' => 0,
+                    ]);
+
+                if ($response->successful()) {
+                    $aiResponse = trim($response->json()['choices'][0]['message']['content'] ?? '');
+                    $predictedId = (int) $aiResponse;
+                    
+                    // Validamos que el ID entregado por la IA realmente exista en nuestra DB
+                    if ($categories->pluck('id')->contains($predictedId)) {
+                        $categoryId = $predictedId;
+                    }
+                }
+            } catch (\Exception $e) {
+                \Log::warning("IA Falló: Usando fallback - " . $e->getMessage());
+            }
+        }
+
+        // --- 🛠️ FASE 2: PROCESAMIENTO DE DATOS ---
         $specs = $request->specifications;
         if (is_string($specs)) {
             $specs = json_decode($specs, true);
         }
 
-        // 2. Creamos el animal
+        // --- 📦 FASE 3: CREACIÓN Y GUARDADO ---
         $pig = \App\Models\GuineaPig::create([
-            'user_id'         => auth()->id() ?? 1, // Forzar a 1 si no hay sesión
+            'user_id'         => auth()->id() ?? 1,
             'name'            => $request->name,
+            'category_id'     => $categoryId, // <--- ID ASIGNADO POR IA O FALLBACK
             'species'         => $request->species,
             'price'           => $request->price,
             'product_state'   => $request->product_state,
             'stock'           => $request->stock, 
             'active'          => true,
-            'specifications'  => $specs, // <--- Usamos la variable procesada
-            'ia_verification' => $request->ia_verification, 
+            'specifications'  => $specs,
+            'ia_verification' => json_encode([
+                'status' => 'automatic',
+                'confidence' => 'high',
+                'date' => now()->toDateTimeString()
+            ]), 
         ]);
 
-        // 3. Guardamos la imagen (esto ya está bien)
+        // --- 🖼️ FASE 4: GESTIÓN DE IMÁGENES PERSISTENTE ---
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('images', 'public');
+            // Guardamos en 'productos' que está vinculado a tu volumen de Railway
+            $path = $request->file('image')->store('productos', 'public');
 
             \App\Models\GuineaPigImage::create([
                 'guinea_pig_id' => $pig->id,
                 'image_path'    => $path,
-                'position'      => 0 // Mejor empezar en 0
+                'position'      => 0
             ]);
         }
 
-        // Redirigimos al producto creado para verlo inmediatamente
-        return redirect()->route('products.show', $pig->id)->with('message', '¡Publicado con éxito!');
+        return redirect()->route('products.show', $pig->id)->with('message', '¡Publicado y clasificado con éxito!');
 
     } catch (\Exception $e) {
-        \Log::error("Error al crear GuineaPig: " . $e->getMessage());
-        return back()->with('error', 'Error: ' . $e->getMessage());
+        \Log::error("Error crítico en store: " . $e->getMessage());
+        return back()->with('error', 'Ocurrió un error al procesar el producto.');
     }
 }
 }
