@@ -175,7 +175,7 @@ Responde SOLO el número del ID:";
         // 4. Guardado final
         $pig->save();
 
-        return back()->with('success', '¡Actualizado con éxito!');
+        return redirect("/product/{$id}")->with('success', '¡Actualizado con éxito!');
     }
 
     public function destroy($id)
