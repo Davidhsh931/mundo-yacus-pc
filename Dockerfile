@@ -46,7 +46,7 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader
 
 # Fix para Laravel 12 + PHP 8.4
-RUN sed -i 's/return \$port + \$this->portOffset;/return (int)\$port + \$this->portOffset;/' \
+RUN sed -i 's/return \\$port + \\$this->portOffset;/return (int)\\$port + \\$this->portOffset;/' \
     vendor/laravel/framework/src/Illuminate/Foundation/Console/ServeCommand.php
 
 # Generate Laravel app key if not exists
@@ -55,6 +55,19 @@ RUN if [ ! -f .env ]; then cp .env.example .env; fi
 # Build frontend assets
 RUN npm run build
 
-EXPOSE 8000
+# Ensure storage directory structure exists with correct permissions
+RUN mkdir -p storage/app/public storage/framework/sessions storage/framework/views \
+             storage/framework/cache storage/logs bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
-CMD ["sh", "-c", "php -S 0.0.0.0:8080 -t public"]
+# Create the public/storage symlink at build time so it exists in the image.
+# The start.sh entrypoint will recreate it at runtime after the volume is mounted.
+RUN php artisan storage:link --force || true
+
+# Copy and prepare the entrypoint script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+EXPOSE 8080
+
+CMD ["/start.sh"]
