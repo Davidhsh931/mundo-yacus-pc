@@ -47,8 +47,8 @@ class CustomerOrderController extends Controller
             abort(403, 'No tienes permiso para ver este pedido.');
         }
         
-        // Cargar detalles completos del pedido con tracking
-        $order->load(['items.guineaPig.images', 'items.guineaPig.seller', 'trackings.updatedBy']);
+        // Cargar detalles completos del pedido con tracking y usuario
+        $order->load(['items.guineaPig.images', 'items.guineaPig.seller', 'trackings.updatedBy', 'user']);
         
         // Forzar carga de guineaPig para cada item (solución temporal)
         $order->items->each(function($item) {

@@ -248,7 +248,7 @@ const addToCart = () => {
                                                 @click="form.rating = star"
                                                 class="text-xl transition-colors"
                                                 :class="star <= form.rating ? 'text-amber-400' : 'text-gray-300'">
-                                            **
+                                            🌟
                                         </button>
                                     </div>
                                 </div>
@@ -277,13 +277,13 @@ const addToCart = () => {
                                     <button v-if="auth.user?.id === comment.user_id" 
                                             @click="deleteComment(comment.id)"
                                             class="text-gray-400 hover:text-red-500 transition-colors text-sm">
-                                        **
+                                        🌟
                                     </button>
                                 </div>
 
                                 <div class="mt-2">
                                     <div class="text-amber-400 text-xs mb-1">
-                                        {{ '**'.repeat(comment.rating) }}
+                                        {{ '🌟'.repeat(comment.rating) }}
                                     </div>
                                     <p class="text-gray-700 text-sm leading-relaxed">{{ comment.content }}</p>
                                 </div>

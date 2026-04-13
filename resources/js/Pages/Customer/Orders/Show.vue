@@ -163,12 +163,8 @@ const getStatusIcon = (status) => {
                             </div>
                             <div class="space-y-4">
                                 <div>
-                                    <p class="text-[10px] font-bold uppercase text-stone-400 tracking-widest mb-1">Teléfono</p>
-                                    <p class="font-black text-stone-900">{{ order.phone || 'No especificado' }}</p>
-                                </div>
-                                <div>
                                     <p class="text-[10px] font-bold uppercase text-stone-400 tracking-widest mb-1">Dirección de Entrega</p>
-                                    <p class="font-black text-stone-900">{{ order.address || 'No especificado' }}</p>
+                                    <p class="font-black text-stone-900">{{ order.shipping_address || 'No especificado' }}</p>
                                 </div>
                             </div>
                         </div>

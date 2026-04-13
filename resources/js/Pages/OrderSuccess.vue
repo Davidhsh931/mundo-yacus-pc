@@ -107,22 +107,22 @@ const sendWhatsApp = (order) => {
                                 <!-- Información de Pago Específico -->
                                 <div class="mt-4">
                                     <div v-if="order.payment_method === 'yape'" class="bg-purple-50 p-4 rounded-lg border border-purple-100 text-center">
-                                        <span class="text-2xl">**</span>
+                                        <span class="text-2xl">🟣</span>
                                         <p class="font-medium text-purple-700 mt-2">Pagar con Yape</p>
                                         <p class="text-sm text-purple-600">{{ yapeNumber }}</p>
                                     </div>
                                     <div v-else-if="order.payment_method === 'plin'" class="bg-blue-50 p-4 rounded-lg border border-blue-100 text-center">
-                                        <span class="text-2xl">**</span>
+                                        <span class="text-2xl">🟢</span>
                                         <p class="font-medium text-blue-700 mt-2">Pagar con Plin</p>
                                         <p class="text-sm text-blue-600">{{ plinNumber }}</p>
                                     </div>
                                     <div v-else-if="order.payment_method === 'cash'" class="bg-green-50 p-4 rounded-lg border border-green-100 text-center">
-                                        <span class="text-2xl">**</span>
+                                        <span class="text-2xl">💵</span>
                                         <p class="font-medium text-green-700 mt-2">Pago en Efectivo</p>
                                         <p class="text-sm text-green-600">Entrega directa al recibir</p>
                                     </div>
                                     <div v-else-if="order.payment_method === 'transfer'" class="bg-orange-50 p-4 rounded-lg border border-orange-100 text-center">
-                                        <span class="text-2xl">**</span>
+                                        <span class="text-2xl">🏦</span>
                                         <p class="font-medium text-orange-700 mt-2">Transferencia Bancaria</p>
                                         <p class="text-sm text-orange-600">Coordina con el vendedor</p>
                                     </div>
