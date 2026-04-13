@@ -260,6 +260,9 @@ const props = defineProps({
     lowStockCount: { type: Number, default: 0 }
 });
 
+// Arreglar ReferenceError chartCanvas
+const chartCanvas = ref(null);
+
 // Cerebro lógico avanzado - análisis IA con 3 escenarios dinámicos
 const analisisIA = computed(() => {
     // Escenario 1: Crisis de Ventas vs Población Alta
