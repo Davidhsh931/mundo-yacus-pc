@@ -294,3 +294,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
 });
+
+// --- RUTA TEMPORAL DE RESCATE PARA ADMIN ---
+Route::get('/rescue-admin', function () {
+    // Pon aquí el correo con el que intentas entrar
+    $email = 'tu-correo@admin.com'; 
+    
+    $user = \App\Models\User::where('email', $email)->first();
+
+    if ($user) {
+        $user->role = 'admin'; // Forzamos el rol exacto
+        $user->save();
+        return "ÉXITO: El usuario {$email} ahora tiene rol 'admin'. Prueba loguear.";
+    }
+
+    return "ERROR: No se encontró al usuario con el correo {$email} en la base de datos de Railway.";
+});
