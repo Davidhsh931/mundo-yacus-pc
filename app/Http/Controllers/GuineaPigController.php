@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\GuineaPig;
 use App\Models\GuineaPigImage;
 use App\Models\Category;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
@@ -254,7 +255,6 @@ class GuineaPigController extends Controller
                 'position'      => 0
             ]);
         }
-
         return redirect()->route('products.show', $pig->id)->with('message', '¡Publicado y clasificado con éxito!');
 
     } catch (\Exception $e) {
@@ -262,4 +262,35 @@ class GuineaPigController extends Controller
         return back()->with('error', 'Ocurrió un error al procesar el producto.');
     }
 }
+
+    /**
+     * Returns total sales (quantity × unit_price) grouped by day for the last 30 days.
+     * Used by the SalesChart Vue component.
+     */
+    public function getSalesLast30Days()
+    {
+        // Build a map of date => total_sales from OrderItem records
+        $salesByDate = OrderItem::where('created_at', '>=', now()->subDays(29)->startOfDay())
+            ->select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('SUM(quantity * unit_price) as total')
+            )
+            ->groupBy('date')
+            ->get()
+            ->pluck('total', 'date');
+
+        $labels = [];
+        $data   = [];
+
+        foreach (range(0, 29) as $i) {
+            $date     = now()->subDays(29 - $i)->format('Y-m-d');
+            $labels[] = $date;
+            $data[]   = isset($salesByDate[$date]) ? (float) $salesByDate[$date] : 0;
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'data'   => $data,
+        ]);
+    }
 }

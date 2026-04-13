@@ -17,3 +17,4 @@ use Illuminate\Support\Facades\Route;
 
 // Rutas API sin autenticación para llamadas desde JavaScript
 Route::get('/cuy/sugerir-stock/{id}', [GuineaPigController::class, 'sugerirStock'])->name('api.cuy.sugerir-stock');
+Route::get('/sales/last-30-days', [GuineaPigController::class, 'getSalesLast30Days'])->name('api.sales.last-30-days');

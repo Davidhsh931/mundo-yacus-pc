@@ -1,33 +1,36 @@
 <template>
-    <div class="h-72">
-        <canvas ref="chartCanvas"></canvas>
+    <div class="h-72 relative">
+        <!-- Loading state -->
+        <div v-if="loading" class="absolute inset-0 flex items-center justify-center">
+            <span class="text-gray-400 text-sm">Cargando datos de ventas...</span>
+        </div>
+
+        <!-- Error state -->
+        <div v-else-if="error" class="absolute inset-0 flex items-center justify-center">
+            <span class="text-red-400 text-sm">{{ error }}</span>
+        </div>
+
+        <!-- Empty state -->
+        <div v-else-if="isEmpty" class="absolute inset-0 flex items-center justify-center">
+            <span class="text-gray-400 text-sm">No hay ventas registradas en los últimos 30 días.</span>
+        </div>
+
+        <canvas ref="chartCanvas" :class="{ 'opacity-0': loading || error || isEmpty }"></canvas>
     </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, nextTick } from 'vue';
 import Chart from 'chart.js/auto';
 
 const chartCanvas = ref(null);
+const loading     = ref(true);
+const error       = ref(null);
+const isEmpty     = ref(false);
 let chartInstance = null;
 
-onMounted(() => {
-    // Datos de prueba directamente en el componente
-    const testData = [12, 19, 15, 25, 22, 30, 28, 35, 32, 38, 42, 45, 48, 52, 55, 58, 62, 65, 68, 70, 72, 75, 78, 80, 82, 85, 87, 90, 92, 95];
-    const testLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'];
-
-    console.log('Iniciando gráfico con datos:', testData);
-
-    if (!chartCanvas.value) {
-        console.error('Canvas no encontrado');
-        return;
-    }
-
+function buildChart(labels, data) {
     const ctx = chartCanvas.value.getContext('2d');
-    if (!ctx) {
-        console.error('No se puede obtener el contexto del canvas');
-        return;
-    }
 
     // Crear gradiente de relleno
     const gradient = ctx.createLinearGradient(0, 0, 0, 320);
@@ -37,20 +40,20 @@ onMounted(() => {
     chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: testLabels,
+            labels,
             datasets: [{
                 label: 'Ventas de Mundo Yacus',
-                data: testData,
+                data,
                 borderColor: '#10b981',           // Esmeralda moderno
                 backgroundColor: gradient,        // Gradiente de relleno
                 borderWidth: 3,                   // Grosor de línea
-                tension: 0.4,                    // Línea curva suave
+                tension: 0.4,                     // Línea curva suave
                 fill: true,                       // Relleno con gradiente
                 pointBackgroundColor: '#10b981',
                 pointBorderColor: '#ffffff',
                 pointBorderWidth: 2,
                 pointRadius: 0,                   // Puntos ocultos por defecto
-                pointHoverRadius: 6,             // Puntos visibles en hover
+                pointHoverRadius: 6,              // Puntos visibles en hover
                 pointHoverBackgroundColor: '#10b981',
                 pointHoverBorderColor: '#ffffff',
                 pointHoverBorderWidth: 3
@@ -60,7 +63,7 @@ onMounted(() => {
             responsive: true,
             maintainAspectRatio: false,
             animation: {
-                duration: 1500,                  // Animación suave de 1.5s
+                duration: 1500,                   // Animación suave de 1.5s
                 easing: 'easeInOutQuart'
             },
             interaction: {
@@ -68,8 +71,8 @@ onMounted(() => {
                 mode: 'index'
             },
             plugins: {
-                legend: { 
-                    display: false 
+                legend: {
+                    display: false
                 },
                 tooltip: {
                     backgroundColor: 'rgba(15, 23, 42, 0.9)',
@@ -81,15 +84,14 @@ onMounted(() => {
                     displayColors: false,
                     callbacks: {
                         label: function(context) {
-                            return 'Ventas: S/ ' + context.parsed.y;
+                            return 'Ventas: S/ ' + context.parsed.y.toFixed(2);
                         }
                     }
                 }
             },
             scales: {
-                y: { 
+                y: {
                     beginAtZero: true,
-                    suggestedMax: 100,
                     ticks: {
                         stepSize: 20,
                         color: '#6b7280',
@@ -101,7 +103,7 @@ onMounted(() => {
                             return 'S/ ' + value;  // Símbolo de Soles
                         }
                     },
-                    grid: { 
+                    grid: {
                         color: 'rgba(229, 231, 235, 0.3)',  // Grid muy tenue
                         drawBorder: false
                     },
@@ -121,11 +123,13 @@ onMounted(() => {
                         autoSkip: true,
                         maxTicksLimit: 15,  // Mostrar máximo 15 etiquetas para no saturar
                         callback: function(value, index) {
-                            // Mostrar etiqueta cada 2 días para 30 días
-                            return index % 2 === 0 ? this.getLabelForValue(value) : '';
+                            // Show only the day number (e.g. "15") every other tick
+                            if (index % 2 !== 0) return '';
+                            const label = this.getLabelForValue(value); // "YYYY-MM-DD"
+                            return label ? label.split('-')[2] : '';
                         }
                     },
-                    grid: { 
+                    grid: {
                         display: false,
                         drawBorder: false
                     },
@@ -136,8 +140,42 @@ onMounted(() => {
             }
         }
     });
+}
 
-    console.log('Gráfico inicializado correctamente');
+onMounted(async () => {
+    try {
+        const response = await fetch('/api/sales/last-30-days');
+
+        if (!response.ok) {
+            throw new Error(`Error del servidor: ${response.status}`);
+        }
+
+        const { labels, data } = await response.json();
+
+        const hasData = data.some(v => v > 0);
+        if (!hasData) {
+            isEmpty.value = true;
+            loading.value = false;
+            return;
+        }
+
+        loading.value = false;
+
+        // Wait for Vue to render the canvas before Chart.js touches it
+        await nextTick();
+
+        if (!chartCanvas.value) {
+            console.error('Canvas no encontrado tras nextTick');
+            return;
+        }
+
+        buildChart(labels, data);
+
+    } catch (err) {
+        console.error('Error al cargar datos de ventas:', err);
+        error.value = 'No se pudieron cargar los datos de ventas.';
+        loading.value = false;
+    }
 });
 </script>
 
