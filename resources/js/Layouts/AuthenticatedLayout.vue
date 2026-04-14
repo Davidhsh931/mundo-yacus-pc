@@ -225,14 +225,15 @@ const formatNotificationTime = (date) => {
             ⚠️ {{ $page.props.settings?.banner_text }}
         </div>
 
-        <div class="min-h-screen bg-gray-100">
+        <div class="min-h-screen bg-white">
             <nav class="border-b border-gray-100 bg-white">
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 justify-between">
                         <div class="flex">
-                            <div class="flex shrink-0 items-center">
-                                <Link href="/">
-                                    <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800" />
+                            <div class="flex items-center space-x-2">
+                                <Link href="/" class="flex items-center">
+                                    <ApplicationLogo class="h-8 w-auto fill-current text-amber-600" />
+                                    <span class="ml-2 text-xl font-bold text-gray-900">Mundo Yacus</span>
                                 </Link>
                             </div>
 

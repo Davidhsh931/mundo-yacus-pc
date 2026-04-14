@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import ImageSlider from '@/Components/ImageSlider.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
@@ -132,7 +133,12 @@ function addToCart(pig) {
             </div>
         </template>
 
-        <div class="py-10 bg-gray-50 min-h-screen">
+        <!-- Hero Slider - Nuevo componente -->
+        <div class="mb-8">
+            <ImageSlider />
+        </div>
+
+        <div class="py-10 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 min-h-screen">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-10">
 
                 <!-- Section heading -->
