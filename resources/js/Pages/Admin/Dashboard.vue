@@ -229,6 +229,21 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Sección de Eventos -->
+                <div class="bg-amber-50 rounded-3xl p-1 shadow-2xl shadow-amber-900/10">
+                    <div class="bg-white p-7 rounded-[calc(1.5rem-2px)] border border-amber-100">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="p-2 bg-amber-50 rounded-lg text-amber-600 text-xl font-bold">EV</div>
+                            <h3 class="font-black text-slate-900 text-sm uppercase tracking-tight">Eventos</h3>
+                        </div>
+                        <p class="text-gray-500 text-xs mb-6 leading-relaxed">Gestiona noticias y actividades programadas para tu comunidad.</p>
+                        <Link href="/admin/events" class="group flex items-center justify-center gap-2 w-full bg-amber-600 text-white py-3.5 rounded-2xl font-bold text-xs hover:bg-amber-700 transition-all duration-300 shadow-lg shadow-amber-200 hover:shadow-amber-300">
+                            GESTIONAR EVENTOS
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                        </Link>
+                    </div>
+                </div>
             </div>
         </div>
     </AuthenticatedLayout>
@@ -257,6 +272,7 @@ const props = defineProps({
     },
     latestProducts: { type: Array, default: () => [] },
     lowStockProducts: { type: Array, default: () => [] },
+    events: { type: Array, default: () => [] },
     lowStockCount: { type: Number, default: 0 }
 });
 
