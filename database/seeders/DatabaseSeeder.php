@@ -44,5 +44,8 @@ class DatabaseSeeder extends Seeder
             'image_path' => '/images/images.jpeg',
             'position' => 1
         ]);
+
+        // 5. Crear eventos de ejemplo
+        $this->call(EventSeeder::class);
     }
 }

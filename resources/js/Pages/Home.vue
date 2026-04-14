@@ -109,7 +109,7 @@ function addToCart(pig) {
 <template>
     <Head title="Mercado de la Chacra - Mundo Yacus" />
 
-    <AuthenticatedLayout>
+    <AuthenticatedLayout :categories="categories">
         <template #header>
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-2">
                 <!-- Left: identity -->
@@ -295,44 +295,38 @@ function addToCart(pig) {
                 </div>
 
                 <!-- Events -->
-                <section v-if="events && events.length > 0" class="mt-4">
-                    <div class="flex items-center justify-between mb-4 px-4 sm:px-0">
-                        <span class="text-sm font-medium text-gray-700">Voces del valle</span>
-                        <Link
-                            href="/admin/events"
-                            class="text-xs text-blue-600 border border-blue-200 bg-blue-50 rounded-lg px-3 py-1.5 hover:bg-blue-100 transition-colors"
-                        >
-                            Ver calendario
-                        </Link>
-                    </div>
+                <section v-if="events && events.length > 0" class="mt-8"> <div class="flex items-center justify-between mb-4 px-4 sm:px-0">
+        <h2 class="text-base font-bold text-gray-800 tracking-tight italic">Voces del valle</h2>
+    </div>
 
-                    <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-amber-300 scrollbar-track-gray-100">
-                        <div
-                            v-for="event in events"
-                            :key="event.id"
-                            class="min-w-[240px] bg-white border border-gray-100 rounded-2xl overflow-hidden flex-shrink-0 hover:border-gray-200 transition-colors"
-                        >
-                            <img
-                                :src="event.image_url"
-                                class="w-full h-36 object-cover"
-                            />
-                            <div class="p-3">
-                                <span class="inline-block text-[11px] font-medium text-amber-700 bg-amber-50 border border-amber-100 rounded px-2 py-0.5 mb-2">
-                                    {{ event.formatted_date }}
-                                </span>
-                                <h3 class="text-[13px] font-medium text-gray-800 leading-snug">{{ event.title }}</h3>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+    <div class="flex gap-4 overflow-x-auto pb-6 px-4 sm:px-0 snap-x scrollbar-none">
+        <div
+            v-for="event in events"
+            :key="event.id"
+            class="snap-start w-[280px] sm:w-[300px] bg-white border border-gray-100 rounded-3xl overflow-hidden flex-shrink-0 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+        >
+            <div class="overflow-hidden"> <img
+                    :src="event.image_url"
+                    class="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+            </div>
+            
+            <div class="p-4">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="inline-block text-[10px] font-bold uppercase tracking-widest text-amber-700 bg-amber-50 border border-amber-100 rounded-md px-2 py-1">
+                        {{ event.formatted_date }}
+                    </span>
+                </div>
+                <h3 class="text-sm font-semibold text-gray-800 leading-snug group-hover:text-blue-600 transition-colors">
+                    {{ event.title }}
+                </h3>
+            </div>
+        </div>
+    </div>
+</section>
 
                 <!-- Footer -->
                 <footer class="pt-8 border-t border-gray-100 text-center pb-4">
-                    <div class="flex justify-center gap-2 mb-3">
-                        <span class="w-2 h-2 rounded-full bg-red-500"></span>
-                        <span class="w-2 h-2 rounded-full bg-gray-200"></span>
-                        <span class="w-2 h-2 rounded-full bg-red-500"></span>
-                    </div>
                     <p class="text-[11px] text-gray-400 tracking-widest uppercase">
                         Mundo Yacus · 25 años · Huánuco · Perú
                     </p>

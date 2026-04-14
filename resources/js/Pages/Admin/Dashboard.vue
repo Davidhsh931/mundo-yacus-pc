@@ -20,7 +20,6 @@
 
         <div class="py-10 bg-[#F8FAFC] min-h-screen">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-10">
-                
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div class="bg-white p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-2xl border border-gray-100 group">
                         <div class="flex items-center justify-between mb-4">
@@ -177,6 +176,21 @@
                             </div>
                         </div>
 
+                        <!-- Sección de Eventos -->
+                        <div class="bg-slate-900 rounded-3xl p-1 shadow-2xl shadow-blue-900/10">
+                            <div class="bg-white p-7 rounded-[calc(1.5rem-2px)] border border-slate-100">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="p-2 bg-blue-50 rounded-lg text-blue-600 text-xl font-bold">EV</div>
+                                    <h3 class="font-black text-slate-900 text-sm uppercase tracking-tight">Eventos</h3>
+                                </div>
+                                <p class="text-gray-500 text-xs mb-6 leading-relaxed">Gestiona noticias y actividades programadas para tu comunidad.</p>
+                                <Link href="/admin/events" class="group flex items-center justify-center gap-2 w-full bg-slate-900 text-white py-3.5 rounded-2xl font-bold text-xs hover:bg-blue-600 transition-all duration-300 shadow-lg shadow-slate-200 hover:shadow-blue-200">
+                                    GESTIONAR EVENTOS
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                                </Link>
+                            </div>
+                        </div>
+
                         <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                             <div class="px-6 py-4 border-b border-gray-50 bg-[#FDFDFD] flex justify-between items-center">
                                 <h3 class="font-bold text-slate-800 text-xs uppercase tracking-widest flex items-center gap-2">
@@ -229,24 +243,9 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Sección de Eventos -->
-                <div class="bg-amber-50 rounded-3xl p-1 shadow-2xl shadow-amber-900/10">
-                    <div class="bg-white p-7 rounded-[calc(1.5rem-2px)] border border-amber-100">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="p-2 bg-amber-50 rounded-lg text-amber-600 text-xl font-bold">EV</div>
-                            <h3 class="font-black text-slate-900 text-sm uppercase tracking-tight">Eventos</h3>
-                        </div>
-                        <p class="text-gray-500 text-xs mb-6 leading-relaxed">Gestiona noticias y actividades programadas para tu comunidad.</p>
-                        <Link href="/admin/events" class="group flex items-center justify-center gap-2 w-full bg-amber-600 text-white py-3.5 rounded-2xl font-bold text-xs hover:bg-amber-700 transition-all duration-300 shadow-lg shadow-amber-200 hover:shadow-amber-300">
-                            GESTIONAR EVENTOS
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                        </Link>
-                    </div>
-                </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+</AuthenticatedLayout>
 </template>
 
 <script setup>

@@ -71,7 +71,7 @@ onMounted(() => {
                     :src="slide.image" 
                     :alt="slide.title"
                     class="w-full h-full object-cover"
-                    @error="$event.target.src='/storage/slider/default.jpg'"
+                    @error="$event.target.style.display='none'"
                 />
                 
                 <!-- Content Overlay -->

@@ -7,7 +7,12 @@ import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 
+const props = defineProps({
+    categories: Array
+});
+
 const showingNavigationDropdown = ref(false);
+const showingLoginDropdown = ref(false);
 const page = usePage();
 
 // Contador de productos para el carrito
@@ -226,128 +231,127 @@ const formatNotificationTime = (date) => {
         </div>
 
         <div class="min-h-screen bg-white">
-            <nav class="border-b border-gray-100 bg-white">
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div class="flex h-16 justify-between">
-                        <div class="flex">
-                            <div class="flex items-center space-x-2">
-                                <Link href="/" class="flex items-center">
-                                    <ApplicationLogo class="h-8 w-auto fill-current text-amber-600" />
-                                    <span class="ml-2 text-xl font-bold text-gray-900">Mundo Yacus</span>
-                                </Link>
+            <!-- Header Simplificado con Solo Elementos Funcionales -->
+            <header class="bg-white border-b border-gray-200 shadow-sm">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-center h-16">
+                        <!-- Izquierda: Logo y Categorías -->
+                        <div class="flex items-center space-x-8">
+                            <Link href="/" class="flex items-center">
+                                <ApplicationLogo class="h-8 w-auto fill-current text-amber-600" />
+                                <span class="ml-2 text-xl font-bold text-gray-900">Mundo Yacus</span>
+                            </Link>
+                            
+                            <!-- Menú de Categorías con Dropdown -->
+                            <div class="relative group hidden md:block">
+                                <button class="text-gray-700 hover:text-amber-600 font-medium transition-colors flex items-center">
+                                    Categoria
+                                    <svg class="w-4 h-4 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </button>
+                                
+                                <!-- Dropdown de Categorías -->
+                                <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                    <div class="py-2">
+                                        <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                            Selecciona la categoría
+                                        </div>
+                                        <div v-for="category in props.categories" :key="category.id">
+                                            <Link :href="'/products?category=' + category.id" 
+                                                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                                🏷️ {{ category.name }}
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <!-- ZONA ADMIN: Solo visible para administradores -->
-                                <template v-if="$page.props.auth.user?.role === 'admin'">
-                                    <NavLink href="/admin/dashboard" :active="$page.component === 'Admin/Dashboard'">
-                                        📊 Dashboard Admin
-                                    </NavLink>
-                                    
-                                    <NavLink href="/admin/guinea-pigs" :active="$page.component.startsWith('Admin/GuineaPigs')" class="bg-green-50 text-green-700">
-                                        🐹 Gestión de Productos
-                                    </NavLink>
-                                    
-                                    <NavLink href="/admin/orders" :active="route().current('admin.orders.*')" class="bg-purple-50 text-purple-700">
-                                        🏭 Gestión de Ventas
-                                    </NavLink>
-                                    
-                                    <div class="border-l border-gray-300 h-6 mx-2"></div>
-                                </template>
-                                
-                                <!-- ZONA CLIENTE: Visible para todos -->
-                                <NavLink href="/" :active="$page.component === 'Home'">
-                                    🛒 Tienda
-                                </NavLink>
-                                
-                                <NavLink href="/cart" :active="$page.component === 'Cart'" class="relative">
-                                    🛒 Carrito
-                                    <span v-if="cartCount > 0" class="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                                        {{ cartCount }}
+                        <!-- Derecha: Solo Elementos Funcionales -->
+                        <div class="flex items-center space-x-4">
+                            <!-- Notificaciones Admin (Funcional) -->
+                            <div v-if="$page.props.auth.user?.role === 'admin'" class="relative">
+                                <button @click="showingNavigationDropdown = !showingNavigationDropdown" 
+                                        class="p-2 text-gray-600 hover:text-gray-900 relative">
+                                    <span class="text-lg">🔔</span>
+                                    <span v-if="unreadCount > 0" 
+                                          class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+                                        {{ unreadCount > 9 ? '9+' : unreadCount }}
                                     </span>
-                                </NavLink>
+                                </button>
                                 
-                                <!-- Notificaciones Admin -->
-                                <div v-if="$page.props.auth.user?.role === 'admin'" class="relative">
-                                    <button @click="showingNavigationDropdown = !showingNavigationDropdown" 
-                                            class="p-2 text-gray-600 hover:text-gray-900 relative">
-                                        <span class="text-lg">🔔</span>
-                                        <span v-if="unreadCount > 0" 
-                                              class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
-                                            {{ unreadCount > 9 ? '9+' : unreadCount }}
-                                        </span>
-                                    </button>
-                                    
-                                    <!-- Overlay para Click Away -->
-                                    <div v-if="showingNavigationDropdown" 
-                                         @click="showingNavigationDropdown = false" 
-                                         class="fixed inset-0 z-40"></div>
-                                    
-                                    <!-- Dropdown de Notificaciones -->
-                                    <div v-show="showingNavigationDropdown" 
-                                         class="absolute right-0 z-50 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200">
-                                        <div class="py-2">
-                                            <div class="px-4 py-2 border-b border-gray-200">
-                                                <div class="flex justify-between items-center">
-                                                    <h3 class="text-sm font-black text-gray-900">Notificaciones</h3>
-                                                    <div class="flex gap-2">
-                                                        <button @click="clearAll" 
-                                                                class="text-xs text-red-600 hover:text-red-800">
-                                                            Limpiar todo
-                                                        </button>
-                                                        <button @click="refreshProducts" 
-                                                                class="text-xs text-blue-600 hover:text-blue-800"
-                                                                title="Refrescar productos">
-                                                            🔄
-                                                        </button>
-                                                    </div>
+                                <!-- Overlay para Click Away -->
+                                <div v-if="showingNavigationDropdown" 
+                                     @click="showingNavigationDropdown = false" 
+                                     class="fixed inset-0 z-40"></div>
+                                
+                                <!-- Dropdown de Notificaciones -->
+                                <div v-show="showingNavigationDropdown" 
+                                     class="absolute right-0 z-50 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200">
+                                    <div class="py-2">
+                                        <div class="px-4 py-2 border-b border-gray-200">
+                                            <div class="flex justify-between items-center">
+                                                <h3 class="text-sm font-black text-gray-900">Notificaciones</h3>
+                                                <div class="flex gap-2">
+                                                    <button @click="clearAll" 
+                                                            class="text-xs text-red-600 hover:text-red-800">
+                                                        Limpiar todo
+                                                    </button>
+                                                    <button @click="refreshProducts" 
+                                                            class="text-xs text-blue-600 hover:text-blue-800"
+                                                            title="Refrescar productos">
+                                                        🔔
+                                                    </button>
                                                 </div>
                                             </div>
-                                            
-                                            <div v-if="notifications.length === 0" class="px-4 py-4 text-center text-gray-500 text-sm">
-                                                No hay notificaciones nuevas
-                                            </div>
-                                            
-                                            <div v-else class="max-h-64 overflow-y-auto">
-                                                <div v-for="notification in notifications.slice(0, 10)" :key="notification.id"
-                                                     @click="markAsRead(notification)"
-                                                     :class="['px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100', 
-                                                              notification.read ? 'bg-gray-50 opacity-60' : 'bg-white']">
-                                                    <div class="flex items-start gap-3">
-                                                        <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm"
-                                                             :class="getNotificationColor(notification.type)">
-                                                            {{ getNotificationIcon(notification.type) }}
-                                                        </div>
-                                                        <div class="flex-1 min-w-0">
-                                                            <p class="text-sm text-gray-900">{{ notification.message }}</p>
-                                                            <p class="text-xs text-gray-500 mt-1">
-                                                                {{ formatNotificationTime(notification.created_at) }}
-                                                            </p>
-                                                        </div>
+                                        </div>
+                                        
+                                        <div v-if="notifications.length === 0" class="px-4 py-4 text-center text-gray-500 text-sm">
+                                            No hay notificaciones nuevas
+                                        </div>
+                                        
+                                        <div v-else class="max-h-64 overflow-y-auto">
+                                            <div v-for="notification in notifications.slice(0, 10)" :key="notification.id"
+                                                 @click="markAsRead(notification)"
+                                                 :class="['px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100', 
+                                                          notification.read ? 'bg-gray-50 opacity-60' : 'bg-white']">
+                                                <div class="flex items-start gap-3">
+                                                    <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm"
+                                                         :class="getNotificationColor(notification.type)">
+                                                        {{ getNotificationIcon(notification.type) }}
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <p class="text-sm text-gray-900">{{ notification.message }}</p>
+                                                        <p class="text-xs text-gray-500 mt-1">
+                                                            {{ formatNotificationTime(notification.created_at) }}
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
                                 </div>
-
-                                <NavLink href="/orders" :active="$page.component === 'Orders'">
-                                    📦 Mis Pedidos
-                                </NavLink>
                             </div>
-                        </div>
 
-                        <div class="hidden sm:ms-6 sm:flex sm:items-center">
-                            <div class="relative ms-3">
+                            <!-- Carrito (Funcional) -->
+                            <Link href="/cart" class="relative p-2 text-gray-600 hover:text-amber-600 transition-colors">
+                                <span class="text-lg">🛒</span>
+                                <span v-if="cartCount > 0" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                                    {{ cartCount }}
+                                </span>
+                            </Link>
+
+                            <!-- Perfil de Usuario (Funcional) -->
+                            <div class="relative">
                                 <Dropdown v-if="$page.props.auth.user" align="right" width="48">
                                     <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button type="button" class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none">
-                                                {{ $page.props.auth.user.name }}
-                                                <svg class="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                                </svg>
-                                            </button>
-                                        </span>
+                                        <button class="inline-flex items-center px-4 py-2 text-gray-700 hover:text-amber-600 font-medium transition-colors border border-gray-300 rounded-lg hover:border-amber-500">
+                                            {{ $page.props.auth.user.name }}
+                                            <svg class="w-4 h-4 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M19 9l-7 7-7-7"/>
+                                            </svg>
+                                        </button>
                                     </template>
                                     <template #content>
                                         <!-- Opciones de Cliente -->
@@ -358,7 +362,7 @@ const formatNotificationTime = (date) => {
                                         <template v-if="$page.props.auth.user?.role === 'admin'">
                                             <div class="border-t border-gray-100"></div>
                                             <div class="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                                🏭 Administración
+                                                🏢 Administración
                                             </div>
                                             <DropdownLink href="/admin/dashboard"> 📊 Dashboard Admin </DropdownLink>
                                             <DropdownLink href="/admin/orders"> 💰 Gestión de Ventas </DropdownLink>
@@ -371,72 +375,120 @@ const formatNotificationTime = (date) => {
                                     </template>
                                 </Dropdown>
 
-                                <div v-else class="space-x-4">
-                                    <Link href="/login" class="text-sm text-gray-700 hover:text-gray-900 font-medium">Login</Link>
-                                    <Link href="/register" class="text-sm text-gray-700 hover:text-gray-900 font-medium">Registro</Link>
+                                <div v-else class="relative">
+                                    <!-- Dropdown Login/Registro unificado (Funcional) -->
+                                    <div class="relative">
+                                        <button @click="showingLoginDropdown = !showingLoginDropdown" class="inline-flex items-center px-4 py-2 text-gray-700 hover:text-amber-600 font-medium transition-colors border border-gray-300 rounded-lg hover:border-amber-500">
+                                            Iniciar sesión
+                                            <svg class="w-4 h-4 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M19 9l-7 7-7-7"/>
+                                            </svg>
+                                        </button>
+                                        
+                                        <!-- Overlay para Click Away -->
+                                        <div v-if="showingLoginDropdown" 
+                                             @click="showingLoginDropdown = false" 
+                                             class="fixed inset-0 z-40"></div>
+                                        
+                                        <!-- Dropdown Menu -->
+                                        <div v-show="showingLoginDropdown" 
+                                             class="absolute right-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-[100]">
+                                            <div class="py-2">
+                                                <!-- Opción Principal: Iniciar Sesión -->
+                                                <Link href="/login" class="block px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors font-medium">
+                                                    <div class="flex items-center">
+                                                        <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                            <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l7-7-7-7"/>
+                                                        </svg>
+                                                        Iniciar Sesión
+                                                    </div>
+                                                </Link>
+                                                
+                                                <!-- Sub-opciones: Registro -->
+                                                <div class="border-t border-gray-100 my-2"></div>
+                                                <div class="px-4 py-2 text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                                                    Registrarse
+                                                </div>
+                                                
+                                                <!-- Opción 1: @admin.com -->
+                                                <Link href="/register" class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                                    <div class="flex items-center">
+                                                        <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                                                            <circle cx="8.5" cy="7" r="4"/>
+                                                            <path d="M20 8v6M23 11h-6"/>
+                                                        </svg>
+                                                        @admin.com
+                                                    </div>
+                                                </Link>
+                                                
+                                                <!-- Opción 2: @cliente.com -->
+                                                <Link href="/register" class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                                    <div class="flex items-center">
+                                                        <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                                                            <circle cx="8.5" cy="7" r="4"/>
+                                                            <path d="M20 8v6M23 11h-6"/>
+                                                        </svg>
+                                                        @cliente.com
+                                                    </div>
+                                                </Link>    
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="-me-2 flex items-center sm:hidden">
-                            <button @click="showingNavigationDropdown = !showingNavigationDropdown" class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none">
-                                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path :class="{'hidden': showingNavigationDropdown, 'inline-flex': !showingNavigationDropdown }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                                    <path :class="{'hidden': !showingNavigationDropdown, 'inline-flex': showingNavigationDropdown }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
                     </div>
-                    </div>
-                </div>
-
-                <!-- Mobile menu -->
-                <div :class="{'block': showingNavigationDropdown, 'hidden': !showingNavigationDropdown}" class="sm:hidden">
-                    <!-- ZONA CLIENTE: Visible para todos -->
-                    <div class="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink href="/"> 🛒 Tienda </ResponsiveNavLink>
-                        <ResponsiveNavLink href="/cart"> 🛒 Carrito </ResponsiveNavLink>
-                        <ResponsiveNavLink href="/orders"> 📦 Mis Pedidos </ResponsiveNavLink>
-                    </div>
-
-                    <!-- ZONA ADMIN: Solo para administradores -->
-                    <template v-if="$page.props.auth.user?.role === 'admin'">
-                        <div class="border-t border-gray-200"></div>
-                        <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                            🏭 Administración
-                        </div>
-                        <div class="space-y-1 pb-3 pt-2">
-                            <ResponsiveNavLink href="/dashboard"> 📊 Dashboard </ResponsiveNavLink>
-                            <ResponsiveNavLink href="/admin/orders"> 💰 Gestión de Ventas </ResponsiveNavLink>
-                            <ResponsiveNavLink href="/admin/guinea-pigs"> 🐹 Gestión de Productos </ResponsiveNavLink>
-                        </div>
-                    </template>
-
-                    <div class="border-t border-gray-200 pb-1 pt-4">
-                        <div v-if="$page.props.auth.user" class="px-4 space-y-2">
-                            <div class="text-base font-medium text-gray-800">{{ $page.props.auth.user.name }}</div>
-                            <div class="text-sm font-medium text-gray-500">{{ $page.props.auth.user.email }}</div>
-                            <div class="border-t border-gray-200 pt-2 mt-2">
-                                <form method="POST" action="/logout">
-                                    <button type="submit" class="block w-full text-left text-base font-medium text-red-600 hover:text-red-700">
-                                        🚪 Salir
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                        <div v-else class="px-4 space-y-2">
-                            <Link href="/login" class="block text-base font-medium text-gray-600">Login</Link>
-                            <Link href="/register" class="block text-base font-medium text-gray-600">Registro</Link>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
-            <header class="bg-white shadow" v-if="$slots.header">
-                <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <slot name="header" />
                 </div>
             </header>
+
+            <!-- Mobile menu -->
+            <div :class="{'block': showingNavigationDropdown, 'hidden': !showingNavigationDropdown}" class="sm:hidden">
+                <!-- ZONA CLIENTE: Visible para todos -->
+                <div class="space-y-1 pb-3 pt-2">
+                    <ResponsiveNavLink href="/"> 🛒 Tienda </ResponsiveNavLink>
+                    <ResponsiveNavLink href="/products"> 🏷️ Selecciona la categoría </ResponsiveNavLink>
+                    <div v-for="category in props.categories" :key="category.id">
+                        <ResponsiveNavLink :href="'/products?category=' + category.id"> 
+                            🏷️ {{ category.name }} 
+                        </ResponsiveNavLink>
+                    </div>
+                    <ResponsiveNavLink href="/cart"> 🛒 Carrito </ResponsiveNavLink>
+                    <ResponsiveNavLink href="/orders"> 📦 Mis Pedidos </ResponsiveNavLink>
+                </div>
+
+                <!-- ZONA ADMIN: Solo para administradores -->
+                <template v-if="$page.props.auth.user?.role === 'admin'">
+                    <div class="border-t border-gray-200"></div>
+                    <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        🏢 Administración
+                    </div>
+                    <div class="space-y-1 pb-3 pt-2">
+                        <ResponsiveNavLink href="/dashboard"> 📊 Dashboard </ResponsiveNavLink>
+                        <ResponsiveNavLink href="/admin/orders"> 💰 Gestión de Ventas </ResponsiveNavLink>
+                        <ResponsiveNavLink href="/admin/guinea-pigs"> 🐹 Gestión de Productos </ResponsiveNavLink>
+                    </div>
+                </template>
+
+                <div class="border-t border-gray-200 pb-1 pt-4">
+                    <div v-if="$page.props.auth.user" class="px-4 space-y-2">
+                        <div class="text-base font-medium text-gray-800">{{ $page.props.auth.user.name }}</div>
+                        <div class="text-sm font-medium text-gray-500">{{ $page.props.auth.user.email }}</div>
+                        <div class="border-t border-gray-200 pt-2 mt-2">
+                            <form method="POST" action="/logout">
+                                <button type="submit" class="block w-full text-left text-base font-medium text-red-600 hover:text-red-700">
+                                    🚪 Salir
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div v-else class="px-4 space-y-2">
+                        <Link href="/login" class="block text-base font-medium text-gray-600">Login</Link>
+                        <Link href="/register" class="block text-base font-medium text-gray-600">Registro</Link>
+                    </div>
+                </div>
+            </div>
 
             <main>
                 <slot />

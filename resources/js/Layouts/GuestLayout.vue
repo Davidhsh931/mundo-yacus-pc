@@ -13,11 +13,11 @@ defineProps({
 
 <template>
     <div class="min-h-screen bg-white">
-        <!-- Header Estilo Marketplace -->
+        <!-- Header Estilo Peru Marketplace -->
         <header class="bg-white border-b border-gray-200 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
-                    <!-- Izquierda: Logo y Menú de Navegación -->
+                    <!-- Izquierda: Logo y Menú de Navegación (Zona de exploración) -->
                     <div class="flex items-center space-x-8">
                         <!-- Logo -->
                         <Link href="/" class="flex items-center">
@@ -25,51 +25,73 @@ defineProps({
                             <span class="ml-2 text-xl font-bold text-gray-900">Mundo Yacus</span>
                         </Link>
                         
-                        <!-- Menú de Navegación -->
+                        <!-- Menú Principal (No relacionado con login) -->
                         <nav class="hidden md:flex space-x-6">
                             <Link href="/products" class="text-gray-700 hover:text-amber-600 font-medium transition-colors">
-                                Productos
-                            </Link>
-                            <Link href="/categories" class="text-gray-700 hover:text-amber-600 font-medium transition-colors">
-                                Categorías
+                                Producto
                             </Link>
                             <Link href="/about" class="text-gray-700 hover:text-amber-600 font-medium transition-colors">
-                                Nosotros
-                            </Link>
-                            <Link href="/contact" class="text-gray-700 hover:text-amber-600 font-medium transition-colors">
-                                Contacto
+                                Empresa
                             </Link>
                         </nav>
                     </div>
 
-                    <!-- Derecha: Login con Dropdown Integrado -->
-                    <div class="flex items-center space-x-4">
-                        <!-- Dropdown Login/Registro -->
+                    <!-- Centro: Búsqueda -->
+                    <div class="hidden md:flex flex-1 max-w-lg mx-8">
+                        <div class="relative w-full">
+                            <input 
+                                type="text" 
+                                placeholder="Introduzca un término de búsqueda para incluir en los resultados de la búsqueda. Ejemplo: 50 ml de cacao orgánico"
+                                class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                            />
+                            <svg class="absolute right-3 top-2.5 w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Derecha: Zona de acción de usuario (Totalmente separada) -->
+                    <div class="flex items-center space-x-4 border-l border-gray-200 pl-6">
+                        <!-- Selector de Idioma -->
+                        <div class="relative">
+                            <button class="text-gray-600 hover:text-gray-900 font-medium text-sm">
+                                Inglés
+                                <svg class="w-4 h-4 ml-1 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <span class="text-gray-400">|</span>
+                        
+                        <button class="text-gray-600 hover:text-gray-900 font-medium text-sm">
+                            Español
+                        </button>
+
+                        <!-- Login con Dropdown Integrado (Estilo Peru Marketplace) -->
                         <div 
                             v-if="canLogin || canRegister"
                             class="relative"
-                            @mouseenter="showingLoginDropdown = true"
-                            @mouseleave="showingLoginDropdown = false"
                         >
-                            <button class="inline-flex items-center px-4 py-2 border border-amber-600 text-amber-600 hover:bg-amber-600 hover:text-white font-medium rounded-lg transition-colors">
-                                <span v-if="canLogin">Mi Cuenta</span>
-                                <span v-else>Registrarse</span>
+                            <button @click="showingLoginDropdown = !showingLoginDropdown" class="inline-flex items-center px-4 py-2 text-gray-700 hover:text-amber-600 font-medium transition-colors border border-gray-300 rounded-lg hover:border-amber-500">
+                                <span v-if="canLogin">Iniciar sesión</span>
                                 <svg class="w-4 h-4 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M19 9l-7 7-7-7"/>
                                 </svg>
                             </button>
                             
-                            <!-- Dropdown Menu -->
+                            <!-- Overlay para Click Away -->
+                            <div v-if="showingLoginDropdown" @click="showingLoginDropdown = false" class="fixed inset-0 z-40"></div>
+                            
+                            <!-- Dropdown Menu (Registro como sub-botón) -->
                             <div 
                                 v-show="showingLoginDropdown"
-                                class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+                                class="absolute right-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-[100]"
                             >
                                 <div class="py-2">
-                                    <!-- Opción de Login -->
+                                    <!-- Opción Principal: Iniciar Sesión -->
                                     <div v-if="canLogin">
-                                        <div class="px-4 py-2 text-xs text-gray-500 font-semibold uppercase tracking-wider">
-                                            Acceder
-                                        </div>
                                         <Link 
                                             href="/login"
                                             class="block px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors font-medium"
@@ -83,13 +105,16 @@ defineProps({
                                         </Link>
                                     </div>
                                     
-                                    <!-- Opciones de Registro -->
+                                    <!-- Sub-opciones: Registro (Como Peru Marketplace) -->
                                     <div v-if="canRegister">
+                                        <div class="border-t border-gray-100 my-2"></div>
                                         <div class="px-4 py-2 text-xs text-gray-500 font-semibold uppercase tracking-wider">
-                                            Nueva Cuenta
+                                            Registrarse
                                         </div>
+                                        
+                                        <!-- Opción 1: @admin.com -->
                                         <Link 
-                                            href="/register/customer"
+                                            href="/register"
                                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
                                         >
                                             <div class="flex items-center">
@@ -98,11 +123,13 @@ defineProps({
                                                     <circle cx="8.5" cy="7" r="4"/>
                                                     <path d="M20 8v6M23 11h-6"/>
                                                 </svg>
-                                                Cliente
+                                                @admin.com
                                             </div>
                                         </Link>
+                                        
+                                        <!-- Opción 2: @cliente.com -->
                                         <Link 
-                                            href="/register/admin"
+                                            href="/register"
                                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
                                         >
                                             <div class="flex items-center">
@@ -111,7 +138,7 @@ defineProps({
                                                     <circle cx="8.5" cy="7" r="4"/>
                                                     <path d="M20 8v6M23 11h-6"/>
                                                 </svg>
-                                                Vendedor
+                                                @cliente.com
                                             </div>
                                         </Link>
                                     </div>
