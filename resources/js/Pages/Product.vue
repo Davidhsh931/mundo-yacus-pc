@@ -42,6 +42,16 @@ const isInvalidImageValue = (value) => {
     return false;
 };
 
+const filteredSpecifications = computed(() => {
+    // Filtrar especificaciones para eliminar la duplicada de 'descripción'
+    if (!props.pig.specifications || props.pig.specifications.length === 0) {
+        return [];
+    }
+    return props.pig.specifications.filter(attr => 
+        attr.key && attr.key.toLowerCase() !== 'descripción'
+    );
+});
+
 const formattedImages = computed(() => {
     // Si no hay imágenes, creamos un objeto de respaldo para evitar errores en el carrusel
     if (!props.pig.images || props.pig.images.length === 0) {
@@ -175,12 +185,12 @@ const addToCart = () => {
                                 <span class="text-gray-500 text-sm">IVA incluido</span>
                             </div>
 
-                            <div v-if="pig.specifications?.length" class="space-y-4">
+                            <div v-if="filteredSpecifications?.length" class="space-y-4">
                                 <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] flex items-center">
                                     📋 Especificaciones Técnicas
                                 </h3>
                                 <div class="grid grid-cols-2 gap-4">
-                                    <div v-for="(attr, index) in pig.specifications" :key="index" 
+                                    <div v-for="(attr, index) in filteredSpecifications" :key="index" 
                                          class="p-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
                                         <p class="text-[9px] text-gray-400 uppercase font-black tracking-tighter mb-1">{{ attr.key }}</p>
                                         <p class="font-bold text-gray-800 text-sm">{{ attr.value }}</p>

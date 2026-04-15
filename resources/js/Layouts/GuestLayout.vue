@@ -25,50 +25,6 @@ defineProps({
                             <span class="ml-2 text-xl font-bold text-gray-900">Mundo Yacus</span>
                         </Link>
                         
-                        <!-- Menú Principal (No relacionado con login) -->
-                        <nav class="hidden md:flex space-x-6">
-                            <Link href="/products" class="text-gray-700 hover:text-amber-600 font-medium transition-colors">
-                                Producto
-                            </Link>
-                            <Link href="/about" class="text-gray-700 hover:text-amber-600 font-medium transition-colors">
-                                Empresa
-                            </Link>
-                        </nav>
-                    </div>
-
-                    <!-- Centro: Búsqueda -->
-                    <div class="hidden md:flex flex-1 max-w-lg mx-8">
-                        <div class="relative w-full">
-                            <input 
-                                type="text" 
-                                placeholder="Introduzca un término de búsqueda para incluir en los resultados de la búsqueda. Ejemplo: 50 ml de cacao orgánico"
-                                class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                            />
-                            <svg class="absolute right-3 top-2.5 w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <path d="m21 21-4.35-4.35"></path>
-                            </svg>
-                        </div>
-                    </div>
-
-                    <!-- Derecha: Zona de acción de usuario (Totalmente separada) -->
-                    <div class="flex items-center space-x-4 border-l border-gray-200 pl-6">
-                        <!-- Selector de Idioma -->
-                        <div class="relative">
-                            <button class="text-gray-600 hover:text-gray-900 font-medium text-sm">
-                                Inglés
-                                <svg class="w-4 h-4 ml-1 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M19 9l-7 7-7-7"/>
-                                </svg>
-                            </button>
-                        </div>
-                        
-                        <span class="text-gray-400">|</span>
-                        
-                        <button class="text-gray-600 hover:text-gray-900 font-medium text-sm">
-                            Español
-                        </button>
-
                         <!-- Login con Dropdown Integrado (Estilo Peru Marketplace) -->
                         <div 
                             v-if="canLogin || canRegister"
@@ -105,41 +61,14 @@ defineProps({
                                         </Link>
                                     </div>
                                     
-                                    <!-- Sub-opciones: Registro (Como Peru Marketplace) -->
+                                    <!-- Sub-opciones: Registro -->
                                     <div v-if="canRegister">
                                         <div class="border-t border-gray-100 my-2"></div>
-                                        <div class="px-4 py-2 text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                                        <Link 
+                                            href="/register"
+                                            class="block px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
+                                        >
                                             Registrarse
-                                        </div>
-                                        
-                                        <!-- Opción 1: @admin.com -->
-                                        <Link 
-                                            href="/register"
-                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
-                                        >
-                                            <div class="flex items-center">
-                                                <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-                                                    <circle cx="8.5" cy="7" r="4"/>
-                                                    <path d="M20 8v6M23 11h-6"/>
-                                                </svg>
-                                                @admin.com
-                                            </div>
-                                        </Link>
-                                        
-                                        <!-- Opción 2: @cliente.com -->
-                                        <Link 
-                                            href="/register"
-                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
-                                        >
-                                            <div class="flex items-center">
-                                                <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-                                                    <circle cx="8.5" cy="7" r="4"/>
-                                                    <path d="M20 8v6M23 11h-6"/>
-                                                </svg>
-                                                @cliente.com
-                                            </div>
                                         </Link>
                                     </div>
                                 </div>

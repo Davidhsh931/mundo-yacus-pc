@@ -15,6 +15,7 @@ const form = useForm({
   description: '',       // Para guardar en specifications
   price: '',
   stock: 1, 
+  product_state: 'Disponible',  // Campo requerido por backend
   specifications: [{ key: '', value: '' }], // Para datos técnicos
   image: null,
   active: true, // Por defecto activo
@@ -179,8 +180,7 @@ const submit = () => {
                    RAZA/MODELO: ${data.breed_or_model}.`,
       
       specifications: JSON.stringify([
-        ...data.specifications.filter(attr => attr.key && attr.value),
-        { key: 'descripción', value: data.description || '' },
+        ...data.specifications.filter(attr => attr.key && attr.value && attr.key.toLowerCase() !== 'descripción'),
         { key: 'raza_o_modelo', value: data.breed_or_model || '' }
       ]),
     }
@@ -275,23 +275,18 @@ const submit = () => {
             <input v-model="form.breed_or_model" type="text" class="w-full border-gray-200 rounded-xl text-sm" placeholder="Ej: Raza Andana, Marca Molitalia...">
           </div>
 
-          <div>
-            <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Descripción del producto</label>
-            <div class="relative">
-              <textarea 
-                v-model="form.description" 
-                rows="3" 
-                :class="[
-                  'w-full rounded-xl text-sm resize-none',
-                  camposIALLenados.description ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200'
-                ]" 
-                placeholder="Cuenta más detalles sobre lo que ofreces..."
-              ></textarea>
-              <span v-if="camposIALLenados.description" class="absolute -top-2 -right-2 text-[9px] text-emerald-600 font-bold animate-pulse bg-white px-2 py-1 rounded-full shadow-md border border-emerald-200 flex items-center gap-1">
-                <span>🤖</span> IA
-              </span>
-            </div>
-          </div>
+          <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                                    <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+                                        <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center">
+                                            <span class="mr-2">📑</span> DESCRIPCIÓN DEL PRODUCTO
+                                        </h3>
+                                    </div>
+                                    
+                                    <div class="space-y-1">
+                                        <label class="block text-xs font-bold text-gray-500 uppercase px-1">Descripción</label>
+                                        <textarea v-model="form.description" rows="4" class="w-full border-yellow-100 bg-yellow-50 rounded-xl text-sm p-3 focus:ring-yellow-500 shadow-sm" placeholder="Describe las características principales..."></textarea>
+                                    </div>
+                                </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="relative">
@@ -328,43 +323,44 @@ const submit = () => {
               </div>
             </div>
           </div>
+          
+          <!-- Campo oculto para product_state requerido por backend -->
+          <input type="hidden" v-model="form.product_state">
 
-          <div class="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100">
-            <h3 class="text-xs font-medium text-emerald-700 mb-3 flex items-center">
-               <span class="mr-1">📋</span> Características específicas (Ficha Técnica)
-            </h3>
-            <div v-for="(attr, index) in form.specifications" :key="index" class="flex gap-2 mb-2">
-              <input v-model="attr.key" placeholder="Ej: Peso, Color, Edad" class="flex-1 border-gray-200 rounded-lg text-xs">
-              <input v-model="attr.value" placeholder="Valor" class="flex-1 border-gray-200 rounded-lg text-xs">
-              <button @click.prevent="removeAttribute(index)" class="text-red-400 hover:text-red-600 px-2">✕</button>
-            </div>
-            <button @click.prevent="addAttribute" class="mt-2 text-emerald-600 text-xs font-medium flex items-center hover:text-emerald-800">
-              <span class="text-lg mr-1">+</span> Añadir otra característica
-            </button>
-          </div>
+          <div class="space-y-4">
+                                    <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+                                        <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center">
+                                            <span class="mr-2">📋</span> Ficha Técnica
+                                        </h3>
+                                        <button type="button" @click="addAttribute" class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-bold hover:bg-emerald-200 transition">
+                                            + AGREGAR ATRIBUTO
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="space-y-2">
+                                        <div v-for="(attr, index) in form.specifications" :key="index" class="flex gap-2 group">
+                                            <input v-model="attr.key" type="text" placeholder="Ej: Peso" class="flex-1 border-gray-200 rounded-xl text-[13px] p-2 focus:ring-emerald-500 shadow-sm">
+                                            <input v-model="attr.value" type="text" placeholder="Ej: 1.2kg" class="flex-1 border-gray-200 rounded-xl text-[13px] p-2 focus:ring-emerald-500 shadow-sm">
+                                            <button type="button" @click="removeAttribute(index)" class="text-gray-300 hover:text-red-500 transition px-2">
+                                                ✕
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
 
-          <button 
-            type="submit" 
-            :disabled="form.processing"
-            :class="[
-              'relative flex items-center justify-center gap-3 px-8 py-4 font-black rounded-2xl transition-all shadow-xl disabled:opacity-70 border-2 border-transparent',
-              form.processing 
-                ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-emerald-400' 
-                : 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white hover:from-emerald-700 hover:to-emerald-800 hover:shadow-2xl hover:scale-[1.02] border-emerald-500'
-            ]"
-          >
-            <template v-if="form.processing">
-              <span class="animate-bounce text-2xl">🤖</span>
-              <span class="animate-pulse text-sm">IA Clasificando...</span>
-            </template>
-
-            <template v-else>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-              <span>Publicar en Mundo Yacus</span>
-            </template>
-          </button>
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 pt-8 border-t border-gray-100">
+                                    <Link href="/admin/guinea-pigs" class="text-gray-400 hover:text-gray-600 text-sm font-bold transition">
+                                        ← CANCELAR
+                                    </Link>
+                                    
+                                    <div class="flex gap-3 w-full sm:w-auto">
+                                        <button type="submit" 
+                                                :disabled="form.processing"
+                                                class="flex-1 sm:flex-none bg-emerald-600 text-white px-10 py-3 rounded-xl font-bold shadow-xl shadow-emerald-500/20 hover:bg-emerald-700 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 disabled:transform-none">
+                                            {{ form.processing ? 'PUBLICANDO...' : 'PUBLICAR EN MUNDO YACUS' }}
+                                        </button>
+                                    </div>
+                                </div>
         </form>
       </div>
     </div>

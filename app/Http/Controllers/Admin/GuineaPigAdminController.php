@@ -36,20 +36,14 @@ class GuineaPigAdminController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Limpia los datos: convierte strings vacíos en null
+        // 1. Mantener datos tal como llegan - no convertir a null
         $data = $request->all();
-        if (isset($data['species']) && empty($data['species'])) {
-            $data['species'] = null; 
-        }
-        if (isset($data['breed_or_model']) && empty($data['breed_or_model'])) {
-            $data['breed_or_model'] = null;
-        }
 
         try {
             // 2. Validar datos del formulario
             $request->validate([
                 'name' => 'required|string|max:255',
-                'description' => 'required|string',
+                'description' => 'nullable|string',
                 'price' => 'required|numeric|min:0',
                 'stock' => 'required|integer|min:0',
                 'breed_or_model' => 'nullable|string|max:255',
@@ -100,13 +94,20 @@ Responde SOLO el número del ID:";
 
             $specificationsArray = json_decode($request->specifications, true) ?: [];
 
+            // 3. Forzar valores si están vacíos
+            $description = !empty($request->description) ? $request->description : 'Producto de alta calidad';
+            $species = !empty($request->species) ? $request->species : 'Animales en Pie';
+            $product_state = !empty($request->product_state) ? $request->product_state : 'Disponible';
+            
             // 3. Intenta crear el registro
             $guineaPig = GuineaPig::create([
                 'name' => $request->name,
-                'description' => $request->description,
+                'description' => $description,
                 'category_id' => $categoryId, 
                 'price' => $request->price,
                 'stock' => $request->stock,
+                'species' => $species,
+                'product_state' => $product_state,
                 'breed' => $request->breed_or_model ?? 'No especificada',
                 'average_weight' => 0,
                 'specifications' => $specificationsArray,

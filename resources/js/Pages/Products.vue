@@ -155,45 +155,20 @@ function filterByCategory(categoryId) {
 
                 <!-- Section heading -->
                 <div class="flex justify-between items-baseline px-4 sm:px-0">
-                    <span class="text-sm font-medium text-gray-700">Productos disponibles</span>
                     <span class="text-xs text-gray-400">{{ guineaPigs.length }} producto{{ guineaPigs.length !== 1 ? 's' : '' }}</span>
                 </div>
 
-                <!-- Filtro de Categorías - Diseño Home.vue -->
-                <section v-if="categories && categories.length > 0" class="relative p-6 bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                            <span class="text-2xl">🏷️</span>
-                            <div>
-                                <h3 class="text-lg font-medium text-gray-900">Filtrar por Categoría</h3>
-                                <p class="text-sm text-gray-500">Selecciona una variedad</p>
-                            </div>
-                        </div>
-                        <button 
-                            v-if="categoryId"
-                            @click="filterByCategory(null)"
-                            class="text-xs text-amber-600 border border-amber-200 bg-amber-50 rounded-lg px-3 py-1.5 hover:bg-amber-100 transition-colors">
-                            Limpiar filtro
-                        </button>
+                <!-- Mensaje cuando no hay productos en la categoría -->
+                <div v-if="!guineaPigs || guineaPigs.length === 0" class="py-20 bg-gray-50 min-h-screen">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">🏷️</div>
+                        <h2 class="text-2xl font-medium text-gray-900 mb-2">No hay productos en esta categoría</h2>
+                        <p class="text-gray-500 mb-6">No se encontraron productos que coincidan con esta categoría.</p>
                     </div>
-
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                        <div v-for="category in categories" :key="category.id" 
-                             class="group bg-gray-50 border border-gray-100 rounded-xl p-3 text-center transition-all duration-200 hover:bg-amber-50 hover:border-amber-200 hover:shadow-sm cursor-pointer transform hover:-translate-y-0.5"
-                             @click="filterByCategory(category.id)"
-                             :class="{ 'bg-amber-50 border-amber-200': categoryId == category.id }">
-                            <div class="w-10 h-10 mx-auto mb-2 bg-amber-100 rounded-lg flex items-center justify-center group-hover:bg-amber-200 transition-colors"
-                                 :class="{ 'bg-amber-200': categoryId == category.id }">
-                                <span class="text-lg">🏷️</span>
-                            </div>
-                            <h4 class="text-xs font-medium text-gray-900 mb-1 group-hover:text-amber-700 transition-colors">{{ category.name }}</h4>
-                            <p class="text-[10px] text-gray-500">{{ category.guinea_pigs_count || 0 }} productos</p>
-                        </div>
-                    </div>
-                </section>
+                </div>
 
                 <!-- Product grid - Diseño Home.vue -->
-                <div v-if="guineaPigs.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div v-if="guineaPigs && guineaPigs.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div
                         v-for="pig in guineaPigs"
                         :key="pig.id"

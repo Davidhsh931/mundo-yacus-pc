@@ -78,10 +78,7 @@ const submit = () => {
     // Filtrar atributos vacíos
     let specsToSubmit = form.specifications.filter(s => s.key.trim() !== '');
 
-    // Incluir descripción en la ficha técnica para el backend
-    if (form.description?.trim()) {
-        specsToSubmit.push({ key: 'descripción', value: form.description.trim() });
-    }
+    // No incluir descripción en specifications - se maneja como campo separado
 
     // Resumen para el contexto de IA
     const specsSummary = specsToSubmit

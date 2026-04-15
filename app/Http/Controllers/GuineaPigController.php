@@ -164,8 +164,12 @@ class GuineaPigController extends Controller
 
     public function store(Request $request) 
 {
+    // Debug: Ver qué datos llegan
+    \Log::info('Datos recibidos en store:', $request->all());
+    
     $request->validate([
         'name'          => 'required|string|max:255',
+        'description'   => 'required|string',
         'price'         => 'required|numeric',
         'stock'         => 'required|integer|min:0',
         'species'       => 'required',
@@ -225,11 +229,12 @@ class GuineaPigController extends Controller
             $specs = json_decode($specs, true);
         }
 
-        // --- 📦 FASE 3: CREACIÓN Y GUARDADO ---
+        // --- FASE 3: CREACIÓN Y GUARDADO ---
         $pig = \App\Models\GuineaPig::create([
             'user_id'         => auth()->id() ?? 1,
             'name'            => $request->name,
-            'category_id'     => $categoryId, // <--- ID ASIGNADO POR IA O FALLBACK
+            'description'     => $request->description,
+            'category_id'     => $categoryId, // ID ASIGNADO POR IA O FALLBACK
             'species'         => $request->species,
             'price'           => $request->price,
             'product_state'   => $request->product_state,

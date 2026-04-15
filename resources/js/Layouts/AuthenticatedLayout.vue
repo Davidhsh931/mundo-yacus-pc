@@ -11,6 +11,12 @@ const props = defineProps({
     categories: Array
 });
 
+// Usar categorías globales del middleware
+const categories = computed(() => page.props.categories || props.categories);
+
+// Depuración de categorías
+console.log('📋 Categories recibidas en AuthenticatedLayout:', props.categories);
+
 const showingNavigationDropdown = ref(false);
 const showingLoginDropdown = ref(false);
 const page = usePage();
@@ -230,6 +236,67 @@ const formatNotificationTime = (date) => {
             ⚠️ {{ $page.props.settings?.banner_text }}
         </div>
 
+        <!-- Barra Superior de Accesos (Separada) -->
+        <div class="bg-gray-50 border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-end items-center py-2 space-x-4">
+                    <!-- Usuario NO logueado -->
+                    <div v-if="!$page.props.auth.user" class="relative">
+                        <button @click="showingLoginDropdown = !showingLoginDropdown" 
+                                class="text-xs text-gray-600 hover:text-amber-600 transition-colors flex items-center">
+                            Iniciar sesión
+                            <svg class="w-3 h-3 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        
+                        <!-- Overlay para Click Away -->
+                        <div v-if="showingLoginDropdown" 
+                             @click="showingLoginDropdown = false" 
+                             class="fixed inset-0 z-40"></div>
+                        
+                        <!-- Dropdown Menu -->
+                        <div v-show="showingLoginDropdown" 
+                             class="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-[100]">
+                            <div class="py-2">
+                                <!-- Opción Principal: Iniciar Sesión -->
+                                <Link href="/login" 
+                                      class="block px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors font-medium">
+                                    Iniciar Sesión
+                                </Link>
+                                
+                                <!-- Sub-opción: Registrarse -->
+                                <div class="border-t border-gray-100 my-2"></div>
+                                <Link href="/register" 
+                                      class="block px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                    Registrarse
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Usuario SÍ logueado -->
+                    <div v-else class="flex items-center space-x-3">
+                        <span class="text-xs text-gray-700">
+                            Hola, {{ $page.props.auth.user.name }}
+                        </span>
+                        <span class="text-xs text-gray-400">|</span>
+                        <Link href="/profile" 
+                              class="text-xs text-gray-600 hover:text-amber-600 transition-colors">
+                            Mi perfil
+                        </Link>
+                        <span class="text-xs text-gray-400">|</span>
+                        <Link href="/logout" 
+                              method="post" 
+                              as="button"
+                              class="text-xs text-gray-600 hover:text-amber-600 transition-colors">
+                            Salir
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="min-h-screen bg-white">
             <!-- Header Simplificado con Solo Elementos Funcionales -->
             <header class="bg-white border-b border-gray-200 shadow-sm">
@@ -257,10 +324,10 @@ const formatNotificationTime = (date) => {
                                         <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                             Selecciona la categoría
                                         </div>
-                                        <div v-for="category in props.categories" :key="category.id">
+                                        <div v-for="category in categories" :key="category.id">
                                             <Link :href="'/products?category=' + category.id" 
                                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
-                                                🏷️ {{ category.name }}
+                                                🏷️ {{ category.name }} ({{ category.guinea_pigs_count || 0 }})
                                             </Link>
                                         </div>
                                     </div>
@@ -341,103 +408,6 @@ const formatNotificationTime = (date) => {
                                     {{ cartCount }}
                                 </span>
                             </Link>
-
-                            <!-- Perfil de Usuario (Funcional) -->
-                            <div class="relative">
-                                <Dropdown v-if="$page.props.auth.user" align="right" width="48">
-                                    <template #trigger>
-                                        <button class="inline-flex items-center px-4 py-2 text-gray-700 hover:text-amber-600 font-medium transition-colors border border-gray-300 rounded-lg hover:border-amber-500">
-                                            {{ $page.props.auth.user.name }}
-                                            <svg class="w-4 h-4 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M19 9l-7 7-7-7"/>
-                                            </svg>
-                                        </button>
-                                    </template>
-                                    <template #content>
-                                        <!-- Opciones de Cliente -->
-                                        <DropdownLink href="/profile"> 👤 Perfil </DropdownLink>
-                                        <DropdownLink href="/orders"> 📦 Mis Pedidos </DropdownLink>
-                                        
-                                        <!-- Separador y Opciones de Admin -->
-                                        <template v-if="$page.props.auth.user?.role === 'admin'">
-                                            <div class="border-t border-gray-100"></div>
-                                            <div class="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                                🏢 Administración
-                                            </div>
-                                            <DropdownLink href="/admin/dashboard"> 📊 Dashboard Admin </DropdownLink>
-                                            <DropdownLink href="/admin/orders"> 💰 Gestión de Ventas </DropdownLink>
-                                            <DropdownLink href="/admin/guinea-pigs"> 🐹 Gestión de Productos </DropdownLink>
-                                        </template>
-                                        
-                                        <!-- Salir -->
-                                        <div class="border-t border-gray-100"></div>
-                                        <DropdownLink href="/logout" method="post" as="button"> 🚪 Salir </DropdownLink>
-                                    </template>
-                                </Dropdown>
-
-                                <div v-else class="relative">
-                                    <!-- Dropdown Login/Registro unificado (Funcional) -->
-                                    <div class="relative">
-                                        <button @click="showingLoginDropdown = !showingLoginDropdown" class="inline-flex items-center px-4 py-2 text-gray-700 hover:text-amber-600 font-medium transition-colors border border-gray-300 rounded-lg hover:border-amber-500">
-                                            Iniciar sesión
-                                            <svg class="w-4 h-4 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M19 9l-7 7-7-7"/>
-                                            </svg>
-                                        </button>
-                                        
-                                        <!-- Overlay para Click Away -->
-                                        <div v-if="showingLoginDropdown" 
-                                             @click="showingLoginDropdown = false" 
-                                             class="fixed inset-0 z-40"></div>
-                                        
-                                        <!-- Dropdown Menu -->
-                                        <div v-show="showingLoginDropdown" 
-                                             class="absolute right-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-[100]">
-                                            <div class="py-2">
-                                                <!-- Opción Principal: Iniciar Sesión -->
-                                                <Link href="/login" class="block px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors font-medium">
-                                                    <div class="flex items-center">
-                                                        <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                            <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l7-7-7-7"/>
-                                                        </svg>
-                                                        Iniciar Sesión
-                                                    </div>
-                                                </Link>
-                                                
-                                                <!-- Sub-opciones: Registro -->
-                                                <div class="border-t border-gray-100 my-2"></div>
-                                                <div class="px-4 py-2 text-xs text-gray-500 font-semibold uppercase tracking-wider">
-                                                    Registrarse
-                                                </div>
-                                                
-                                                <!-- Opción 1: @admin.com -->
-                                                <Link href="/register" class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
-                                                    <div class="flex items-center">
-                                                        <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-                                                            <circle cx="8.5" cy="7" r="4"/>
-                                                            <path d="M20 8v6M23 11h-6"/>
-                                                        </svg>
-                                                        @admin.com
-                                                    </div>
-                                                </Link>
-                                                
-                                                <!-- Opción 2: @cliente.com -->
-                                                <Link href="/register" class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
-                                                    <div class="flex items-center">
-                                                        <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-                                                            <circle cx="8.5" cy="7" r="4"/>
-                                                            <path d="M20 8v6M23 11h-6"/>
-                                                        </svg>
-                                                        @cliente.com
-                                                    </div>
-                                                </Link>    
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -449,9 +419,9 @@ const formatNotificationTime = (date) => {
                 <div class="space-y-1 pb-3 pt-2">
                     <ResponsiveNavLink href="/"> 🛒 Tienda </ResponsiveNavLink>
                     <ResponsiveNavLink href="/products"> 🏷️ Selecciona la categoría </ResponsiveNavLink>
-                    <div v-for="category in props.categories" :key="category.id">
+                    <div v-for="category in categories" :key="category.id">
                         <ResponsiveNavLink :href="'/products?category=' + category.id"> 
-                            🏷️ {{ category.name }} 
+                            🏷️ {{ category.name }} ({{ category.guinea_pigs_count || 0 }})
                         </ResponsiveNavLink>
                     </div>
                     <ResponsiveNavLink href="/cart"> 🛒 Carrito </ResponsiveNavLink>

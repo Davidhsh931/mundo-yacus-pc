@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GuineaPigController;
+use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\VisionController;
 use App\Http\Controllers\VisionComentController;
@@ -144,7 +145,7 @@ Route::delete('/admin/ai-training/{id}/force', [AiTrainingController::class, 'fo
 Route::get('/', [GuineaPigController::class, 'index'])->name('home');
 
 // Productos filtrados por categoría
-Route::get('/products', [GuineaPigController::class, 'productsByCategory'])->name('products.category');
+Route::get('/products', [ProductsController::class, 'index'])->name('products.category');
 
 // Detalle del producto (Detección de rol corregida)
 Route::get('/product/{id}', function($id){

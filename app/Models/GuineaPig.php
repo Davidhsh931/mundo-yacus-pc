@@ -11,13 +11,15 @@ class GuineaPig extends Model
     protected $fillable = [
     'user_id', 
     'name', 
-    'breed',          // <--- AÑADIR BREED
-    'average_weight',  // <--- AÑADIR AVERAGE_WEIGHT
-    'category_id',    // <--- AÑADIR CATEGORY_ID
+    'description',     // <--- AGREGADO
+    'breed',          
+    'average_weight',  
+    'category_id',    
     'species', 
     'price', 
-    'stock',          // <--- ASEGÚRATE DE QUE ESTÉ AQUÍ
-    'specifications',   // <--- ASEGÚRATE DE QUE ESTÉ AQUÍ
+    'stock',
+    'product_state',   // <--- AGREGADO
+    'specifications',   
     'ia_verification', 
     'active'
 ];

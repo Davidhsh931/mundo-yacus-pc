@@ -38,6 +38,7 @@ class HandleInertiaRequests extends Middleware
                 'banner_text' => \App\Models\Setting::get('banner_text', ''),
                 'banner_active' => \App\Models\Setting::get('banner_active', '0'),
             ],
+            'categories' => \App\Models\Category::withCount('guineaPigs')->get(),
         ];
     }
 }
