@@ -289,28 +289,54 @@ const cartItemsCount = computed(() => {
                 </div>
 
                 <!-- Events section (si existe) -->
-                <section v-if="events && events.length > 0" class="mt-20">
-                    <!-- Events content here -->
-                </section>
+                <section v-if="events && events.length > 0" class="mt-8">
+                    <div class="flex items-center justify-between mb-4 px-4 sm:px-0">
+                        <h2 class="text-base font-bold text-gray-800 tracking-tight italic">Voces del valle</h2>
+                    </div>
+
+                    <div class="flex gap-4 overflow-x-auto pb-6 px-4 sm:px-0 snap-x scrollbar-none">
+                    <div
+                        v-for="event in events"
+                        :key="event.id"
+                        class="snap-start w-[280px] sm:w-[300px] bg-white border border-gray-100 rounded-3xl overflow-hidden flex-shrink-0 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+                    >
+                        <div class="overflow-hidden">
+                            <img
+                                :src="event.image_url || 'https://picsum.photos/seed/event-' + event.id + '/400/300.jpg'"
+                                class="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
+                                @error="(e) => { e.target.src = 'https://picsum.photos/seed/event-' + event.id + '/400/300.jpg'; }"
+                            />
+                        </div>
+                        
+                        <div class="p-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="inline-block text-[10px] font-bold uppercase tracking-widest text-amber-700 bg-amber-50 border border-amber-100 rounded-md px-2 py-1">
+                                    {{ event.formatted_date }}
+                                </span>
+                            </div>
+                            <h3 class="text-sm font-semibold text-gray-800 leading-snug group-hover:text-blue-600 transition-colors">
+                                {{ event.title }}
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="py-20 bg-stone-950 text-stone-500 border-t-4 border-amber-600">
+                <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12 items-center">
+                    <div class="text-center md:text-left">
+                        <p class="text-2xl font-black text-white italic tracking-tighter leading-none">YACUS</p>
+                        <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-amber-600">Huánuco, Perú</p>
+                            🏔️ 🌿 ☀️
+                        </div>
+                        <div class="text-center md:text-right">
+                            <p class="text-[9px] font-black uppercase tracking-widest text-stone-400">© 2026 DISTRITO DE YACUS</p>
+                            <p class="text-[8px] mt-1 italic">Tierra de la Nación de los Yacus</p>
+                        </div>
+                    </div>
+                </footer>
             </div>
         </div>
-
-        <footer class="py-20 bg-stone-950 text-stone-500 border-t-4 border-amber-600">
-            <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12 items-center">
-                <div class="text-center md:text-left">
-                    <p class="text-2xl font-black text-white italic tracking-tighter leading-none">YACUS</p>
-                    <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-amber-600">Huánuco, Perú</p>
-                </div>
-                <div class="flex justify-center gap-4 text-4xl opacity-20">
-                    🏔️ 🌿 ☀️
-                </div>
-                <div class="text-center md:text-right">
-                    <p class="text-[9px] font-black uppercase tracking-widest text-stone-400">© 2026 DISTRITO DE YACUS</p>
-                    <p class="text-[8px] mt-1 italic">Tierra de la Nación de los Yacus</p>
-                </div>
-            </div>
-        </footer>
-
     </AuthenticatedLayout>
 </template>
 

@@ -19,6 +19,7 @@ console.log('📋 Categories recibidas en AuthenticatedLayout:', props.categorie
 
 const showingNavigationDropdown = ref(false);
 const showingLoginDropdown = ref(false);
+const showingProfileDropdown = ref(false);
 const page = usePage();
 
 // Contador de productos para el carrito
@@ -276,22 +277,90 @@ const formatNotificationTime = (date) => {
                     </div>
                     
                     <!-- Usuario SÍ logueado -->
-                    <div v-else class="flex items-center space-x-3">
-                        <span class="text-xs text-gray-700">
-                            Hola, {{ $page.props.auth.user.name }}
-                        </span>
-                        <span class="text-xs text-gray-400">|</span>
-                        <Link href="/profile" 
-                              class="text-xs text-gray-600 hover:text-amber-600 transition-colors">
-                            Mi perfil
-                        </Link>
-                        <span class="text-xs text-gray-400">|</span>
-                        <Link href="/logout" 
-                              method="post" 
-                              as="button"
-                              class="text-xs text-gray-600 hover:text-amber-600 transition-colors">
-                            Salir
-                        </Link>
+                    <div v-else class="relative">
+                        <button @click="showingProfileDropdown = !showingProfileDropdown" 
+                                class="text-xs text-gray-700 hover:text-amber-600 transition-colors flex items-center">
+                            <span class="text-xs text-gray-700">
+                                Hola, {{ $page.props.auth.user.name }}
+                            </span>
+                            <svg class="w-3 h-3 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        
+                        <!-- Overlay para Click Away -->
+                        <div v-if="showingProfileDropdown" 
+                             @click="showingProfileDropdown = false" 
+                             class="fixed inset-0 z-40"></div>
+                        
+                        <!-- Dropdown Menu -->
+                        <div v-show="showingProfileDropdown" 
+                             class="absolute right-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-[100]">
+                            <div class="py-2">
+                                <!-- Opciones para Admin -->
+                                <div v-if="$page.props.auth.user?.role === 'admin'">
+                                    <!-- Panel de Administración con sub-opciones -->
+                                    <div class="px-4 py-2 text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                                        Panel de Administración
+                                    </div>
+                                    <Link href="/admin/dashboard" 
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                        Dashboard
+                                    </Link>
+                                    <Link href="/admin/guinea-pigs" 
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                        Productos
+                                    </Link>
+                                    <Link href="/admin/orders" 
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                        Pedidos
+                                    </Link>
+                                    <Link href="/admin/ai-training" 
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                        IA Training
+                                    </Link>
+                                    <Link href="/admin/events" 
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                        Eventos
+                                    </Link>
+                                    
+                                    <div class="border-t border-gray-100 my-2"></div>
+                                </div>
+                                
+                                <!-- Opciones comunes -->
+                                <Link href="/profile" 
+                                      class="block px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors font-medium">
+                                    Mi Perfil
+                                </Link>
+                                
+                                <Link href="/orders" 
+                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                    Mis Pedidos
+                                </Link>
+                                
+                                <!-- Configuración según rol -->
+                                <Link v-if="$page.props.auth.user?.role === 'admin'" 
+                                      href="/admin/settings" 
+                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                    Configuración
+                                </Link>
+                                <Link v-else 
+                                      href="/settings" 
+                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                    Configuración
+                                </Link>
+                                
+                                <div class="border-t border-gray-100 my-2"></div>
+                                
+                                <!-- Salir -->
+                                <Link href="/logout" 
+                                      method="post" 
+                                      as="button"
+                                      class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                    Salir
+                                </Link>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

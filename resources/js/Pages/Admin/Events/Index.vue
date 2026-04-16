@@ -1,5 +1,6 @@
 <script setup>
 import { Head, useForm } from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 const props = defineProps({
     events: Array,
@@ -41,12 +42,13 @@ const handleImageUpload = (e) => {
 </script>
 
 <template>
-    <Head title="Gestión de Eventos" />
+    <AuthenticatedLayout>
+        <Head title="Gestión de Eventos" />
 
-    <div class="py-12 bg-slate-100/50 min-h-screen">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-12">
-            
-            <!-- Header Admin -->
+        <div class="py-12 bg-slate-100/50 min-h-screen">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-12">
+                
+                <!-- Header Personalizado dentro del Layout -->
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 p-8 rounded-3xl shadow-2xl border-b-4 border-emerald-500">
                 <div>
                     <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-200 text-[10px] font-black uppercase tracking-widest mb-2 border border-emerald-500/20">
@@ -226,4 +228,5 @@ const handleImageUpload = (e) => {
             </div>
         </div>
     </div>
+    </AuthenticatedLayout>
 </template>

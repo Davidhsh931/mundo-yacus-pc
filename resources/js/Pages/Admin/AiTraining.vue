@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useForm, router } from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 const props = defineProps({ categories: Array, trashed: Array });
 const showNewCategoryForm = ref(false);
@@ -48,70 +49,74 @@ const permanentDelete = (id) => {
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto p-6 sm:p-10 bg-slate-50 min-h-screen font-sans selection:bg-indigo-100 selection:text-indigo-700">
-    
-    <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
-        <div class="space-y-2">
-            <div class="flex items-center gap-4">
-                <div class="p-3 bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl text-white text-2xl shadow-xl shadow-indigo-200/50 rotate-3 group-hover:rotate-0 transition-transform">
-                    <span class="block drop-shadow-md">🧠</span>
-                </div>
-                <div>
-                    <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight leading-none">Neural Core</h1>
-                    <p class="text-slate-500 text-sm font-medium mt-1">Entrenamiento de semántica para <span class="text-indigo-600 font-bold">Mundo Yacus</span></p>
-                </div>
-            </div>
-        </div>
+    <AuthenticatedLayout :categories="categories">
+        <Head title="IA Training" />
         
-        <button 
-            @click="showNewCategoryForm = !showNewCategoryForm"
-            :class="showNewCategoryForm ? 'bg-white text-slate-600 border-slate-200 shadow-sm' : 'bg-slate-900 text-white shadow-xl shadow-slate-200 hover:bg-indigo-600'"
-            class="group px-6 py-3 rounded-2xl font-bold text-sm transition-all flex items-center gap-3 border-2 border-transparent active:scale-95"
-        >
-            <template v-if="!showNewCategoryForm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70 group-hover:rotate-90 transition-transform" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                </svg>
-                Registrar Nodo
-            </template>
-            <template v-else>
-                <span class="text-lg">✕</span> Cerrar Panel
-            </template>
-        </button>
-    </header>
-
-    <transition enter-active-class="transition duration-300 ease-out" enter-from-class="transform scale-95 opacity-0" enter-to-class="transform scale-100 opacity-100" leave-active-class="transition duration-200 ease-in" leave-from-class="transform scale-100 opacity-100" leave-to-class="transform scale-95 opacity-0">
-        <div v-if="showNewCategoryForm" class="bg-white/80 backdrop-blur-md p-8 rounded-3xl border border-white shadow-[0_20px_50px_rgba(79,70,229,0.1)] mb-12 relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-2 h-full bg-indigo-600"></div>
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs">01</div>
-                <h3 class="font-black uppercase tracking-widest text-xs text-slate-400">Configuración de Nuevo Descriptor</h3>
-            </div>
-            <div class="flex flex-col md:flex-row gap-4">
-                <div class="flex-1">
-                    <input 
-                        v-model="newCategoryForm.name"
-                        placeholder="Ej: Reproductores Machos Elite"
-                        class="w-full px-6 py-4 bg-slate-100/50 border-transparent rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:bg-white focus:border-indigo-500 transition-all font-bold text-slate-700 placeholder-slate-400"
-                        @keyup.enter="createCategory"
-                    />
+        <div class="max-w-7xl mx-auto p-6 sm:p-10 bg-slate-50 min-h-screen font-sans selection:bg-indigo-100 selection:text-indigo-700">
+            
+            <!-- Header Personalizado dentro del Layout -->
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl text-white text-2xl shadow-xl shadow-indigo-200/50 rotate-3 group-hover:rotate-0 transition-transform">
+                            <span class="block drop-shadow-md">🧠</span>
+                        </div>
+                        <div>
+                            <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight leading-none">Neural Core</h1>
+                            <p class="text-slate-500 text-sm font-medium mt-1">Entrenamiento de semántica para <span class="text-indigo-600 font-bold">Mundo Yacus</span></p>
+                        </div>
+                    </div>
                 </div>
+                
                 <button 
-                    @click="createCategory"
-                    :disabled="newCategoryForm.processing"
-                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black shadow-lg shadow-indigo-200 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-3"
+                    @click="showNewCategoryForm = !showNewCategoryForm"
+                    :class="showNewCategoryForm ? 'bg-white text-slate-600 border-slate-200 shadow-sm' : 'bg-slate-900 text-white shadow-xl shadow-slate-200 hover:bg-indigo-600'"
+                    class="group px-6 py-3 rounded-2xl font-bold text-sm transition-all flex items-center gap-3 border-2 border-transparent active:scale-95"
                 >
-                    DESPLEGAR NODO
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
+                    <template v-if="!showNewCategoryForm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70 group-hover:rotate-90 transition-transform" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        Registrar Nodo
+                    </template>
+                    <template v-else>
+                        <span class="text-lg">✕</span> Cerrar Panel
+                    </template>
                 </button>
-            </div>
-            <p v-if="newCategoryForm.errors.name" class="text-red-500 text-xs mt-4 font-bold flex items-center gap-2">
-                <span class="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center">!</span> {{ newCategoryForm.errors.name }}
-            </p>
-        </div>
-    </transition>
+            </header>
+
+            <transition enter-active-class="transition duration-300 ease-out" enter-from-class="transform scale-95 opacity-0" enter-to-class="transform scale-100 opacity-100" leave-active-class="transition duration-200 ease-in" leave-from-class="transform scale-100 opacity-100" leave-to-class="transform scale-95 opacity-0">
+                <div v-if="showNewCategoryForm" class="bg-white/80 backdrop-blur-md p-8 rounded-3xl border border-white shadow-[0_20px_50px_rgba(79,70,229,0.1)] mb-12 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-2 h-full bg-indigo-600"></div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs">01</div>
+                        <h3 class="font-black uppercase tracking-widest text-xs text-slate-400">Configuración de Nuevo Descriptor</h3>
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <input 
+                                v-model="newCategoryForm.name"
+                                placeholder="Ej: Reproductores Machos Elite"
+                                class="w-full px-6 py-4 bg-slate-100/50 border-transparent rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:bg-white focus:border-indigo-500 transition-all font-bold text-slate-700 placeholder-slate-400"
+                                @keyup.enter="createCategory"
+                            />
+                        </div>
+                        <button 
+                            @click="createCategory"
+                            :disabled="newCategoryForm.processing"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black shadow-lg shadow-indigo-200 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-3"
+                        >
+                            DESPLEGAR NODO
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586L-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                    <p v-if="newCategoryForm.errors.name" class="text-red-500 text-xs mt-4 font-bold flex items-center gap-2">
+                        <span class="w-5 h-5 bg-red-100 rounded-full animate-pulse"></span> {{ newCategoryForm.errors.name }}
+                    </p>
+                </div>
+            </transition>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <div v-for="category in categories" :key="category.id" 
@@ -211,8 +216,9 @@ const permanentDelete = (id) => {
         </div>
       </div>
     </div>
-  </div>
-</template>
+   </div>
+  </AuthenticatedLayout>
+ </template>
 
 <style scoped>
 /* Animación suave para el hover de las tarjetas */

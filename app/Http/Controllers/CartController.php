@@ -68,7 +68,8 @@ public function add($id) {
         
         return Inertia::render('Cart', [
             'cart' => $cart,
-            'suggestedProducts' => $suggestedProducts
+            'suggestedProducts' => $suggestedProducts,
+            'events' => \App\Models\Event::active()->orderBy('event_date', 'asc')->get()
         ]);
     }
 

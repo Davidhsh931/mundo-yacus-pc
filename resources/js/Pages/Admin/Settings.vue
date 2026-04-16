@@ -1,5 +1,5 @@
 <script setup>
-import AdminLayout from '@/Layouts/AdminLayout.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
@@ -39,28 +39,36 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Configuraciones - Mundo Yacus" />
-    <AdminLayout>
-        <template #header>
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 p-8 rounded-3xl shadow-2xl border-b-4 border-emerald-500">
-                <div>
-                    <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-200 text-[10px] font-black uppercase tracking-widest mb-2 border border-emerald-500/20">
-                        Sistema
-                    </span>
-                    <h2 class="font-black text-4xl text-white leading-none tracking-tighter">
-                        Configuraciones
-                    </h2>
-                    <p class="text-gray-400 text-sm mt-1">Ajustes generales de la plataforma.</p>
-                </div>
-                <div class="text-left md:text-right border-l-4 md:border-l-0 md:border-r-4 border-emerald-500 pl-4 md:pl-0 md:pr-4">
-                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Parámetros</span>
-                    <p class="text-2xl font-black text-emerald-400 leading-none">{{ settings?.length || 0 }} <span class="text-xs text-emerald-600">configuraciones</span></p>
-                </div>
-            </div>
-        </template>
-
-        <div class="py-12 bg-slate-100/50">
+    <AuthenticatedLayout>
+        <Head title="Configuraciones" />
+        
+        <div class="py-12 bg-slate-100/50 min-h-screen">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-12">
+                
+                <!-- Header Personalizado dentro del Layout -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 p-8 rounded-3xl shadow-2xl border-b-4 border-emerald-500">
+                    <div>
+                        <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-200 text-[10px] font-black uppercase tracking-widest mb-2 border border-emerald-500/20">
+                            Sistema
+                        </span>
+                        <h2 class="font-black text-4xl text-white leading-none tracking-tighter">
+                            Configuraciones
+                        </h2>
+                        <p class="text-gray-400 text-sm mt-1">Ajustes generales de la plataforma.</p>
+                    </div>
+                    <div class="text-left md:text-right border-l-4 md:border-l-0 md:border-r-4 border-emerald-500 pl-4 md:pl-0 md:pr-4">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Parámetros</span>
+                        <p class="text-2xl font-black text-emerald-400 leading-none">{{ settings?.length || 0 }} <span class="text-xs text-emerald-600">configuraciones</span></p>
+                    </div>
+                </div>
+
+                <!-- Mensaje de éxito -->
+                <div v-if="success" class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">✅</span>
+                        <p class="text-emerald-800 font-black text-sm">{{ success }}</p>
+                    </div>
+                </div>
 
                 <!-- Mensaje de éxito -->
                 <div v-if="success" class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 shadow-lg">
@@ -202,6 +210,5 @@ const submit = () => {
                 </form>
             </div>
         </div>
-    </AdminLayout>
+    </AuthenticatedLayout>
 </template>
-                        

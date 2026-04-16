@@ -303,6 +303,37 @@ function filterByCategory(categoryId) {
                     </button>
                 </div>
 
+                <!-- Events -->
+                <section v-if="events && events.length > 0" class="mt-8"> <div class="flex items-center justify-between mb-4 px-4 sm:px-0">
+        <h2 class="text-base font-bold text-gray-800 tracking-tight italic">Voces del valle</h2>
+    </div>
+
+    <div class="flex gap-4 overflow-x-auto pb-6 px-4 sm:px-0 snap-x scrollbar-none">
+        <div
+            v-for="event in events"
+            :key="event.id"
+            class="snap-start w-[280px] sm:w-[300px] bg-white border border-gray-100 rounded-3xl overflow-hidden flex-shrink-0 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+        >
+            <div class="overflow-hidden"> <img
+                    :src="event.image_url"
+                    class="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+            </div>
+            
+            <div class="p-4">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="inline-block text-[10px] font-bold uppercase tracking-widest text-amber-700 bg-amber-50 border border-amber-100 rounded-md px-2 py-1">
+                        {{ event.formatted_date }}
+                    </span>
+                </div>
+                <h3 class="text-sm font-semibold text-gray-800 leading-snug group-hover:text-blue-600 transition-colors">
+                    {{ event.title }}
+                </h3>
+            </div>
+        </div>
+    </div>
+</section>
+
                 <!-- Footer -->
                 <footer class="pt-8 border-t border-gray-100 text-center pb-4">
                     <div class="flex justify-center gap-2 mb-3">
