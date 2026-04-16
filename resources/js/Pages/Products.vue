@@ -4,11 +4,16 @@ import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
- guineaPigs: Array,
- categories: Array,
- selectedCategory: Object,
- events: Array,
- categoryId: String
+    guineaPigs: Array,
+    categories: Array,
+    selectedCategory: Object,
+    events: Array,
+    categoryId: String,
+    search: String,
+    minPrice: String,
+    maxPrice: String,
+    sortBy: String,
+    sortOrder: String
 });
 
 const page = usePage();
@@ -45,7 +50,7 @@ const getProductAltitude = (pig) => {
 const getProductLocation = (pig) => {
     const locations = [
         'Comunidad San Cristóbal',
-        'Valle Colorado', 
+        'Valle Colorado',
         'Chacra La Esperanza',
         'Comunidad Santa Rosa',
         'Valle del Yacus',
@@ -53,9 +58,16 @@ const getProductLocation = (pig) => {
         'Chacra El Progreso',
         'Valle Andino'
     ];
-    
+
     const index = (pig?.id || 1) % locations.length;
     return locations[index];
+};
+
+const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const options = { day: '2-digit', month: 'short', year: 'numeric' };
+    return date.toLocaleDateString('es-ES', options);
 };
 
 const currentAltitude = computed(() => {
@@ -84,6 +96,41 @@ const getSafeProductImageSrc = (pig) => {
 
 // Estado de animación del carrito
 const cartAnimating = ref(false);
+
+// Variables reactivas para búsqueda y filtros
+const searchQuery = ref(props.search || '');
+const minPrice = ref(props.minPrice || '');
+const maxPrice = ref(props.maxPrice || '');
+const sortBy = ref(props.sortBy || 'created_at');
+const sortOrder = ref(props.sortOrder || 'desc');
+
+// Función para aplicar búsqueda y filtros
+function applyFilters() {
+    const params = new URLSearchParams();
+
+    if (props.categoryId) {
+        params.append('category', props.categoryId);
+    }
+    if (searchQuery.value) {
+        params.append('search', searchQuery.value);
+    }
+    if (minPrice.value) {
+        params.append('min_price', minPrice.value);
+    }
+    if (maxPrice.value) {
+        params.append('max_price', maxPrice.value);
+    }
+    if (sortBy.value) {
+        params.append('sort', sortBy.value);
+    }
+    if (sortOrder.value) {
+        params.append('order', sortOrder.value);
+    }
+
+    const queryString = params.toString();
+    const url = queryString ? `/products?${queryString}` : '/products';
+    router.visit(url);
+}
 
 function addToCart(pig) {
     if (!page.props.auth.user) {
@@ -133,8 +180,8 @@ function filterByCategory(categoryId) {
                         {{ selectedCategory ? selectedCategory.name : 'Catálogo Completo' }}
                     </h2>
                     <p class="text-sm text-gray-400 mt-0.5">
-                        {{ selectedCategory 
-                            ? `${selectedCategory.guinea_pigs_count || 0} productos disponibles` 
+                        {{ selectedCategory
+                            ? `${selectedCategory.guinea_pigs_count || 0} productos disponibles`
                             : 'Explora toda nuestra selección de la región' }}
                     </p>
                 </div>
@@ -152,6 +199,72 @@ function filterByCategory(categoryId) {
 
         <div class="py-10 bg-gray-50 min-h-screen">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-10">
+
+                <!-- Búsqueda y Filtros -->
+                <div class="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Precio mínimo -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Precio mínimo (S/)</label>
+                            <input
+                                v-model="minPrice"
+                                type="number"
+                                placeholder="0"
+                                min="0"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            />
+                        </div>
+
+                        <!-- Precio máximo -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Precio máximo (S/)</label>
+                            <input
+                                v-model="maxPrice"
+                                type="number"
+                                placeholder="999"
+                                min="0"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            />
+                        </div>
+
+                        <!-- Ordenamiento -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Ordenar por</label>
+                            <select
+                                v-model="sortBy"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            >
+                                <option value="created_at">Fecha de publicación</option>
+                                <option value="price">Precio</option>
+                                <option value="name">Nombre</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <!-- Orden -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Orden</label>
+                            <select
+                                v-model="sortOrder"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            >
+                                <option value="desc">Descendente</option>
+                                <option value="asc">Ascendente</option>
+                            </select>
+                        </div>
+
+                        <!-- Botón aplicar filtros -->
+                        <div class="flex items-end">
+                            <button
+                                @click="applyFilters"
+                                class="w-full bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors"
+                            >
+                                Aplicar Filtros
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Section heading -->
                 <div class="flex justify-between items-baseline px-4 sm:px-0">
@@ -227,6 +340,15 @@ function filterByCategory(categoryId) {
                                     {{ getProductLocation(pig) }}
                                     <span class="text-gray-200">·</span>
                                     {{ pig.seller?.name || 'Comunidad Yacus' }}
+                                </p>
+                                <p class="text-[10px] text-gray-400 mt-1 flex items-center gap-1">
+                                    <svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                        <line x1="16" y1="2" x2="16" y2="6"/>
+                                        <line x1="8" y1="2" x2="8" y2="6"/>
+                                        <line x1="3" y1="10" x2="21" y2="10"/>
+                                    </svg>
+                                    Publicado: {{ formatDate(pig.created_at) }}
                                 </p>
                             </div>
 

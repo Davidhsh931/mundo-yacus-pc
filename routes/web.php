@@ -243,6 +243,57 @@ Route::post('/login', function (Request $request) {
 
 Route::get('/register', function () { return Inertia::render('Auth/Register'); })->name('register');
 
+// Rutas separadas para registro de comprador y vendedor
+Route::get('/register/comprador', function () {
+    return Inertia::render('Auth/RegisterComprador');
+})->name('register.comprador');
+
+Route::post('/register/comprador', function (Request $request) {
+    $validated = $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'username' => ['required', 'string', 'max:255', 'unique:users,email'], // username único como email
+        'password' => ['required', 'string', 'min:8', 'confirmed'],
+    ]);
+
+    // Generar correo automático con dominio @cliente.com
+    $email = $validated['username'] . '@cliente.com';
+
+    $user = User::create([
+        'name' => $validated['name'],
+        'email' => $email,
+        'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
+        'role' => 'buyer',
+    ]);
+
+    Auth::login($user);
+    return redirect('/dashboard');
+})->name('register.comprador.store');
+
+Route::get('/register/vendedor', function () {
+    return Inertia::render('Auth/RegisterVendedor');
+})->name('register.vendedor');
+
+Route::post('/register/vendedor', function (Request $request) {
+    $validated = $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'username' => ['required', 'string', 'max:255', 'unique:users,email'], // username único como email
+        'password' => ['required', 'string', 'min:8', 'confirmed'],
+    ]);
+
+    // Generar correo automático con dominio @vendedor.com
+    $email = $validated['username'] . '@vendedor.com';
+
+    $user = User::create([
+        'name' => $validated['name'],
+        'email' => $email,
+        'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
+        'role' => 'seller',
+    ]);
+
+    Auth::login($user);
+    return redirect('/dashboard');
+})->name('register.vendedor.store');
+
 Route::post('/register', function (Request $request) {
     $validated = $request->validate([
         'name' => ['required', 'string', 'max:255'],
@@ -252,7 +303,7 @@ Route::post('/register', function (Request $request) {
 
     // Extraer y limpiar el dominio del email (robusto a mayúsculas/espacios)
     $emailDomain = strtolower(trim(substr(strrchr($validated['email'], "@"), 1)));
-    
+
     // Asignación de rol automática por dominio (lógica clara y explícita)
     if ($emailDomain === 'admin.com') {
         $role = 'admin';

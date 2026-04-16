@@ -31,6 +31,15 @@ const cartCount = computed(() => {
 // Sistema de notificaciones desde la base de datos
 const notifications = ref([]);
 
+// Sistema de búsqueda global
+const searchQuery = ref(new URLSearchParams(window.location.search).get('search') || '');
+
+const performSearch = () => {
+    if (searchQuery.value.trim()) {
+        router.visit(`/products?search=${encodeURIComponent(searchQuery.value)}`);
+    }
+};
+
 // Función para forzar recarga de productos del servidor
 const refreshProducts = () => {
     console.log('🔄 Forzando recarga de productos...');
@@ -129,12 +138,14 @@ const unreadCount = computed(() => {
 const clearAll = () => {
     // Marcar todas como leídas localmente
     notifications.value = notifications.value.map(n => ({ ...n, read: true }));
-    
+
     // Persistir en backend con fetch (no Inertia)
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     fetch('/admin/notifications/mark-all-read', {
         method: 'PATCH',
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+            'X-CSRF-TOKEN': csrfToken,
+            'Content-Type': 'application/json',
             'Accept': 'application/json',
         }
     })
@@ -154,15 +165,25 @@ const markAsRead = (notification) => {
     console.log('📋 Order ID:', notification.order_id);
     console.log('📋 Product ID:', notification.product_id);
     console.log('📋 Comment ID:', notification.comment_id);
-    
-    // 1. Marcar como leída localmente
-    notification.read = true;
-    
+    console.log('🔢 Contador ANTES de marcar:', unreadCount.value);
+
+    // 1. Marcar como leída localmente (forzar reactividad)
+    const index = notifications.value.findIndex(n => n.id === notification.id);
+    if (index !== -1) {
+        notifications.value[index].read = true;
+        console.log('✅ Notificación marcada como leída en índice:', index);
+        console.log('🔢 Contador DESPUÉS de marcar:', unreadCount.value);
+    } else {
+        console.error('❌ No se encontró la notificación en el array');
+    }
+
     // 2. Persistir en backend con fetch (no Inertia)
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     fetch(`/admin/notifications/${notification.id}/read`, {
         method: 'PATCH',
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+            'X-CSRF-TOKEN': csrfToken,
+            'Content-Type': 'application/json',
             'Accept': 'application/json',
         }
     })
@@ -172,12 +193,15 @@ const markAsRead = (notification) => {
     })
     .catch(errors => {
         console.error('❌ Error guardando notificación:', errors);
-        notification.read = false;
+        // Revertir si falla
+        if (index !== -1) {
+            notifications.value[index].read = false;
+        }
     });
-    
+
     // 3. Navegación inteligente según tipo de notificación
     console.log('🧭 Iniciando navegación...');
-    
+
     if (notification.type === 'order' && notification.order_id) {
         console.log('🚀 Navegando a pedido:', notification.order_id);
         router.visit(`/admin/orders/${notification.order_id}`);
@@ -261,17 +285,25 @@ const formatNotificationTime = (date) => {
                              class="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-[100]">
                             <div class="py-2">
                                 <!-- Opción Principal: Iniciar Sesión -->
-                                <Link href="/login" 
+                                <Link href="/login"
                                       class="block px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors font-medium">
                                     Iniciar Sesión
                                 </Link>
-                                
+
                                 <!-- Sub-opción: Registrarse -->
-                                <div class="border-t border-gray-100 my-2"></div>
-                                <Link href="/register" 
-                                      class="block px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
-                                    Registrarse
-                                </Link>
+                                <div class="border-t border-gray-100 my-2">
+                                    <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Registrarse como
+                                    </div>
+                                    <Link href="/register/comprador"
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                        🛒 Comprador
+                                    </Link>
+                                    <Link href="/register/vendedor"
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                        🏪 Vendedor
+                                    </Link>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -377,7 +409,7 @@ const formatNotificationTime = (date) => {
                                 <ApplicationLogo class="h-8 w-auto fill-current text-amber-600" />
                                 <span class="ml-2 text-xl font-bold text-gray-900">Mundo Yacus</span>
                             </Link>
-                            
+
                             <!-- Menú de Categorías con Dropdown -->
                             <div class="relative group hidden md:block">
                                 <button class="text-gray-700 hover:text-amber-600 font-medium transition-colors flex items-center">
@@ -386,7 +418,7 @@ const formatNotificationTime = (date) => {
                                         <path d="M19 9l-7 7-7-7"/>
                                     </svg>
                                 </button>
-                                
+
                                 <!-- Dropdown de Categorías -->
                                 <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                     <div class="py-2">
@@ -394,13 +426,30 @@ const formatNotificationTime = (date) => {
                                             Selecciona la categoría
                                         </div>
                                         <div v-for="category in categories" :key="category.id">
-                                            <Link :href="'/products?category=' + category.id" 
+                                            <Link :href="'/products?category=' + category.id"
                                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
                                                 🏷️ {{ category.name }} ({{ category.guinea_pigs_count || 0 }})
                                             </Link>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Centro: Búsqueda -->
+                        <div class="flex-1 max-w-md mx-4 hidden md:block">
+                            <div class="relative">
+                                <input
+                                    v-model="searchQuery"
+                                    type="text"
+                                    placeholder="Buscar productos..."
+                                    class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white"
+                                    @keyup.enter="performSearch"
+                                />
+                                <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <path d="M21 21l-4.35-4.35"/>
+                                </svg>
                             </div>
                         </div>
 
