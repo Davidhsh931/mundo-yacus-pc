@@ -43,7 +43,7 @@ class Event extends Model
      */
     public function getFormattedDateAttribute()
     {
-        return $this->event_date->format('d/m/Y');
+        return $this->event_date ? $this->event_date->format('d/m/Y') : null;
     }
 
     /**

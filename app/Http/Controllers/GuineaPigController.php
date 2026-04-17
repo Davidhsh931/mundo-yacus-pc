@@ -23,17 +23,22 @@ class GuineaPigController extends Controller
             ->get();
 
         // Traemos eventos activos ordenados por fecha
-        $events = \App\Models\Event::active()
-            ->upcoming()
-            ->orderBy('event_date', 'asc')
-            ->take(3) // Limitamos a 3 eventos para la home
-            ->get();
-        
-        // Agregar accesores a cada evento
-        $events->each(function ($event) {
-            $event->formatted_date = $event->formatted_date;
-            $event->image_url = $event->image_url;
-        });
+        try {
+            $events = \App\Models\Event::active()
+                ->upcoming()
+                ->orderBy('event_date', 'asc')
+                ->take(3) // Limitamos a 3 eventos para la home
+                ->get();
+
+            // Agregar accesores a cada evento
+            $events->each(function ($event) {
+                $event->formatted_date = $event->formatted_date;
+                $event->image_url = $event->image_url;
+            });
+        } catch (\Exception $e) {
+            \Log::error('Error loading events on home: ' . $e->getMessage());
+            $events = collect();
+        }
 
         // Traemos todas las categorías disponibles
         $categories = \App\Models\Category::withCount('guineaPigs')
@@ -80,16 +85,21 @@ class GuineaPigController extends Controller
             ->get();
         
         // Obtener eventos (mantener consistencia con la home)
-        $events = \App\Models\Event::active()
-            ->upcoming()
-            ->orderBy('event_date', 'asc')
-            ->take(3)
-            ->get();
-        
-        $events->each(function ($event) {
-            $event->formatted_date = $event->formatted_date;
-            $event->image_url = $event->image_url;
-        });
+        try {
+            $events = \App\Models\Event::active()
+                ->upcoming()
+                ->orderBy('event_date', 'asc')
+                ->take(3)
+                ->get();
+
+            $events->each(function ($event) {
+                $event->formatted_date = $event->formatted_date;
+                $event->image_url = $event->image_url;
+            });
+        } catch (\Exception $e) {
+            \Log::error('Error loading events on products page: ' . $e->getMessage());
+            $events = collect();
+        }
         
         return Inertia::render('Products', [
             'guineaPigs' => $guineaPigs,
