@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\GuineaPig;
 use App\Models\GuineaPigImage;
 use App\Models\Category;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
@@ -267,4 +268,30 @@ class GuineaPigController extends Controller
         return back()->with('error', 'Ocurrió un error al procesar el producto.');
     }
 }
+
+    public function getSalesLast30Days()
+    {
+        $salesByDate = OrderItem::where('created_at', '>=', now()->subDays(29)->startOfDay())
+            ->select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('SUM(quantity * unit_price) as total')
+            )
+            ->groupBy('date')
+            ->get()
+            ->pluck('total', 'date');
+
+        $labels = [];
+        $data   = [];
+
+        foreach (range(0, 29) as $i) {
+            $date     = now()->subDays(29 - $i)->format('Y-m-d');
+            $labels[] = $date;
+            $data[]   = isset($salesByDate[$date]) ? (float) $salesByDate[$date] : 0;
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'data'   => $data,
+        ]);
+    }
 }
