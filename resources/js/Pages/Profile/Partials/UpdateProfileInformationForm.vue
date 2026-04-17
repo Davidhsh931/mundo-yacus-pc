@@ -16,10 +16,22 @@ defineProps({
 
 const user = usePage().props.auth.user;
 
+// Extraer nombre de usuario (sin dominio)
+const getUsername = (email) => {
+    return email.split('@')[0];
+};
+
 const form = useForm({
     name: user.name,
-    email: user.email,
+    username: getUsername(user.email),
 });
+
+// Al enviar, reconstruir email completo
+const submit = () => {
+    const domain = user.role === 'admin' ? '@admin.com' : '@cliente.com';
+    form.email = form.username + domain;
+    form.patch(route('profile.update'));
+};
 </script>
 
 <template>
@@ -30,12 +42,12 @@ const form = useForm({
             </h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                Update your account's profile information and email address.
+                Update your account's profile information and username.
             </p>
         </header>
 
         <form
-            @submit.prevent="form.patch(route('profile.update'))"
+            @submit.prevent="submit"
             class="mt-6 space-y-6"
         >
             <div>
@@ -55,16 +67,21 @@ const form = useForm({
             </div>
 
             <div>
-                <InputLabel for="email" value="Email" />
+                <InputLabel for="username" value="Nombre de usuario" />
 
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
+                <div class="flex items-center gap-2 mt-1">
+                    <TextInput
+                        id="username"
+                        type="text"
+                        class="flex-1"
+                        v-model="form.username"
+                        required
+                        autocomplete="username"
+                    />
+                    <span class="text-gray-500 text-sm font-medium">
+                        {{ user.role === 'admin' ? '@admin.com' : '@cliente.com' }}
+                    </span>
+                </div>
 
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>

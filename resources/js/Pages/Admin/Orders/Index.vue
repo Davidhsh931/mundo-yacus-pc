@@ -1,12 +1,70 @@
 <script setup>
+import { ref } from 'vue';
 import { useForm, Head, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
-const props = defineProps({ 
+const props = defineProps({
     orders: Array,
     adminContext: String, // 'global' indica contexto de administración
     success: String
 });
+
+const editingOrder = ref(null);
+const editForm = useForm({
+    status: '',
+    delivery_type: '',
+    shipping_cost: 0
+});
+
+const startEdit = (order) => {
+    console.log('Iniciando edición para pedido:', order.id);
+    editingOrder.value = order.id;
+    editForm.status = order.status;
+    editForm.delivery_type = order.delivery_type || 'recojo';
+    editForm.shipping_cost = parseFloat(order.shipping_cost || 0);
+};
+
+const calculateSubtotal = (order) => {
+    return order.items.reduce((total, item) => total + (item.unit_price * item.quantity), 0);
+};
+
+const calculateTotal = (order, shippingCost) => {
+    return calculateSubtotal(order) + parseFloat(shippingCost || 0);
+};
+
+const cancelEdit = () => {
+    editingOrder.value = null;
+    editForm.reset();
+};
+
+const saveEdit = (orderId) => {
+    console.log('Guardando edición para pedido:', orderId);
+
+    // Si shipping_cost es 0 y delivery_type no es recojo, cambiar a recojo
+    if (editForm.shipping_cost === 0 && editForm.delivery_type !== 'recojo') {
+        console.log('Shipping cost es 0, cambiando delivery_type a recojo');
+        editForm.delivery_type = 'recojo';
+    }
+
+    console.log('Datos a enviar:', {
+        status: editForm.status,
+        delivery_type: editForm.delivery_type,
+        shipping_cost: editForm.shipping_cost
+    });
+
+    editForm.patch(route('admin.orders.update', orderId), {
+        onSuccess: (page) => {
+            console.log('Edición guardada exitosamente');
+            console.log('Datos actualizados en la página:', page.props.orders);
+            editingOrder.value = null;
+            editForm.reset();
+        },
+        onError: (errors) => {
+            console.error('Errores al guardar:', JSON.stringify(errors, null, 2));
+            console.error('Formulario errors:', editForm.errors);
+        }
+    });
+};
 
 const updateStatus = (orderId, newStatus) => {
     const form = useForm({ status: newStatus });
@@ -61,6 +119,15 @@ const getPaymentMethodText = (method) => {
         'transfer': 'Transferencia 🏦'
     };
     return texts[method] || method;
+};
+
+const getDeliveryTypeText = (type) => {
+    const texts = {
+        'recojo': 'Recojo',
+        'envio_domicilio': 'Envío a Domicilio',
+        'envio_express': 'Envío Express'
+    };
+    return texts[type] || type;
 };
 
 const getTotalItems = (order) => {
@@ -134,6 +201,7 @@ const getTotalItems = (order) => {
                                     <th class="p-6 font-black uppercase text-[10px] text-slate-400 tracking-widest">Cliente</th>
                                     <th class="p-6 font-black uppercase text-[10px] text-slate-400 tracking-widest text-center">Items</th>
                                     <th class="p-6 font-black uppercase text-[10px] text-slate-400 tracking-widest">Total</th>
+                                    <th class="p-6 font-black uppercase text-[10px] text-slate-400 tracking-widest">Entrega</th>
                                     <th class="p-6 font-black uppercase text-[10px] text-slate-400 tracking-widest">Estado Actual</th>
                                     <th class="p-6 font-black uppercase text-[10px] text-slate-400 tracking-widest text-right">Acciones</th>
                                 </tr>
@@ -168,6 +236,41 @@ const getTotalItems = (order) => {
                                         </div>
                                     </td>
                                     <td class="p-6">
+                                        <div v-if="editingOrder !== order.id">
+                                            <span class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase border tracking-wider inline-block bg-blue-50 text-blue-700 border-blue-200">
+                                                {{ getDeliveryTypeText(order.delivery_type || 'recojo') }}
+                                            </span>
+                                        </div>
+                                        <div v-else class="space-y-2">
+                                            <select v-model="editForm.delivery_type"
+                                                    class="w-full px-3 py-2 border border-slate-200 rounded-lg text-[10px] font-black uppercase tracking-tight text-slate-700 focus:ring-2 focus:ring-emerald-500">
+                                                <option value="recojo">Recojo</option>
+                                                <option value="envio_domicilio">Envío a Domicilio</option>
+                                                <option value="envio_express">Envío Express</option>
+                                            </select>
+                                            <div class="p-2 bg-slate-50 rounded-lg text-[10px]">
+                                                <div class="flex justify-between mb-1">
+                                                    <span class="text-slate-500">Subtotal:</span>
+                                                    <span class="font-medium text-slate-800">S/. {{ calculateSubtotal(order).toFixed(2) }}</span>
+                                                </div>
+                                                <div class="flex justify-between items-center gap-2">
+                                                    <span class="text-slate-500">Envío:</span>
+                                                    <input type="number"
+                                                           v-model="editForm.shipping_cost"
+                                                           step="0.01"
+                                                           :disabled="editForm.delivery_type === 'recojo'"
+                                                           :class="editForm.delivery_type === 'recojo' ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-white'"
+                                                           class="w-20 px-2 py-1 border border-slate-200 rounded text-[10px] font-black text-slate-700 focus:ring-2 focus:ring-emerald-500"
+                                                           placeholder="0" />
+                                                </div>
+                                                <div class="flex justify-between mt-1 pt-1 border-t border-slate-200">
+                                                    <span class="font-black text-slate-700">Total:</span>
+                                                    <span class="font-black text-emerald-600">S/. {{ calculateTotal(order, editForm.shipping_cost).toFixed(2) }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-6">
                                         <span class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase border tracking-wider inline-block" 
                                               :class="getStatusColor(order.status)">
                                             {{ getStatusText(order.status) }}
@@ -175,16 +278,43 @@ const getTotalItems = (order) => {
                                     </td>
                                     <td class="p-6">
                                         <div class="flex items-center justify-end gap-3">
-                                            <Link :href="route('admin.orders.show', order.id)" 
+                                            <Link :href="route('admin.orders.show', order.id)"
                                                   class="p-2 bg-emerald-100 hover:bg-emerald-200 rounded-full transition-colors group">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600 group-hover:text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                 </svg>
                                             </Link>
-                                            
-                                            <div class="relative flex items-center">
-                                                <select v-model="order.status" 
+
+                                            <button v-if="editingOrder !== order.id"
+                                                    @click="startEdit(order)"
+                                                    class="p-2 bg-blue-100 hover:bg-blue-200 rounded-full transition-colors group"
+                                                    title="Editar pedido">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600 group-hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </button>
+
+                                            <div v-if="editingOrder === order.id" class="flex items-center gap-2">
+                                                <button @click="() => { console.log('Botón guardar clickeado para pedido:', order.id); saveEdit(order.id); }"
+                                                        :disabled="editForm.processing"
+                                                        class="p-2 bg-green-100 hover:bg-green-200 rounded-full transition-colors group"
+                                                        title="Guardar cambios">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-600 group-hover:text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </button>
+                                                <button @click="cancelEdit"
+                                                        class="p-2 bg-red-100 hover:bg-red-200 rounded-full transition-colors group"
+                                                        title="Cancelar">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-600 group-hover:text-red-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+
+                                            <div v-if="editingOrder !== order.id" class="relative flex items-center">
+                                                <select v-model="order.status"
                                                         @change="updateStatus(order.id, $event.target.value)"
                                                         class="appearance-none bg-emerald-50 border-none rounded-xl py-2 pl-3 pr-8 text-[10px] font-black uppercase tracking-tight text-emerald-700 focus:ring-2 focus:ring-emerald-500 cursor-pointer shadow-sm">
                                                     <option value="pending">Pendiente</option>

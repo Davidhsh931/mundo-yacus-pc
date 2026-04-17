@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\GuineaPig;
+use App\Models\Cart as CartModel;
 use Inertia\Inertia;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -17,47 +18,92 @@ class CartController extends Controller
     // En CartController.php
 public function add($id) {
     $pig = GuineaPig::with('images')->findOrFail($id);
-    $cart = session()->get('cart', []);
 
     // Validar stock disponible
     if($pig->stock <= 0) {
         return back()->with('error', '❌ Este producto está agotado. No hay stock disponible.');
     }
 
-    // Validar que no pida más de lo disponible
-    $currentQty = $cart[$id]['quantity'] ?? 0;
-    if($currentQty >= $pig->stock) {
-        return back()->with('error', "❌ Solo hay {$pig->stock} unidades disponibles. Ya tienes {$currentQty} en tu carrito.");
+    // Si el usuario está autenticado, usar base de datos
+    if (auth()->check()) {
+        $existingCartItem = CartModel::where('user_id', auth()->id())
+            ->where('guinea_pig_id', $id)
+            ->first();
+
+        if ($existingCartItem) {
+            $currentQty = $existingCartItem->quantity;
+            if($currentQty >= $pig->stock) {
+                return back()->with('error', "❌ Solo hay {$pig->stock} unidades disponibles. Ya tienes {$currentQty} en tu carrito.");
+            }
+            $existingCartItem->increment('quantity');
+        } else {
+            CartModel::create([
+                'user_id' => auth()->id(),
+                'guinea_pig_id' => $id,
+                'quantity' => 1,
+            ]);
+        }
+    } else {
+        // Si no está autenticado, usar sesión
+        $cart = session()->get('cart', []);
+        $currentQty = $cart[$id]['quantity'] ?? 0;
+        if($currentQty >= $pig->stock) {
+            return back()->with('error', "❌ Solo hay {$pig->stock} unidades disponibles. Ya tienes {$currentQty} en tu carrito.");
+        }
+
+        $cart[$id] = [
+            "name" => $pig->name,
+            "quantity" => $currentQty + 1,
+            "price" => $pig->price,
+            "image" => $pig->images->first() ? $pig->images->first()->image_path : null
+        ];
+
+        session()->put('cart', $cart);
     }
 
-    $cart[$id] = [
-        "name" => $pig->name,
-        "quantity" => $currentQty + 1,
-        "price" => $pig->price,
-        // Usamos la primera imagen disponible
-        "image" => $pig->images->first() ? $pig->images->first()->image_path : null 
-    ];
-
-    session()->put('cart', $cart);
-    return back()->with('success', "✅ {$pig->name} agregado al carrito. Stock disponible: " . ($pig->stock - ($currentQty + 1)) . " unidades.");
+    return back()->with('success', "✅ {$pig->name} agregado al carrito.");
 }
 
     public function remove($id)
     {
-        $cart = session()->get('cart', []);
-        if(isset($cart[$id])) {
-            unset($cart[$id]);
+        if (auth()->check()) {
+            CartModel::where('user_id', auth()->id())
+                ->where('guinea_pig_id', $id)
+                ->delete();
+        } else {
+            $cart = session()->get('cart', []);
+            if(isset($cart[$id])) {
+                unset($cart[$id]);
+            }
+            session()->put('cart', $cart);
         }
-        session()->put('cart', $cart);
         return redirect()->back();
     }
 
     public function view()
     {
+        // Cargar carrito desde base de datos si está autenticado, sino desde sesión
+        if (auth()->check()) {
+            $cartItems = CartModel::where('user_id', auth()->id())
+                ->with('guineaPig.images')
+                ->get();
+
+            $cart = [];
+            foreach ($cartItems as $item) {
+                $cart[$item->guinea_pig_id] = [
+                    'name' => $item->guineaPig->name,
+                    'quantity' => $item->quantity,
+                    'price' => $item->guineaPig->price,
+                    'image' => $item->guineaPig->images->first() ? $item->guineaPig->images->first()->image_path : null
+                ];
+            }
+        } else {
+            $cart = session()->get('cart', []);
+        }
+
         // Obtener productos sugeridos (aleatorios, con stock, excluyendo los del carrito)
-        $cart = session()->get('cart', []);
         $cartIds = array_keys($cart);
-        
+
         $suggestedProducts = \App\Models\GuineaPig::where('active', true)
             ->where('stock', '>', 0)
             ->whereNotIn('id', $cartIds)
@@ -65,7 +111,7 @@ public function add($id) {
             ->inRandomOrder()
             ->limit(6)
             ->get();
-        
+
         return Inertia::render('Cart', [
             'cart' => $cart,
             'suggestedProducts' => $suggestedProducts,
@@ -80,17 +126,29 @@ public function add($id) {
             'quantity' => 'required|integer|min:1|max:99'
         ]);
 
-        $cart = session()->get('cart', []);
-        
-        if(isset($cart[$id])) {
+        if (auth()->check()) {
             // Validar stock disponible
             $pig = GuineaPig::findOrFail($id);
             if($pig->stock < $request->quantity) {
                 return back()->with('error', 'Stock insuficiente. Solo hay ' . $pig->stock . ' unidades disponibles.');
             }
-            
-            $cart[$id]['quantity'] = $request->quantity;
-            session()->put('cart', $cart);
+
+            CartModel::where('user_id', auth()->id())
+                ->where('guinea_pig_id', $id)
+                ->update(['quantity' => $request->quantity]);
+        } else {
+            $cart = session()->get('cart', []);
+
+            if(isset($cart[$id])) {
+                // Validar stock disponible
+                $pig = GuineaPig::findOrFail($id);
+                if($pig->stock < $request->quantity) {
+                    return back()->with('error', 'Stock insuficiente. Solo hay ' . $pig->stock . ' unidades disponibles.');
+                }
+
+                $cart[$id]['quantity'] = $request->quantity;
+                session()->put('cart', $cart);
+            }
         }
 
         return back()->with('success', 'Cantidad actualizada');
@@ -99,8 +157,25 @@ public function add($id) {
     // --- NUEVO: Función para ver la página de Checkout (Paso 1) ---
     public function viewCheckout()
     {
-        $cart = session()->get('cart', []);
-        
+        // Cargar carrito desde base de datos si está autenticado, sino desde sesión
+        if (auth()->check()) {
+            $cartItems = CartModel::where('user_id', auth()->id())
+                ->with('guineaPig.images')
+                ->get();
+
+            $cart = [];
+            foreach ($cartItems as $item) {
+                $cart[$item->guinea_pig_id] = [
+                    'name' => $item->guineaPig->name,
+                    'quantity' => $item->quantity,
+                    'price' => $item->guineaPig->price,
+                    'image' => $item->guineaPig->images->first() ? $item->guineaPig->images->first()->image_path : null
+                ];
+            }
+        } else {
+            $cart = session()->get('cart', []);
+        }
+
         if(empty($cart)) {
             return redirect('/cart')->with('error', 'Tu carrito está vacío');
         }
@@ -119,7 +194,24 @@ public function add($id) {
     // --- MODIFICADO: Ahora recibe Request para datos reales (Paso 1 cont.) ---
     public function checkout(Request $request)
     {
-        $cart = session()->get('cart', []);
+        // Cargar carrito desde base de datos si está autenticado, sino desde sesión
+        if (auth()->check()) {
+            $cartItems = CartModel::where('user_id', auth()->id())
+                ->with('guineaPig.images')
+                ->get();
+
+            $cart = [];
+            foreach ($cartItems as $item) {
+                $cart[$item->guinea_pig_id] = [
+                    'name' => $item->guineaPig->name,
+                    'quantity' => $item->quantity,
+                    'price' => $item->guineaPig->price,
+                    'image' => $item->guineaPig->images->first() ? $item->guineaPig->images->first()->image_path : null
+                ];
+            }
+        } else {
+            $cart = session()->get('cart', []);
+        }
 
         if(empty($cart)){
             return redirect()->back();
@@ -172,7 +264,13 @@ public function add($id) {
             }
 
             DB::commit();
-            session()->forget('cart');
+
+            // Eliminar carrito de base de datos si está autenticado
+            if (auth()->check()) {
+                CartModel::where('user_id', auth()->id())->delete();
+            } else {
+                session()->forget('cart');
+            }
 
             // --- PASO 3: Redirigir a la página de éxito con el botón de WhatsApp ---
             return redirect()->route('order.success', ['id' => $order->id]);

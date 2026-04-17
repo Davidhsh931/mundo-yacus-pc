@@ -144,7 +144,7 @@ function addToCart(pig) {
     
     cartAnimating.value = true;
     setTimeout(() => cartAnimating.value = false, 600);
-    
+
     router.post('/cart/add/' + pig.id, {}, {
         onSuccess: (page) => {
             if (page.props.flash?.success) {

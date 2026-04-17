@@ -17,6 +17,7 @@ return new class extends Migration
 
             // 👇 Campo agregado
             $table->string('role')->default('cliente');
+            $table->boolean('is_approved')->default(false);
             $table->string('phone')->nullable();
 
             $table->rememberToken();

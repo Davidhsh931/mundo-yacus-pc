@@ -21,7 +21,12 @@ class AdminMiddleware
             return redirect('/')->with('error', 'Acceso denegado: Área exclusiva para administradores.');
         }
 
-        // ✅ Si es admin, deja pasar
+        // 🛑 Si es admin pero no está aprobado, redirige con mensaje específico
+        if (Auth::user()->role === 'admin' && !Auth::user()->is_approved) {
+            return redirect('/')->with('error', 'Tu cuenta de administrador está pendiente de aprobación por el propietario.');
+        }
+
+        // ✅ Si es admin y está aprobado, deja pasar
         return $next($request);
     }
 }

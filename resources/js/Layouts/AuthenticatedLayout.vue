@@ -22,11 +22,8 @@ const showingLoginDropdown = ref(false);
 const showingProfileDropdown = ref(false);
 const page = usePage();
 
-// Contador de productos para el carrito
-const cartCount = computed(() => {
-    const cart = page.props.cart || {};
-    return Object.keys(cart).length;
-});
+// Contador de productos para el carrito (usar prop compartida del middleware)
+const cartCount = computed(() => page.props.cartCount || 0);
 
 // Sistema de notificaciones desde la base de datos
 const notifications = ref([]);
@@ -170,7 +167,8 @@ const markAsRead = (notification) => {
     // 1. Marcar como leída localmente (forzar reactividad)
     const index = notifications.value.findIndex(n => n.id === notification.id);
     if (index !== -1) {
-        notifications.value[index].read = true;
+        // Usar splice para forzar reactividad de Vue
+        notifications.value.splice(index, 1, { ...notifications.value[index], read: true });
         console.log('✅ Notificación marcada como leída en índice:', index);
         console.log('🔢 Contador DESPUÉS de marcar:', unreadCount.value);
     } else {
@@ -256,7 +254,7 @@ const formatNotificationTime = (date) => {
 <template>
     <div>
         <!-- Banner de Anuncios Urgentes -->
-        <div v-if="$page.props.settings?.banner_active === '1' && $page.props.settings?.banner_text" 
+        <div v-if="$page.props.settings?.banner_active === '1' && $page.props.settings?.banner_text"
              class="bg-red-600 text-white py-2 px-4 text-center text-sm font-black animate-pulse uppercase tracking-tight">
             ⚠️ {{ $page.props.settings?.banner_text }}
         </div>
@@ -351,11 +349,15 @@ const formatNotificationTime = (date) => {
                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
                                         IA Training
                                     </Link>
-                                    <Link href="/admin/events" 
+                                    <Link href="/admin/events"
                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
                                         Eventos
                                     </Link>
-                                    
+                                    <Link href="/admin/users"
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                        Usuarios
+                                    </Link>
+
                                     <div class="border-t border-gray-100 my-2"></div>
                                 </div>
                                 

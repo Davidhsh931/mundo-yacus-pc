@@ -24,6 +24,13 @@ class ProfileUpdateRequest extends FormRequest
                 'email',
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
+                function ($attribute, $value, $fail) {
+                    // Verificar que el nombre de usuario no exista con ningún dominio
+                    $username = explode('@', $value)[0];
+                    if (User::where('email', 'LIKE', $username . '@%')->where('id', '!=', $this->user()->id)->exists()) {
+                        $fail('El nombre de usuario ya está en uso.');
+                    }
+                },
             ],
         ];
     }

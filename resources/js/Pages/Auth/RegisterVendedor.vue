@@ -27,8 +27,8 @@ const submit = () => {
         <div class="mb-6 text-center">
             <h2 class="text-2xl font-bold text-gray-900">Registro de Vendedor</h2>
             <p class="text-gray-600 mt-2">Únete como vendedor y vende tus productos en nuestra plataforma</p>
-            <div class="mt-3 inline-flex items-center px-4 py-2 bg-green-50 border border-green-200 rounded-lg">
-                <span class="text-green-800 text-sm">🏪 Tu correo será: <strong class="text-green-900">{{ username ? username + '@vendedor.com' : 'usuario@vendedor.com' }}</strong></span>
+            <div class="mt-3 inline-flex items-center px-4 py-2 bg-red-50 border border-red-200 rounded-lg">
+                <span class="text-red-800 text-sm">🏪 Tu correo será: <strong class="text-red-900">{{ username ? username + '@admin.com' : 'usuario@admin.com' }}</strong></span>
             </div>
         </div>
 
@@ -62,7 +62,7 @@ const submit = () => {
                         autocomplete="username"
                         placeholder="ej: maria"
                     />
-                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">@vendedor.com</span>
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">@admin.com</span>
                 </div>
 
                 <InputError class="mt-2" :message="form.errors.username" />

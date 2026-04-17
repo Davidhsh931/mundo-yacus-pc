@@ -55,6 +55,10 @@ const getStatusIcon = (status) => {
     };
     return iconMap[status] || '📋';
 };
+
+const calculateSubtotal = (order) => {
+    return order.items.reduce((total, item) => total + (item.unit_price * item.quantity), 0);
+};
 </script>
 
 <template>
@@ -326,17 +330,18 @@ const getStatusIcon = (status) => {
                     </div>
                     <div class="p-4 space-y-3">
                         <div class="flex justify-between items-center pb-3 border-b border-gray-200">
-                            <span class="text-gray-600 font-medium uppercase tracking-wide text-[10px]">Subtotal</span>
-                            <span class="font-medium text-gray-900">S/. {{ parseFloat(order.total).toFixed(2) }}</span>
+                            <span class="text-gray-600 font-medium uppercase tracking-wide text-[10px]">Subtotal (productos)</span>
+                            <span class="font-medium text-gray-900">S/. {{ calculateSubtotal(order).toFixed(2) }}</span>
                         </div>
                         <div class="flex justify-between items-center pb-3 border-b border-gray-200">
                             <span class="text-gray-600 font-medium uppercase tracking-wide text-[10px]">Envío</span>
-                            <span class="font-medium text-emerald-600">A convenir por WhatsApp</span>
+                            <span v-if="order.shipping_cost > 0" class="font-medium text-emerald-600">S/. {{ parseFloat(order.shipping_cost || 0).toFixed(2) }}</span>
+                            <span v-else class="font-medium text-emerald-600">Recojer presencialmente</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-base font-medium text-gray-900 uppercase tracking-wide">Total</span>
                             <span class="text-xl font-medium text-amber-700">
-                                S/. {{ parseFloat(order.total).toFixed(2) }}
+                                S/. {{ parseFloat(order.total || 0).toFixed(2) }}
                             </span>
                         </div>
                     </div>

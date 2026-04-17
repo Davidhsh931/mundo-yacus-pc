@@ -37,9 +37,14 @@ Route::get('/vision/analyze/coment', function () {
 // --- 2. DASHBOARD INTELIGENTE (REDISRECCIÓN POR ROL) ---
 Route::get('/dashboard', function () {
     $user = auth()->user();
-    
-    // SI ES ADMIN: Ve el panel de control con estadísticas
+
+    // SI ES ADMIN: Verificar aprobación
     if ($user->role === 'admin') {
+        if (!$user->is_approved) {
+            return redirect('/')->with('error', 'Tu cuenta de administrador está pendiente de aprobación por el propietario.');
+        }
+
+        // Ve el panel de control con estadísticas
         $lowStockProducts = GuineaPig::where('stock', '<', 5)
             ->where('active', true)
             ->with(['images'])
@@ -97,6 +102,7 @@ Route::get('/admin/dashboard', function () {
 });
 
 use App\Http\Controllers\Admin\AiTrainingController;
+use App\Http\Controllers\Admin\UserAdminController;
 
 // --- 3. MÓDULO ADMINISTRATIVO (BLOQUEO TOTAL PARA CLIENTES) ---
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function(){
@@ -125,6 +131,12 @@ Route::delete('/admin/ai-training/{id}/force', [AiTrainingController::class, 'fo
     Route::get('/orders', [OrderAdminController::class, 'index'])->name('admin.orders.index');
     Route::get('/orders/{order}', [OrderAdminController::class, 'show'])->name('admin.orders.show');
     Route::patch('/orders/{order}/status', [OrderAdminController::class, 'updateStatus'])->name('admin.orders.update');
+
+    // Gestión de Usuarios
+    Route::get('/users', [UserAdminController::class, 'index'])->name('admin.users.index');
+    Route::post('/users/{user}/approve', [UserAdminController::class, 'approve'])->name('admin.users.approve');
+    Route::post('/users/{user}/reject', [UserAdminController::class, 'reject'])->name('admin.users.reject');
+    Route::patch('/users/{user}/role', [UserAdminController::class, 'changeRole'])->name('admin.users.change-role');
 
     Route::get('/vision', [VisionController::class, 'index'])->name('admin.vision');
     Route::get('/analytics', function () {
@@ -236,7 +248,32 @@ Route::post('/login', function (Request $request) {
     ]);
     if (Auth::attempt($credentials)) {
         $request->session()->regenerate();
-        return redirect()->intended('/dashboard'); 
+
+        // Sincronizar carrito de sesión con base de datos
+        $sessionCart = session()->get('cart', []);
+        if (!empty($sessionCart) && auth()->check()) {
+            foreach ($sessionCart as $guineaPigId => $item) {
+                $existingCartItem = \App\Models\Cart::where('user_id', auth()->id())
+                    ->where('guinea_pig_id', $guineaPigId)
+                    ->first();
+
+                if ($existingCartItem) {
+                    // Si ya existe, actualizar cantidad
+                    $existingCartItem->update(['quantity' => $item['quantity']]);
+                } else {
+                    // Si no existe, crear nuevo
+                    \App\Models\Cart::create([
+                        'user_id' => auth()->id(),
+                        'guinea_pig_id' => $guineaPigId,
+                        'quantity' => $item['quantity'],
+                    ]);
+                }
+            }
+            // Eliminar carrito de sesión después de sincronizar
+            session()->forget('cart');
+        }
+
+        return redirect()->intended('/dashboard');
     }
     return back()->withErrors(['email' => 'Credenciales incorrectas.']);
 })->name('login.store');
@@ -251,7 +288,12 @@ Route::get('/register/comprador', function () {
 Route::post('/register/comprador', function (Request $request) {
     $validated = $request->validate([
         'name' => ['required', 'string', 'max:255'],
-        'username' => ['required', 'string', 'max:255', 'unique:users,email'], // username único como email
+        'username' => ['required', 'string', 'max:255', function ($attribute, $value, $fail) {
+            // Verificar que el nombre de usuario no exista con ningún dominio
+            if (User::where('email', 'LIKE', $value . '@%')->exists()) {
+                $fail('El nombre de usuario ya está en uso.');
+            }
+        }],
         'password' => ['required', 'string', 'min:8', 'confirmed'],
     ]);
 
@@ -262,7 +304,7 @@ Route::post('/register/comprador', function (Request $request) {
         'name' => $validated['name'],
         'email' => $email,
         'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
-        'role' => 'buyer',
+        'role' => 'cliente',
     ]);
 
     Auth::login($user);
@@ -276,18 +318,24 @@ Route::get('/register/vendedor', function () {
 Route::post('/register/vendedor', function (Request $request) {
     $validated = $request->validate([
         'name' => ['required', 'string', 'max:255'],
-        'username' => ['required', 'string', 'max:255', 'unique:users,email'], // username único como email
+        'username' => ['required', 'string', 'max:255', function ($attribute, $value, $fail) {
+            // Verificar que el nombre de usuario no exista con ningún dominio
+            if (User::where('email', 'LIKE', $value . '@%')->exists()) {
+                $fail('El nombre de usuario ya está en uso.');
+            }
+        }],
         'password' => ['required', 'string', 'min:8', 'confirmed'],
     ]);
 
-    // Generar correo automático con dominio @vendedor.com
-    $email = $validated['username'] . '@vendedor.com';
+    // Generar correo automático con dominio @admin.com
+    $email = $validated['username'] . '@admin.com';
 
     $user = User::create([
         'name' => $validated['name'],
         'email' => $email,
         'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
-        'role' => 'seller',
+        'role' => 'admin',
+        'is_approved' => false,
     ]);
 
     Auth::login($user);
@@ -297,7 +345,13 @@ Route::post('/register/vendedor', function (Request $request) {
 Route::post('/register', function (Request $request) {
     $validated = $request->validate([
         'name' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'email' => ['required', 'string', 'email', 'max:255', function ($attribute, $value, $fail) {
+            // Verificar que el nombre de usuario no exista con ningún dominio
+            $username = explode('@', $value)[0];
+            if (User::where('email', 'LIKE', $username . '@%')->exists()) {
+                $fail('El nombre de usuario ya está en uso.');
+            }
+        }],
         'password' => ['required', 'string', 'min:8', 'confirmed'],
     ]);
 
@@ -307,8 +361,10 @@ Route::post('/register', function (Request $request) {
     // Asignación de rol automática por dominio (lógica clara y explícita)
     if ($emailDomain === 'admin.com') {
         $role = 'admin';
+        $isApproved = false; // Los admins requieren aprobación
     } elseif ($emailDomain === 'cliente.com') {
         $role = 'cliente';
+        $isApproved = true; // Los clientes no requieren aprobación
     } else {
         return back()->withErrors(['email' => 'Dominio no autorizado. Solo @admin.com o @cliente.com permitidos.']);
     }
@@ -318,6 +374,7 @@ Route::post('/register', function (Request $request) {
         'email' => $validated['email'],
         'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
         'role' => $role,
+        'is_approved' => $isApproved,
     ]);
 
     Auth::login($user);

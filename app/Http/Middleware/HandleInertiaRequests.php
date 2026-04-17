@@ -29,6 +29,17 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        // Calcular contador del carrito
+        $cartCount = 0;
+        if ($request->user()) {
+            // Usuario autenticado: contar desde base de datos
+            $cartCount = \App\Models\Cart::where('user_id', $request->user()->id)->count();
+        } else {
+            // Usuario no autenticado: contar desde sesión
+            $cart = session()->get('cart', []);
+            $cartCount = count($cart);
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -39,6 +50,7 @@ class HandleInertiaRequests extends Middleware
                 'banner_active' => \App\Models\Setting::get('banner_active', '0'),
             ],
             'categories' => \App\Models\Category::withCount('guineaPigs')->get(),
+            'cartCount' => $cartCount,
         ];
     }
 }

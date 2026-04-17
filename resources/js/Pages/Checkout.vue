@@ -239,6 +239,20 @@ const getPaymentMethodName = (method) => {
                                 <p class="text-xs mt-3 text-amber-700 text-center font-medium">Pago directo al productor de Yacus</p>
                             </div>
 
+                            <!-- Información de Envío -->
+                            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                                <div class="flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                                        <circle cx="12" cy="9" r="2.5"/>
+                                    </svg>
+                                    <div>
+                                        <p class="text-sm font-medium text-blue-900">Método predeterminado: Recojo en local</p>
+                                        <p class="text-xs text-blue-700 mt-1">Para envíos a domicilio, coordina el costo adicional por WhatsApp</p>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Botón de Confirmación -->
                             <button type="submit" 
                                     :disabled="form.processing"

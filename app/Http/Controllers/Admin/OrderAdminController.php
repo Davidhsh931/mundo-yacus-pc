@@ -39,19 +39,50 @@ class OrderAdminController extends Controller
      */
     public function updateStatus(Request $request, Order $order)
     {
+        \Log::info('Datos recibidos en updateStatus:', $request->all());
+
         $request->validate([
-            'status' => 'required|in:pending,paid,shipped,delivered,canceled'
+            'status' => 'required|in:pending,paid,shipped,delivered,canceled',
+            'delivery_type' => 'nullable|in:recojo,envio_domicilio,envio_express',
+            'shipping_cost' => 'nullable|numeric|min:0'
         ]);
 
         $oldStatus = $order->status;
         $newStatus = $request->status;
-        
-        $order->update([
+
+        $updateData = [
             'status' => $newStatus,
             'status_updated_at' => now(),
             'status_notes' => $request->notes ?? null
-        ]);
-        
+        ];
+
+        // Si se proporciona delivery_type, actualizarlo
+        if ($request->has('delivery_type')) {
+            \Log::info('Actualizando delivery_type a:', ['delivery_type' => $request->delivery_type]);
+            $updateData['delivery_type'] = $request->delivery_type;
+        }
+
+        // Si se proporciona shipping_cost, actualizarlo y recalcular el total
+        if ($request->has('shipping_cost')) {
+            $shippingCost = floatval($request->shipping_cost);
+            \Log::info('Actualizando shipping_cost a:', ['shipping_cost' => $shippingCost]);
+            $updateData['shipping_cost'] = $shippingCost;
+
+            // Calcular subtotal del pedido (precio de los items)
+            $subtotal = $order->items->sum(function ($item) {
+                return $item->unit_price * $item->quantity;
+            });
+
+            // Calcular total = subtotal + shipping_cost
+            $total = $subtotal + $shippingCost;
+            \Log::info('Calculando total:', ['subtotal' => $subtotal, 'shipping_cost' => $shippingCost, 'total' => $total]);
+            $updateData['total'] = $total;
+        }
+
+        \Log::info('Datos a actualizar:', $updateData);
+
+        $order->update($updateData);
+
         // Crear tracking entry
         \App\Models\OrderTracking::create([
             'order_id' => $order->id,
@@ -59,8 +90,16 @@ class OrderAdminController extends Controller
             'notes' => $request->notes ?? "Estado cambiado de {$oldStatus} a {$newStatus}",
             'updated_by' => auth()->id()
         ]);
-        
-        return back()->with('success', "Pedido #{$order->id} actualizado a: " . $this->getStatusName($newStatus));
+
+        // Recargar todos los pedidos para actualizar la vista
+        $orders = \App\Models\Order::with(['user', 'items.guineaPig.images', 'items.guineaPig.seller'])
+            ->latest()
+            ->get();
+
+        return back()->with([
+            'success' => "Pedido #{$order->id} actualizado a: " . $this->getStatusName($newStatus),
+            'orders' => $orders
+        ]);
     }
     
     private function getStatusName($status)
