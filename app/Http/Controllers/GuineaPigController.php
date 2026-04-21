@@ -16,25 +16,39 @@ class GuineaPigController extends Controller
 {
     public function index()
     {
-        // Traemos productos activos con imágenes y vendedores
-        $guineaPigs = \App\Models\GuineaPig::with(['seller', 'images', 'category'])
-            ->where('active', true)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        try {
+            // Log the start
+            \Log::info('GuineaPigController::index() started');
 
-        // Traemos todas las categorías disponibles
-        $categories = \App\Models\Category::withCount('guineaPigs')
-            ->orderBy('name', 'asc')
-            ->get();
+            // Traemos productos activos con imágenes y vendedores
+            \Log::info('Loading guinea pigs...');
+            $guineaPigs = \App\Models\GuineaPig::with(['seller', 'images', 'category'])
+                ->where('active', true)
+                ->orderBy('created_at', 'desc')
+                ->get();
+            \Log::info('Loaded ' . count($guineaPigs) . ' guinea pigs');
 
-        // Agregar timestamp para evitar cache
-        $timestamp = now()->timestamp;
+            // Traemos todas las categorías disponibles
+            \Log::info('Loading categories...');
+            $categories = \App\Models\Category::withCount('guineaPigs')
+                ->orderBy('name', 'asc')
+                ->get();
+            \Log::info('Loaded ' . count($categories) . ' categories');
 
-        return Inertia::render('Home', [
-            'guineaPigs' => $guineaPigs,
-            'categories' => $categories,
-            'cacheBuster' => $timestamp // Forzar recarga de frontend
-        ]);
+            // Agregar timestamp para evitar cache
+            $timestamp = now()->timestamp;
+
+            \Log::info('Rendering Home view');
+            return Inertia::render('Home', [
+                'guineaPigs' => $guineaPigs,
+                'categories' => $categories,
+                'cacheBuster' => $timestamp
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error in GuineaPigController::index(): ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            throw $e; // Re-throw to see the error
+        }
     }
 
     public function productsByCategory(Request $request)
