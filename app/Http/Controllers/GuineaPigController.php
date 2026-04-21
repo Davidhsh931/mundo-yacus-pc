@@ -22,24 +22,6 @@ class GuineaPigController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Traemos eventos activos ordenados por fecha
-        try {
-            $events = \App\Models\Event::active()
-                ->upcoming()
-                ->orderBy('event_date', 'asc')
-                ->take(3) // Limitamos a 3 eventos para la home
-                ->get();
-
-            // Agregar accesores a cada evento
-            $events->each(function ($event) {
-                $event->formatted_date = $event->formatted_date;
-                $event->image_url = $event->image_url;
-            });
-        } catch (\Exception $e) {
-            \Log::error('Error loading events on home: ' . $e->getMessage());
-            $events = collect();
-        }
-
         // Traemos todas las categorías disponibles
         $categories = \App\Models\Category::withCount('guineaPigs')
             ->orderBy('name', 'asc')
@@ -50,7 +32,6 @@ class GuineaPigController extends Controller
 
         return Inertia::render('Home', [
             'guineaPigs' => $guineaPigs,
-            'events' => $events,
             'categories' => $categories,
             'cacheBuster' => $timestamp // Forzar recarga de frontend
         ]);
@@ -84,28 +65,10 @@ class GuineaPigController extends Controller
             ->orderBy('name', 'asc')
             ->get();
         
-        // Obtener eventos (mantener consistencia con la home)
-        try {
-            $events = \App\Models\Event::active()
-                ->upcoming()
-                ->orderBy('event_date', 'asc')
-                ->take(3)
-                ->get();
-
-            $events->each(function ($event) {
-                $event->formatted_date = $event->formatted_date;
-                $event->image_url = $event->image_url;
-            });
-        } catch (\Exception $e) {
-            \Log::error('Error loading events on products page: ' . $e->getMessage());
-            $events = collect();
-        }
-        
         return Inertia::render('Products', [
             'guineaPigs' => $guineaPigs,
             'categories' => $categories,
             'selectedCategory' => $category,
-            'events' => $events,
             'categoryId' => $categoryId
         ]);
     }

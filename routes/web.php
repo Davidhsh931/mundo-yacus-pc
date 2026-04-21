@@ -56,24 +56,6 @@ Route::get('/dashboard', function () {
             ->limit(10)
             ->get();
         
-        // Obtener eventos para el Dashboard
-        try {
-            $events = \App\Models\Event::active()
-                ->upcoming()
-                ->orderBy('event_date', 'asc')
-                ->take(5)
-                ->get();
-
-            // Agregar accesores a cada evento
-            $events->each(function ($event) {
-                $event->formatted_date = $event->formatted_date;
-                $event->image_url = $event->image_url;
-            });
-        } catch (\Exception $e) {
-            \Log::error('Error loading events on dashboard: ' . $e->getMessage());
-            $events = collect();
-        }
-        
         return Inertia::render('Admin/Dashboard', [
             'totalPigs'    => (int) GuineaPig::count(),
             'totalOrders'  => (int) Order::count(),
@@ -82,7 +64,6 @@ Route::get('/dashboard', function () {
             'lowStockProducts' => $lowStockProducts,
             'lowStockCount' => $lowStockProducts->count(),
             'latestProducts' => $latestProducts,
-            'events' => $events,
             'analytics'    => [
                 'labels' => ['Ene', 'Feb', 'Mar', 'Abr'],
                 'values' => [0, 0, 0, 0]
