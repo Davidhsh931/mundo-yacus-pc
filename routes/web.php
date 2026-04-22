@@ -392,7 +392,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     });
 });
 
-// --- RUTA DE PRUEBA PARA NOTIFICACIONES (TEMPORAL) ---
+// --- API Routes (public) ---
+Route::get('/api/notifications', [App\Http\Controllers\Admin\NotificationController::class, 'test'])->name('api.notifications');
 Route::get('/api/notifications/test', [App\Http\Controllers\Admin\NotificationController::class, 'test']);
 
 // --- RUTA ESPECIAL PARA EDITAR GUINEA PIGS (Fuera de grupos para evitar conflictos) ---
