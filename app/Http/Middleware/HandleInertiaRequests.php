@@ -40,16 +40,33 @@ class HandleInertiaRequests extends Middleware
             $cartCount = count($cart);
         }
 
+        try {
+            $settings = [
+                'banner_text' => \App\Models\Setting::get('banner_text', ''),
+                'banner_active' => \App\Models\Setting::get('banner_active', '0'),
+            ];
+        } catch (\Exception $e) {
+            \Log::warning('Error loading settings in middleware: ' . $e->getMessage());
+            $settings = [
+                'banner_text' => '',
+                'banner_active' => '0',
+            ];
+        }
+
+        try {
+            $categories = \App\Models\Category::withCount('guineaPigs')->get();
+        } catch (\Exception $e) {
+            \Log::warning('Error loading categories in middleware: ' . $e->getMessage());
+            $categories = collect();
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
             ],
-            'settings' => [
-                'banner_text' => \App\Models\Setting::get('banner_text', ''),
-                'banner_active' => \App\Models\Setting::get('banner_active', '0'),
-            ],
-            'categories' => \App\Models\Category::withCount('guineaPigs')->get(),
+            'settings' => $settings,
+            'categories' => $categories,
             'cartCount' => $cartCount,
         ];
     }

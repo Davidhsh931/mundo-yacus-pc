@@ -13,8 +13,12 @@ class Setting extends Model
      */
     public static function get($key, $default = null)
     {
-        $setting = static::where('key', $key)->first();
-        return $setting ? $setting->value : $default;
+        try {
+            return static::where('key', $key)->value('value') ?? $default;
+        } catch (\Exception $e) {
+            \Log::warning("Error reading setting '{$key}': " . $e->getMessage());
+            return $default;
+        }
     }
 
     /**
@@ -37,6 +41,11 @@ class Setting extends Model
      */
     public static function getAll()
     {
-        return static::all()->pluck('value', 'key')->toArray();
+        try {
+            return static::all()->pluck('value', 'key')->toArray();
+        } catch (\Exception $e) {
+            \Log::warning('Error reading all settings: ' . $e->getMessage());
+            return [];
+        }
     }
 }
