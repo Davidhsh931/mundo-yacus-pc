@@ -22,7 +22,7 @@ const formatStatus = (status) => {
 
 const getStatusColor = (status) => {
     const colorMap = {
-        'pending': 'bg-amber-100 text-amber-800 border-amber-200',
+        'pending': 'bg-red-100 text-red-800 border-red-200',
         'paid': 'bg-emerald-100 text-emerald-800 border-emerald-200',
         'shipped': 'bg-stone-800 text-stone-100 border-stone-700',
         'delivered': 'bg-stone-200 text-stone-800 border-stone-300',
@@ -48,11 +48,11 @@ const cancelOrder = (orderId) => {
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 
                 <div class="mb-12">
-                    <div class="bg-stone-900 p-8 text-white border-b-8 border-amber-600 shadow-xl relative overflow-hidden rounded-t-lg">
+                    <div class="bg-stone-900 p-8 text-white border-b-8 border-red-600 shadow-xl relative overflow-hidden rounded-t-lg">
                         <div class="relative z-10">
-                            <span class="text-[10px] font-black uppercase tracking-widest text-amber-500 block mb-1">Archivo de Intercambios</span>
+                            <span class="text-[10px] font-black uppercase tracking-widest text-red-500 block mb-1">Archivo de Intercambios</span>
                             <h2 class="text-3xl font-black italic uppercase tracking-tighter text-white">
-                                Mis <span class="text-amber-500">Pedidos</span>
+                                Mis <span class="text-red-500">Pedidos</span>
                             </h2>
                         </div>
                     </div>
@@ -99,7 +99,7 @@ const cancelOrder = (orderId) => {
 
                         <div class="bg-stone-50 p-4 flex justify-end gap-3 border-t border-stone-100">
                             <Link :href="`/orders/${order.id}`" 
-                                  class="px-4 py-2 bg-stone-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-colors rounded">
+                                  class="px-4 py-2 bg-stone-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-red-600 transition-colors rounded">
                                 Ver Detalles
                             </Link>
                             <button v-if="!isAdmin && order.status === 'pending'"
@@ -113,7 +113,7 @@ const cancelOrder = (orderId) => {
 
                 <div v-else class="bg-white border-2 border-dashed border-stone-200 rounded-xl py-20 text-center">
                     <p class="text-stone-400 font-bold uppercase tracking-widest">No hay registros de pedidos</p>
-                    <Link href="/" class="mt-4 inline-block bg-amber-600 text-white px-8 py-3 rounded font-black uppercase text-xs">Ir a la tienda</Link>
+                    <Link href="/" class="mt-4 inline-block bg-red-600 text-white px-8 py-3 rounded font-black uppercase text-xs">Ir a la tienda</Link>
                 </div>
 
             </div>

@@ -89,6 +89,7 @@ Route::get('/admin/dashboard', function () {
 
 use App\Http\Controllers\Admin\AiTrainingController;
 use App\Http\Controllers\Admin\UserAdminController;
+use App\Http\Controllers\Admin\AutoCategoryController;
 
 // --- 3. MÓDULO ADMINISTRATIVO (BLOQUEO TOTAL PARA CLIENTES) ---
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function(){
@@ -107,6 +108,15 @@ Route::post('/ai-training/{category}', [AiTrainingController::class, 'update'])-
 Route::delete('/admin/ai-training/{category}', [AiTrainingController::class, 'destroy'])->name('ai-training.destroy');
 Route::post('/admin/ai-training/{id}/restore', [AiTrainingController::class, 'restore'])->name('ai-training.restore');
 Route::delete('/admin/ai-training/{id}/force', [AiTrainingController::class, 'forceDelete'])->name('ai-training.force-delete');
+
+    // Agrupamiento Automático de Categorías
+    Route::get('/auto-categories', function () {
+        return Inertia::render('Admin/AutoCategories/Index');
+    })->name('admin.auto-categories');
+    Route::get('/api/auto-categories', [AutoCategoryController::class, 'index'])->name('admin.auto-categories.api');
+    Route::post('/auto-categories/generate', [AutoCategoryController::class, 'generateGroups'])->name('admin.auto-categories.generate');
+    Route::post('/auto-categories/{id}/approve', [AutoCategoryController::class, 'approve'])->name('admin.auto-categories.approve');
+    Route::post('/auto-categories/{id}/reject', [AutoCategoryController::class, 'reject'])->name('admin.auto-categories.reject');
 
     // Papelera
     Route::get('/guinea-pigs/trashed', [GuineaPigAdminController::class, 'trashed'])->name('guinea-pigs.trashed');

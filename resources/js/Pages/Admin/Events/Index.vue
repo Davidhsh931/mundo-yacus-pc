@@ -166,7 +166,7 @@ const handleImageUpload = (e) => {
                                 <button
                                     type="submit"
                                     :disabled="form.processing"
-                                    class="w-full bg-emerald-500 text-slate-900 py-3 px-6 rounded-xl font-black hover:bg-slate-900 hover:text-emerald-400 transition-all shadow-lg disabled:opacity-50"
+                                    class="w-full bg-red-700 text-white py-3 px-6 rounded-xl font-black hover:bg-red-800 transition-all shadow-lg disabled:opacity-50"
                                 >
                                     <span v-if="form.processing">Creando...</span>
                                     <span v-else>Crear Evento</span>

@@ -12,6 +12,25 @@ const props = defineProps({
 
 const page = usePage();
 
+// Agrupar productos por categoría
+const productsByCategory = computed(() => {
+    const grouped = {};
+    props.guineaPigs.forEach(pig => {
+        const categoryId = pig.category_id || 'uncategorized';
+        if (!grouped[categoryId]) {
+            grouped[categoryId] = [];
+        }
+        grouped[categoryId].push(pig);
+    });
+    return grouped;
+});
+
+// Obtener nombre de categoría por ID
+const getCategoryName = (categoryId) => {
+    const category = props.categories?.find(c => c.id === categoryId);
+    return category?.name || 'Sin categoría';
+};
+
 const FALLBACK_IMAGE = '/images/cobaya-fondo-blanco.jpg';
 
 const isInvalidImageValue = (value) => {
@@ -138,133 +157,136 @@ function addToCart(pig) {
             <ImageSlider />
         </div>
 
-        <div class="py-10 bg-gradient-to-br from-red-50 via-red-100 to-red-50 min-h-screen">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-10">
+        <div class="py-10 bg-white min-h-screen">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-12">
 
-                <!-- Section heading -->
-                <div class="flex justify-between items-baseline px-4 sm:px-0">
-                    <span class="text-sm font-medium text-gray-700">Productos disponibles</span>
-                    <span class="text-xs text-gray-400">{{ guineaPigs.length }} producto{{ guineaPigs.length !== 1 ? 's' : '' }}</span>
-                </div>
+                <!-- Carruseles por categoría -->
+                <template v-for="(products, categoryId) in productsByCategory" :key="categoryId">
+                    <!-- Section heading por categoría -->
+                    <div class="flex justify-between items-baseline px-4 sm:px-0">
+                        <span class="text-sm font-medium text-gray-700">{{ getCategoryName(categoryId) }}</span>
+                        <span class="text-xs text-gray-400">{{ products.length }} producto{{ products.length !== 1 ? 's' : '' }}</span>
+                    </div>
 
-                <!-- Product carousel -->
-                <div class="flex gap-4 overflow-x-auto pb-6 px-4 sm:px-0 snap-x scrollbar-none">
-                    <div
-                        v-for="pig in guineaPigs"
-                        :key="pig.id"
-                        class="snap-start w-[280px] sm:w-[300px] bg-white border border-gray-100 rounded-2xl overflow-hidden flex flex-col transition-all duration-200 hover:border-gray-200 hover:-translate-y-0.5 hover:shadow-sm flex-shrink-0"
-                        :class="{ 'opacity-60': pig.stock <= 0 }"
-                    >
-                        <!-- Image -->
+                    <!-- Product carousel por categoría -->
+                    <div class="flex gap-4 overflow-x-auto pb-6 px-4 sm:px-0 snap-x scrollbar-none">
                         <div
-                            @click="router.visit('/product/' + pig.id)"
-                            class="relative cursor-pointer overflow-hidden"
-                            style="aspect-ratio: 4/3"
+                            v-for="pig in products"
+                            :key="pig.id"
+                            class="snap-start w-[280px] sm:w-[300px] bg-white border border-gray-100 rounded-2xl overflow-hidden flex flex-col transition-all duration-200 hover:border-gray-200 hover:-translate-y-0.5 hover:shadow-sm flex-shrink-0"
+                            :class="{ 'opacity-60': pig.stock <= 0 }"
                         >
-                            <template v-if="pig.images && pig.images.length > 0">
-                                <img
-                                    :src="getSafeProductImageSrc(pig)"
-                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                    @error="(e) => { e.target.removeAttribute('src'); e.target.src = FALLBACK_IMAGE; }"
-                                />
-                            </template>
-                            <div v-else class="w-full h-full bg-red-50 flex flex-col items-center justify-center gap-2">
-                                <svg class="w-8 h-8 text-red-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                                    <rect x="3" y="3" width="18" height="18" rx="2"/>
-                                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                                    <path d="M21 15l-5-5L5 21"/>
-                                </svg>
-                                <p class="text-[10px] font-medium text-red-300 tracking-wide uppercase">Sin imagen</p>
-                            </div>
-
-                            <!-- Origin badge -->
-                            <div class="absolute top-2.5 left-2.5">
-                                <span class="bg-red-50 border border-red-200 text-red-800 text-[10px] font-medium px-2 py-0.5 rounded-md">
-                                    Directo de Yacus
-                                </span>
-                            </div>
-
-                            <!-- Low stock badge -->
-                            <div v-if="pig.stock <= 5 && pig.stock > 0" class="absolute top-2.5 right-2.5">
-                                <span class="bg-red-50 border border-red-200 text-red-700 text-[10px] font-medium px-2 py-0.5 rounded-md">
-                                    Solo {{ pig.stock }} disponibles
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Body -->
-                        <div class="p-4 flex flex-col flex-1 gap-3">
-                            <!-- Name & location -->
-                            <div>
-                                <h3 class="text-[15px] font-medium text-gray-900 capitalize leading-snug group-hover:text-red-600 transition-colors">
-                                    {{ pig.name }}
-                                </h3>
-                                <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
-                                    <svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-                                        <circle cx="12" cy="9" r="2.5"/>
+                            <!-- Image -->
+                            <div
+                                @click="router.visit('/product/' + pig.id)"
+                                class="relative cursor-pointer overflow-hidden"
+                                style="aspect-ratio: 4/3"
+                            >
+                                <template v-if="pig.images && pig.images.length > 0">
+                                    <img
+                                        :src="getSafeProductImageSrc(pig)"
+                                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        @error="(e) => { e.target.removeAttribute('src'); e.target.src = FALLBACK_IMAGE; }"
+                                    />
+                                </template>
+                                <div v-else class="w-full h-full bg-red-50 flex flex-col items-center justify-center gap-2">
+                                    <svg class="w-8 h-8 text-red-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                                        <path d="M21 15l-5-5L5 21"/>
                                     </svg>
-                                    {{ getProductLocation(pig) }}
-                                    <span class="text-gray-200">·</span>
-                                    {{ pig.seller?.name || 'Comunidad Yacus' }}
-                                </p>
-                            </div>
+                                    <p class="text-[10px] font-medium text-red-300 tracking-wide uppercase">Sin imagen</p>
+                                </div>
 
-                            <!-- Specs -->
-                            <div class="grid grid-cols-2 gap-1.5">
-                                <div
-                                    v-for="(attr, index) in pig.specifications?.slice(0, 2)"
-                                    :key="index"
-                                    class="bg-gray-50 rounded-lg px-2.5 py-2"
-                                >
-                                    <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">{{ attr.key }}</p>
-                                    <p class="text-xs font-medium text-gray-800 truncate">{{ attr.value }}</p>
+                                <!-- Origin badge -->
+                                <div class="absolute top-2.5 left-2.5">
+                                    <span class="bg-red-50 border border-red-200 text-red-800 text-[10px] font-medium px-2 py-0.5 rounded-md">
+                                        Directo de Yacus
+                                    </span>
+                                </div>
+
+                                <!-- Low stock badge -->
+                                <div v-if="pig.stock <= 5 && pig.stock > 0" class="absolute top-2.5 right-2.5">
+                                    <span class="bg-red-50 border border-red-200 text-red-700 text-[10px] font-medium px-2 py-0.5 rounded-md">
+                                        Solo {{ pig.stock }} disponibles
+                                    </span>
                                 </div>
                             </div>
 
-                            <!-- Price & CTA -->
-                            <div class="flex items-center justify-between pt-3 border-t border-gray-100 mt-auto">
+                            <!-- Body -->
+                            <div class="p-4 flex flex-col flex-1 gap-3">
+                                <!-- Name & location -->
                                 <div>
-                                    <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wide leading-none mb-1">Precio</p>
-                                    <p class="text-xl font-medium text-gray-900 leading-none">
-                                        <span class="text-sm text-gray-500">S/ </span>{{ pig.price }}
+                                    <h3 class="text-[15px] font-medium text-gray-900 capitalize leading-snug group-hover:text-red-600 transition-colors">
+                                        {{ pig.name }}
+                                    </h3>
+                                    <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
+                                        <svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                                            <circle cx="12" cy="9" r="2.5"/>
+                                        </svg>
+                                        {{ getProductLocation(pig) }}
+                                        <span class="text-gray-200">·</span>
+                                        {{ pig.seller?.name || 'Comunidad Yacus' }}
                                     </p>
                                 </div>
 
-                                <button
-                                    v-if="pig.stock > 0"
-                                    @click.stop="addToCart(pig)"
-                                    :class="[
-                                        'w-9 h-9 rounded-lg border flex items-center justify-center transition-all duration-200',
-                                        cartAnimating
-                                            ? 'bg-gray-900 border-gray-900'
-                                            : 'bg-red-50 border-red-200 hover:bg-red-100'
-                                    ]"
-                                    title="Agregar al carrito"
-                                >
-                                    <svg
-                                        class="w-4 h-4 transition-colors"
-                                        :class="cartAnimating ? 'stroke-red-400' : 'stroke-red-700'"
-                                        viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                                <!-- Specs -->
+                                <div class="grid grid-cols-2 gap-1.5">
+                                    <div
+                                        v-for="(attr, index) in pig.specifications?.slice(0, 2)"
+                                        :key="index"
+                                        class="bg-gray-50 rounded-lg px-2.5 py-2"
                                     >
-                                        <circle cx="9" cy="21" r="1"/>
-                                        <circle cx="20" cy="21" r="1"/>
-                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                                        <line x1="12" y1="10" x2="12" y2="16"/>
-                                        <line x1="9" y1="13" x2="15" y2="13"/>
-                                    </svg>
-                                </button>
+                                        <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">{{ attr.key }}</p>
+                                        <p class="text-xs font-medium text-gray-800 truncate">{{ attr.value }}</p>
+                                    </div>
+                                </div>
 
-                                <div v-else class="w-9 h-9 rounded-lg border border-gray-100 bg-gray-50 flex items-center justify-center" title="Sin stock">
-                                    <svg class="w-4 h-4 stroke-gray-300" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round">
-                                        <line x1="18" y1="6" x2="6" y2="18"/>
-                                        <line x1="6" y1="6" x2="18" y2="18"/>
-                                    </svg>
+                                <!-- Price & CTA -->
+                                <div class="flex items-center justify-between pt-3 border-t border-gray-100 mt-auto">
+                                    <div>
+                                        <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wide leading-none mb-1">Precio</p>
+                                        <p class="text-xl font-medium text-gray-900 leading-none">
+                                            <span class="text-sm text-gray-500">S/ </span>{{ pig.price }}
+                                        </p>
+                                    </div>
+
+                                    <button
+                                        v-if="pig.stock > 0"
+                                        @click.stop="addToCart(pig)"
+                                        :class="[
+                                            'w-9 h-9 rounded-lg border flex items-center justify-center transition-all duration-200',
+                                            cartAnimating
+                                                ? 'bg-gray-900 border-gray-900'
+                                                : 'bg-red-50 border-red-200 hover:bg-red-100'
+                                        ]"
+                                        title="Agregar al carrito"
+                                    >
+                                        <svg
+                                            class="w-4 h-4 transition-colors"
+                                            :class="cartAnimating ? 'stroke-red-400' : 'stroke-red-700'"
+                                            viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                                        >
+                                            <circle cx="9" cy="21" r="1"/>
+                                            <circle cx="20" cy="21" r="1"/>
+                                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                            <line x1="12" y1="10" x2="12" y2="16"/>
+                                            <line x1="9" y1="13" x2="15" y2="13"/>
+                                        </svg>
+                                    </button>
+
+                                    <div v-else class="w-9 h-9 rounded-lg border border-gray-100 bg-gray-50 flex items-center justify-center" title="Sin stock">
+                                        <svg class="w-4 h-4 stroke-gray-300" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round">
+                                            <line x1="18" y1="6" x2="6" y2="18"/>
+                                            <line x1="6" y1="6" x2="18" y2="18"/>
+                                        </svg>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </template>
 
                 <!-- Events -->
                 <section v-if="events && events.length > 0" class="mt-8"> <div class="flex items-center justify-between mb-4 px-4 sm:px-0">
@@ -296,39 +318,6 @@ function addToCart(pig) {
         </div>
     </div>
 </section>
-
-                <!-- Footer -->
-                <footer class="pt-8 border-t border-gray-100 text-center pb-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                        <!-- Servicio al cliente -->
-                        <div class="text-center md:text-left">
-                            <h4 class="text-sm font-bold text-gray-800 mb-4">Servicio al cliente</h4>
-                            <ul class="space-y-2">
-                                <li><Link href="/contact" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Contacto</Link></li>
-                                <li><Link href="/faq" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Preguntas Frecuentes</Link></li>
-                            </ul>
-                        </div>
-                        <!-- Sobre nosotros -->
-                        <div class="text-center md:text-left">
-                            <h4 class="text-sm font-bold text-gray-800 mb-4">Sobre nosotros</h4>
-                            <ul class="space-y-2">
-                                <li><Link href="/about" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Quiénes somos</Link></li>
-                                <li><Link href="/terms" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Términos y condiciones</Link></li>
-                            </ul>
-                        </div>
-                        <!-- Cómo comprar/vender -->
-                        <div class="text-center md:text-left">
-                            <h4 class="text-sm font-bold text-gray-800 mb-4">Cómo comprar/vender</h4>
-                            <ul class="space-y-2">
-                                <li><Link href="/guide" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Guía de compra</Link></li>
-                                <li><Link href="/seller-guide" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Guía de venta</Link></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <p class="text-[11px] text-gray-400 tracking-widest uppercase">
-                        Mundo Yacus · 25 años · Huánuco · Perú
-                    </p>
-                </footer>
 
             </div>
         </div>

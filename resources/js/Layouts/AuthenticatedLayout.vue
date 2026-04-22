@@ -578,6 +578,43 @@ const formatNotificationTime = (date) => {
             <main>
                 <slot />
             </main>
+
+            <!-- Footer Global -->
+            <footer class="pt-12 pb-8 bg-gray-900">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                        <!-- Servicio al cliente -->
+                        <div class="text-center md:text-left">
+                            <h4 class="text-sm font-bold text-white mb-4">Servicio al cliente</h4>
+                            <ul class="space-y-3">
+                                <li><Link href="/contact" class="text-xs text-gray-400 hover:text-white transition-colors">Contacto</Link></li>
+                                <li><Link href="/faq" class="text-xs text-gray-400 hover:text-white transition-colors">Preguntas Frecuentes</Link></li>
+                            </ul>
+                        </div>
+                        <!-- Sobre nosotros -->
+                        <div class="text-center md:text-left">
+                            <h4 class="text-sm font-bold text-white mb-4">Sobre nosotros</h4>
+                            <ul class="space-y-3">
+                                <li><Link href="/about" class="text-xs text-gray-400 hover:text-white transition-colors">Quiénes somos</Link></li>
+                                <li><Link href="/terms" class="text-xs text-gray-400 hover:text-white transition-colors">Términos y condiciones</Link></li>
+                            </ul>
+                        </div>
+                        <!-- Cómo comprar/vender -->
+                        <div class="text-center md:text-left">
+                            <h4 class="text-sm font-bold text-white mb-4">Cómo comprar/vender</h4>
+                            <ul class="space-y-3">
+                                <li><Link href="/guide" class="text-xs text-gray-400 hover:text-white transition-colors">Guía de compra</Link></li>
+                                <li><Link href="/seller-guide" class="text-xs text-gray-400 hover:text-white transition-colors">Guía de venta</Link></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="border-t border-gray-800 pt-8">
+                        <p class="text-[11px] text-gray-500 tracking-widest uppercase text-center">
+                            Mundo Yacus · 25 años · Huánuco · Perú
+                        </p>
+                    </div>
+                </div>
+            </footer>
         </div>
     </div>
 </template>

@@ -282,9 +282,20 @@ const submit = () => {
                                         </h3>
                                     </div>
                                     
-                                    <div class="space-y-1">
+                                    <div class="space-y-1 relative">
                                         <label class="block text-xs font-bold text-gray-500 uppercase px-1">Descripción</label>
-                                        <textarea v-model="form.description" rows="4" class="w-full border-red-100 bg-red-50 rounded-xl text-sm p-3 focus:ring-red-700 shadow-sm" placeholder="Describe las características principales..."></textarea>
+                                        <textarea 
+                                            v-model="form.description" 
+                                            rows="4" 
+                                            :class="[
+                                                'w-full rounded-xl text-sm p-3 focus:ring-red-700 shadow-sm',
+                                                camposIALLenados.description ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white'
+                                            ]" 
+                                            placeholder="Describe las características principales..."
+                                        ></textarea>
+                                        <span v-if="camposIALLenados.description" class="absolute -top-2 -right-2 text-[9px] text-red-600 font-bold animate-pulse bg-white px-2 py-1 rounded-full shadow-md border border-red-200 flex items-center gap-1">
+                                            <span>🤖</span> IA
+                                        </span>
                                     </div>
                                 </div>
 

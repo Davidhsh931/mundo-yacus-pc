@@ -197,7 +197,7 @@ function filterByCategory(categoryId) {
             </div>
         </template>
 
-        <div class="py-10 bg-gray-50 min-h-screen">
+        <div class="py-10 bg-white min-h-screen">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-10">
 
                 <!-- Búsqueda y Filtros -->
@@ -455,39 +455,6 @@ function filterByCategory(categoryId) {
         </div>
     </div>
 </section>
-
-                <!-- Footer -->
-                <footer class="pt-8 border-t border-gray-100 text-center pb-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                        <!-- Servicio al cliente -->
-                        <div class="text-center md:text-left">
-                            <h4 class="text-sm font-bold text-gray-800 mb-4">Servicio al cliente</h4>
-                            <ul class="space-y-2">
-                                <li><Link href="/contact" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Contacto</Link></li>
-                                <li><Link href="/faq" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Preguntas Frecuentes</Link></li>
-                            </ul>
-                        </div>
-                        <!-- Sobre nosotros -->
-                        <div class="text-center md:text-left">
-                            <h4 class="text-sm font-bold text-gray-800 mb-4">Sobre nosotros</h4>
-                            <ul class="space-y-2">
-                                <li><Link href="/about" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Quiénes somos</Link></li>
-                                <li><Link href="/terms" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Términos y condiciones</Link></li>
-                            </ul>
-                        </div>
-                        <!-- Cómo comprar/vender -->
-                        <div class="text-center md:text-left">
-                            <h4 class="text-sm font-bold text-gray-800 mb-4">Cómo comprar/vender</h4>
-                            <ul class="space-y-2">
-                                <li><Link href="/guide" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Guía de compra</Link></li>
-                                <li><Link href="/seller-guide" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Guía de venta</Link></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <p class="text-[11px] text-gray-400 tracking-widest uppercase">
-                        Mundo Yacus · 25 años · Huánuco · Perú
-                    </p>
-                </footer>
 
             </div>
         </div>

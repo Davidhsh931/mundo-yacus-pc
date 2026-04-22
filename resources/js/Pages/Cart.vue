@@ -83,7 +83,7 @@ const cartItemsCount = computed(() => {
                 <!-- Left: cart info -->
                 <div>
                     <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-gray-500 tracking-wide mb-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-amber-600 inline-block"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-600 inline-block"></span>
                         Tu Selección
                     </span>
                     <h2 class="text-2xl font-medium text-gray-900 leading-tight">Mi Carrito</h2>
@@ -91,11 +91,11 @@ const cartItemsCount = computed(() => {
                 </div>
 
                 <!-- Right: items count -->
-                <div class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 text-right shrink-0">
-                    <p class="text-[11px] font-medium text-amber-700 tracking-wide">Total Items</p>
-                    <p class="text-xl font-medium text-amber-900 leading-tight">
+                <div class="bg-red-50 border border-red-200 rounded-xl px-4 py-2.5 text-right shrink-0">
+                    <p class="text-[11px] font-medium text-red-700 tracking-wide">Total Items</p>
+                    <p class="text-xl font-medium text-red-900 leading-tight">
                         {{ cartItemsCount.toLocaleString() }}
-                        <span class="text-xs text-amber-600">productos</span>
+                        <span class="text-xs text-red-600">productos</span>
                     </p>
                 </div>
             </div>
@@ -108,8 +108,8 @@ const cartItemsCount = computed(() => {
                 <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm p-6">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-4">
-                            <div class="bg-amber-100 w-12 h-12 rounded-xl flex items-center justify-center">
-                                <svg class="w-6 h-6 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <div class="bg-red-100 w-12 h-12 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                     <circle cx="9" cy="21" r="1"/>
                                     <circle cx="20" cy="21" r="1"/>
                                     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
@@ -117,12 +117,12 @@ const cartItemsCount = computed(() => {
                             </div>
                             <div>
                                 <h3 class="text-lg font-medium text-gray-900 leading-tight">Tus Productos</h3>
-                                <p class="text-amber-600 text-xs font-medium mt-1">
+                                <p class="text-red-600 text-xs font-medium mt-1">
                                     {{ cartItemsCount }} producto{{ cartItemsCount !== 1 ? 's' : '' }}
                                 </p>
                             </div>
                         </div>
-                        <Link href="/" class="text-amber-600 border border-amber-200 bg-amber-50 rounded-lg px-4 py-2 text-sm font-medium hover:bg-amber-100 transition-colors">
+                        <Link href="/" class="text-red-600 border border-red-200 bg-red-50 rounded-lg px-4 py-2 text-sm font-medium hover:bg-red-100 transition-colors">
                             Seguir Comprando
                         </Link>
                     </div>
@@ -130,8 +130,8 @@ const cartItemsCount = computed(() => {
 
                 <!-- Carrito vacío -->
                 <div v-if="!cart || Object.keys(cart).length === 0" class="text-center py-16 bg-white border border-gray-100 rounded-2xl shadow-sm">
-                    <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="9" cy="21" r="1"/>
                             <circle cx="20" cy="21" r="1"/>
                             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
@@ -139,7 +139,7 @@ const cartItemsCount = computed(() => {
                     </div>
                     <h3 class="text-xl font-medium text-gray-900 mb-2">Tu carrito está vacío</h3>
                     <p class="text-gray-500 text-sm mb-6">Agrega algunos productos del mercado de Yacus</p>
-                    <Link href="/" class="text-amber-600 border border-amber-200 bg-amber-50 rounded-lg px-4 py-2 text-sm font-medium hover:bg-amber-100 transition-colors">
+                    <Link href="/" class="text-red-600 border border-red-200 bg-red-50 rounded-lg px-4 py-2 text-sm font-medium hover:bg-red-100 transition-colors">
                         Ir al Mercado
                     </Link>
                 </div>
@@ -186,7 +186,7 @@ const cartItemsCount = computed(() => {
                                         </button>
                                         <span class="w-8 text-center text-sm font-medium">{{ item.quantity }}</span>
                                         <button @click="updateQuantity(id, item.quantity + 1)" 
-                                                class="w-7 h-7 bg-amber-100 rounded-lg flex items-center justify-center hover:bg-amber-200 transition-colors">
+                                                class="w-7 h-7 bg-red-100 rounded-lg flex items-center justify-center hover:bg-red-200 transition-colors">
                                             <span class="text-xs font-medium">+</span>
                                         </button>
                                     </div>
@@ -219,7 +219,7 @@ const cartItemsCount = computed(() => {
                                 <span class="text-sm text-gray-500">S/ </span>{{ cartTotal.toFixed(2) }}
                             </p>
                         </div>
-                        <Link href="/checkout" class="bg-amber-600 text-white px-6 py-3 rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors">
+                        <Link href="/checkout" class="bg-red-600 text-white px-6 py-3 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">
                             Proceder al Pago
                         </Link>
                     </div>
@@ -238,7 +238,7 @@ const cartItemsCount = computed(() => {
                     <!-- Productos Sugeridos -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                         <div v-for="suggested in suggestedProducts" :key="suggested.id" 
-                             class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all hover:border-amber-500 group">
+                             class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all hover:border-red-500 group">
                             <Link :href="`/product/${suggested.id}`" class="block">
                                 <!-- Imagen -->
                                 <div class="aspect-square bg-stone-100 relative overflow-hidden">
@@ -258,11 +258,11 @@ const cartItemsCount = computed(() => {
                                 
                                 <!-- Info -->
                                 <div class="p-4">
-                                    <h4 class="font-black text-stone-900 mb-2 group-hover:text-amber-600 transition-colors">
+                                    <h4 class="font-black text-stone-900 mb-2 group-hover:text-red-600 transition-colors">
                                         {{ suggested.name }}
                                     </h4>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-lg font-black text-amber-600">S/. {{ suggested.price }}</span>
+                                        <span class="text-lg font-black text-red-600">S/. {{ suggested.price }}</span>
                                         <span v-if="suggested.stock > 0" class="text-xs text-stone-500">
                                             {{ suggested.stock }} disponibles
                                         </span>
@@ -274,7 +274,7 @@ const cartItemsCount = computed(() => {
                     
                     <!-- Botón para seguir comprando -->
                     <Link href="/" 
-                          class="inline-flex items-center gap-2 bg-amber-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-amber-700 transition-colors shadow-lg">
+                          class="inline-flex items-center gap-2 bg-red-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-red-700 transition-colors shadow-lg">
                         <span>🛍️</span>
                         Seguir Explorando
                     </Link>
@@ -283,7 +283,7 @@ const cartItemsCount = computed(() => {
                 <!-- Botón de Procesar Pedido -->
                 <div v-if="cart && Object.keys(cart).length > 0" class="mt-8">
                     <Link href="/checkout" 
-                          class="w-full bg-amber-600 text-white p-6 rounded-2xl font-black text-xl hover:bg-amber-700 transition-colors text-center block shadow-lg">
+                          class="w-full bg-red-600 text-white p-6 rounded-2xl font-black text-xl hover:bg-red-700 transition-colors text-center block shadow-lg">
                         🛒 PROCESAR PEDIDO
                     </Link>
                 </div>
@@ -310,11 +310,11 @@ const cartItemsCount = computed(() => {
                         
                         <div class="p-4">
                             <div class="flex items-center gap-2 mb-2">
-                                <span class="inline-block text-[10px] font-bold uppercase tracking-widest text-amber-700 bg-amber-50 border border-amber-100 rounded-md px-2 py-1">
+                                <span class="inline-block text-[10px] font-bold uppercase tracking-widest text-red-700 bg-red-50 border border-red-100 rounded-md px-2 py-1">
                                     {{ event.formatted_date }}
                                 </span>
                             </div>
-                            <h3 class="text-sm font-semibold text-gray-800 leading-snug group-hover:text-blue-600 transition-colors">
+                            <h3 class="text-sm font-semibold text-gray-800 leading-snug group-hover:text-red-600 transition-colors">
                                 {{ event.title }}
                             </h3>
                         </div>
@@ -322,11 +322,11 @@ const cartItemsCount = computed(() => {
                 </div>
             </section>
 
-            <footer class="py-20 bg-stone-950 text-stone-500 border-t-4 border-amber-600">
+            <footer class="py-20 bg-stone-950 text-stone-500 border-t-4 border-red-600">
                 <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12 items-center">
                     <div class="text-center md:text-left">
                         <p class="text-2xl font-black text-white italic tracking-tighter leading-none">YACUS</p>
-                        <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-amber-600">Huánuco, Perú</p>
+                        <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-red-600">Huánuco, Perú</p>
                             🏔️ 🌿 ☀️
                         </div>
                         <div class="text-center md:text-right">

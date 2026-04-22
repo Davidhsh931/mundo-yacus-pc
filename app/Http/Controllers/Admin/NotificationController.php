@@ -66,8 +66,7 @@ class NotificationController extends Controller
      */
     public function markAsRead($id): JsonResponse
     {
-        $notification = Notification::where('user_id', auth()->id())
-            ->findOrFail($id);
+        $notification = Notification::findOrFail($id);
         
         $notification->update(['read' => true]);
 
@@ -83,8 +82,7 @@ class NotificationController extends Controller
      */
     public function markAllRead(): JsonResponse
     {
-        Notification::where('user_id', auth()->id())
-            ->where('read', false)
+        Notification::where('read', false)
             ->update(['read' => true]);
 
         return response()->json([

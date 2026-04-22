@@ -57,7 +57,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="relative w-full h-96 md:h-[500px] overflow-hidden bg-gradient-to-br from-amber-50 to-orange-50">
+    <div class="relative w-full h-96 md:h-[500px] overflow-hidden bg-gradient-to-br from-red-50 to-orange-50">
         <!-- Slides -->
         <div class="relative w-full h-full">
             <div 
@@ -85,7 +85,7 @@ onMounted(() => {
                         </p>
                         <a 
                             :href="slide.link"
-                            class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+                            class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
                         >
                             {{ slide.cta }}
                             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

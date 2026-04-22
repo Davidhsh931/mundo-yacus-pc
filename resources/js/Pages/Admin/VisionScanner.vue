@@ -206,7 +206,7 @@ const analyzeImage = async () => {
                         <p class="text-xs text-gray-400 italic">Si añades un comentario, la IA activará el análisis de síntomas Avanzado.</p>
                     </div>
 
-                    <button @click="analyzeImage" :disabled="!state.imagePreview || state.isLoading" class="w-full md:col-span-2 bg-gradient-to-r from-orange-400 to-orange-600 text-white p-4 rounded-xl font-black text-xl hover:from-orange-500 hover:to-orange-700 disabled:from-gray-300 disabled:to-gray-400 transition transform hover:scale-[1.01] active:scale-95">
+                    <button @click="analyzeImage" :disabled="!state.imagePreview || state.isLoading" class="w-full md:col-span-2 bg-gradient-to-r from-red-400 to-red-600 text-white p-4 rounded-xl font-black text-xl hover:from-red-500 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-400 transition transform hover:scale-[1.01] active:scale-95">
                         {{ state.comment ? '🔬 Certificar Salud (Avanzado)' : '🔍 Análisis Rápido (IA)' }}
                     </button>
                 </div>
