@@ -38,9 +38,9 @@ const changeRole = (userId, newRole) => {
 
 const getRoleBadge = (role) => {
     if (role === 'admin') {
-        return 'bg-purple-100 text-purple-800 border-purple-200';
+        return 'bg-red-100 text-red-800 border-red-200';
     }
-    return 'bg-blue-100 text-blue-800 border-blue-200';
+    return 'bg-red-100 text-red-800 border-red-200';
 };
 
 const getRoleText = (role) => {
@@ -51,9 +51,9 @@ const getRoleText = (role) => {
 const getApprovalBadge = (isApproved, role) => {
     if (role !== 'admin') return null;
     if (isApproved) {
-        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+        return 'bg-red-100 text-red-800 border-red-200';
     }
-    return 'bg-amber-100 text-amber-800 border-amber-200';
+    return 'bg-red-100 text-red-800 border-red-200';
 };
 
 const getApprovalText = (isApproved, role) => {
@@ -67,19 +67,19 @@ const getApprovalText = (isApproved, role) => {
     <Head title="Gestión de Usuarios - Administración" />
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 p-8 rounded-3xl shadow-2xl border-b-4 border-emerald-500">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 p-8 rounded-3xl shadow-2xl border-b-4 border-red-700">
                 <div>
                     <h1 class="text-3xl font-black text-white tracking-tight">Gestión de Usuarios</h1>
                     <p class="text-slate-400 mt-2 font-medium">Administra usuarios y aprueba administradores</p>
                 </div>
                 <div class="flex gap-3">
-                    <span class="px-4 py-2 bg-slate-800 rounded-xl text-emerald-400 font-black text-sm border border-slate-700">
+                    <span class="px-4 py-2 bg-slate-800 rounded-xl text-red-400 font-black text-sm border border-slate-700">
                         Total: {{ users.length }}
                     </span>
-                    <span class="px-4 py-2 bg-slate-800 rounded-xl text-purple-400 font-black text-sm border border-slate-700">
+                    <span class="px-4 py-2 bg-slate-800 rounded-xl text-red-400 font-black text-sm border border-slate-700">
                         Admins: {{ users.filter(u => u.role === 'admin').length }}
                     </span>
-                    <span class="px-4 py-2 bg-slate-800 rounded-xl text-amber-400 font-black text-sm border border-slate-700">
+                    <span class="px-4 py-2 bg-slate-800 rounded-xl text-red-400 font-black text-sm border border-slate-700">
                         Pendientes: {{ users.filter(u => u.role === 'admin' && !u.is_approved).length }}
                     </span>
                 </div>
@@ -140,18 +140,18 @@ const getApprovalText = (isApproved, role) => {
                                             <select v-if="currentUserEmail === 'admin@admin.com' && user.email !== currentUserEmail"
                                                     v-model="changeRoleForm.role"
                                                     @change="changeRole(user.id, changeRoleForm.role)"
-                                                    class="text-[10px] px-2 py-1 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500">
+                                                    class="text-[10px] px-2 py-1 border border-slate-200 rounded-lg focus:ring-2 focus:ring-red-700">
                                                 <option value="cliente">Cliente</option>
                                                 <option value="admin">Admin</option>
                                             </select>
                                             <button v-if="user.role === 'admin' && !user.is_approved && user.email !== currentUserEmail"
                                                     @click="approveUser(user.id)"
-                                                    class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black rounded-lg transition-colors">
+                                                    class="px-3 py-1.5 bg-red-700 hover:bg-red-800 text-white text-[10px] font-black rounded-lg transition-colors">
                                                 Aprobar
                                             </button>
                                             <button v-if="user.role === 'admin' && user.is_approved && user.email !== currentUserEmail && user.email !== 'admin@admin.com'"
                                                     @click="rejectUser(user.id)"
-                                                    class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-black rounded-lg transition-colors">
+                                                    class="px-3 py-1.5 bg-red-700 hover:bg-red-800 text-white text-[10px] font-black rounded-lg transition-colors">
                                                 Rechazar
                                             </button>
                                             <span v-if="user.email === currentUserEmail" class="text-[10px] text-gray-400 italic">

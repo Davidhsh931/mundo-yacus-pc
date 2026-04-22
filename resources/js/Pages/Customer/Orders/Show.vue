@@ -36,8 +36,8 @@ const formatStatus = (status) => {
 
 const getStatusColor = (status) => {
     const colorMap = {
-        'pending': 'bg-amber-100 text-amber-800 border-amber-200',
-        'paid': 'bg-emerald-100 text-emerald-800 border-emerald-200',
+        'pending': 'bg-red-100 text-red-800 border-red-200',
+        'paid': 'bg-red-100 text-red-800 border-red-200',
         'shipped': 'bg-stone-800 text-stone-100 border-stone-700',
         'delivered': 'bg-stone-200 text-stone-800 border-stone-300',
         'canceled': 'bg-red-100 text-red-800 border-red-200'
@@ -69,7 +69,7 @@ const calculateSubtotal = (order) => {
                 <!-- Left: order info -->
                 <div>
                     <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-gray-500 tracking-wide mb-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-amber-600 inline-block"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-600 inline-block"></span>
                         Detalle de Intercambio
                     </span>
                     <h2 class="text-2xl font-medium text-gray-900 leading-tight">Pedido #{{ order.id }}</h2>
@@ -98,9 +98,9 @@ const calculateSubtotal = (order) => {
 
                 <!-- WhatsApp para pagos pendientes -->
                 <div v-if="order.status === 'pending'">
-                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-6 shadow-sm">
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-6 shadow-sm">
                         <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 bg-amber-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0">
                                 <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M3 21l1.65-5.34A7.92 7.92 0 0 1 3 12a8 8 0 1 1 8 8 7.92 7.92 0 0 1-3.66-.89L3 21z"/>
                                     <path d="M9 10h.01M15 10h.01"/>
@@ -126,9 +126,9 @@ const calculateSubtotal = (order) => {
 
                 <!-- Confirmación de pago -->
                 <div v-else-if="order.status === 'paid'">
-                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-6 shadow-sm">
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-6 shadow-sm">
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-emerald-600 rounded-full flex items-center justify-center">
+                            <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
                                 <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                                     <polyline points="22 4 12 14.01 9 11.01"/>
@@ -146,7 +146,7 @@ const calculateSubtotal = (order) => {
                 <div class="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
                     <div class="bg-gray-50 border-b border-gray-100 p-4">
                         <h2 class="text-lg font-medium text-gray-900 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg class="w-5 h-5 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                                 <circle cx="12" cy="7" r="4"/>
                             </svg>
@@ -179,7 +179,7 @@ const calculateSubtotal = (order) => {
                 <div class="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
                     <div class="bg-gray-50 border-b border-gray-100 p-4">
                         <h2 class="text-lg font-medium text-gray-900 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg class="w-5 h-5 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="9" cy="21" r="1"/>
                                 <circle cx="20" cy="21" r="1"/>
                                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
@@ -193,7 +193,7 @@ const calculateSubtotal = (order) => {
                                 <!-- Imagen -->
                                 <div class="flex-shrink-0">
                                     <Link :href="`/product/${item.guinea_pig_id}`" class="block group">
-                                        <div class="w-20 h-20 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden group-hover:border-amber-500 transition-colors">
+                                        <div class="w-20 h-20 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden group-hover:border-red-500 transition-colors">
                                             <!-- Imagen real del producto -->
                                             <img v-if="item.guineaPig?.images?.[0]?.image_path"
                                                  :src="`/storage/${item.guineaPig.images[0].image_path}`"
@@ -218,7 +218,7 @@ const calculateSubtotal = (order) => {
                                 <div class="flex-1 min-w-0">
                                     <h3 class="text-base font-medium text-gray-900 mb-2">
                                         <Link :href="`/product/${item.guinea_pig_id}`" 
-                                              class="text-gray-900 hover:text-amber-600 transition-colors">
+                                              class="text-gray-900 hover:text-red-600 transition-colors">
                                             {{ item.guineaPig?.name || 'Producto' }}
                                         </Link>
                                     </h3>
@@ -237,8 +237,8 @@ const calculateSubtotal = (order) => {
                                     </div>
                                     
                                     <!-- Motivación para pago pendiente -->
-                                    <div v-if="order.status === 'pending'" class="mt-3 p-2 bg-amber-50 border border-amber-200 rounded-lg">
-                                        <p class="text-amber-700 text-xs font-medium">
+                                    <div v-if="order.status === 'pending'" class="mt-3 p-2 bg-red-50 border border-red-200 rounded-lg">
+                                        <p class="text-red-700 text-xs font-medium">
                                             Activa tu pago para desbloquear beneficios exclusivos
                                         </p>
                                     </div>
@@ -252,7 +252,7 @@ const calculateSubtotal = (order) => {
                                     </div>
                                     <div>
                                         <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wide mb-1">Subtotal</p>
-                                        <p class="text-lg font-medium text-amber-700">
+                                        <p class="text-lg font-medium text-red-700">
                                             S/. {{ (parseFloat(item.unit_price || item.price) * item.quantity).toFixed(2) }}
                                         </p>
                                     </div>
@@ -266,7 +266,7 @@ const calculateSubtotal = (order) => {
                 <div class="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
                     <div class="bg-gray-50 border-b border-gray-100 p-4">
                         <h2 class="text-lg font-medium text-gray-900 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg class="w-5 h-5 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
                                 <circle cx="12" cy="9" r="2.5"/>
                             </svg>
@@ -321,7 +321,7 @@ const calculateSubtotal = (order) => {
                 <div class="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
                     <div class="bg-gray-50 border-b border-gray-100 p-4">
                         <h2 class="text-lg font-medium text-gray-900 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg class="w-5 h-5 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="1" x2="12" y2="23"/>
                                 <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                             </svg>
@@ -335,12 +335,12 @@ const calculateSubtotal = (order) => {
                         </div>
                         <div class="flex justify-between items-center pb-3 border-b border-gray-200">
                             <span class="text-gray-600 font-medium uppercase tracking-wide text-[10px]">Envío</span>
-                            <span v-if="order.shipping_cost > 0" class="font-medium text-emerald-600">S/. {{ parseFloat(order.shipping_cost || 0).toFixed(2) }}</span>
-                            <span v-else class="font-medium text-emerald-600">Recojer presencialmente</span>
+                            <span v-if="order.shipping_cost > 0" class="font-medium text-red-600">S/. {{ parseFloat(order.shipping_cost || 0).toFixed(2) }}</span>
+                            <span v-else class="font-medium text-red-600">Recojer presencialmente</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-base font-medium text-gray-900 uppercase tracking-wide">Total</span>
-                            <span class="text-xl font-medium text-amber-700">
+                            <span class="text-xl font-medium text-red-700">
                                 S/. {{ parseFloat(order.total || 0).toFixed(2) }}
                             </span>
                         </div>

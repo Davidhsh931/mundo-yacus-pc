@@ -9,10 +9,10 @@ const props = defineProps({
 
 const getStatusColor = (status) => {
     const colors = {
-        'pending': 'bg-yellow-100 text-yellow-800',
-        'paid': 'bg-blue-100 text-blue-800',
-        'shipped': 'bg-orange-100 text-orange-800',
-        'delivered': 'bg-green-100 text-green-800',
+        'pending': 'bg-red-100 text-red-800',
+        'paid': 'bg-red-100 text-red-800',
+        'shipped': 'bg-red-100 text-red-800',
+        'delivered': 'bg-red-100 text-red-800',
         'canceled': 'bg-red-100 text-red-800'
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
@@ -61,9 +61,9 @@ const getTotalItems = (order) => {
     <Head title="Detalle de Pedido - Administración" />
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 p-8 rounded-3xl shadow-2xl border-b-4 border-emerald-500">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 p-8 rounded-3xl shadow-2xl border-b-4 border-red-700">
                 <div>
-                    <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-200 text-[10px] font-black uppercase tracking-widest mb-2 border border-emerald-500/20">
+                    <span class="inline-block px-3 py-1 rounded-full bg-red-700/10 text-red-200 text-[10px] font-black uppercase tracking-widest mb-2 border border-red-700/20">
                         Ventas
                     </span>
                     <h2 class="font-black text-4xl text-white leading-none tracking-tighter">
@@ -71,9 +71,9 @@ const getTotalItems = (order) => {
                     </h2>
                     <p class="text-gray-400 text-sm mt-1">Detalles completos del pedido.</p>
                 </div>
-                <div class="text-left md:text-right border-l-4 md:border-l-0 md:border-r-4 border-emerald-500 pl-4 md:pl-0 md:pr-4">
+                <div class="text-left md:text-right border-l-4 md:border-l-0 md:border-r-4 border-red-700 pl-4 md:pl-0 md:pr-4">
                     <Link :href="route('admin.orders.index')" 
-                          class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors">
+                          class="inline-flex items-center gap-2 text-red-400 hover:text-red-300 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                         </svg>
@@ -156,7 +156,7 @@ const getTotalItems = (order) => {
                         <div class="p-8 space-y-4">
                             <div>
                                 <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Tipo de Entrega</p>
-                                <span class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase border tracking-wider inline-block bg-blue-50 text-blue-700 border-blue-200">
+                                <span class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase border tracking-wider inline-block bg-red-50 text-red-700 border-red-200">
                                     {{ getDeliveryTypeText(order.delivery_type || 'recojo') }}
                                 </span>
                             </div>
@@ -189,7 +189,7 @@ const getTotalItems = (order) => {
                                 </div>
                                 <div class="flex justify-between pt-2 border-t border-slate-200">
                                     <span class="font-black text-slate-800">Total:</span>
-                                    <span class="font-black text-emerald-600 text-lg">S/. {{ parseFloat(order.total || 0).toFixed(2) }}</span>
+                                    <span class="font-black text-red-600 text-lg">S/. {{ parseFloat(order.total || 0).toFixed(2) }}</span>
                                 </div>
                             </div>
                         </div>

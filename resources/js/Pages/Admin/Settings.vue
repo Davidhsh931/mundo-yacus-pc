@@ -46,9 +46,9 @@ const submit = () => {
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-12">
                 
                 <!-- Header Personalizado dentro del Layout -->
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 p-8 rounded-3xl shadow-2xl border-b-4 border-emerald-500">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 p-8 rounded-3xl shadow-2xl border-b-4 border-red-700">
                     <div>
-                        <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-200 text-[10px] font-black uppercase tracking-widest mb-2 border border-emerald-500/20">
+                        <span class="inline-block px-3 py-1 rounded-full bg-red-700/10 text-red-200 text-[10px] font-black uppercase tracking-widest mb-2 border border-red-700/20">
                             Sistema
                         </span>
                         <h2 class="font-black text-4xl text-white leading-none tracking-tighter">
@@ -56,25 +56,17 @@ const submit = () => {
                         </h2>
                         <p class="text-gray-400 text-sm mt-1">Ajustes generales de la plataforma.</p>
                     </div>
-                    <div class="text-left md:text-right border-l-4 md:border-l-0 md:border-r-4 border-emerald-500 pl-4 md:pl-0 md:pr-4">
+                    <div class="text-left md:text-right border-l-4 md:border-l-0 md:border-r-4 border-red-700 pl-4 md:pl-0 md:pr-4">
                         <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Parámetros</span>
-                        <p class="text-2xl font-black text-emerald-400 leading-none">{{ settings?.length || 0 }} <span class="text-xs text-emerald-600">configuraciones</span></p>
+                        <p class="text-2xl font-black text-red-400 leading-none">{{ settings?.length || 0 }} <span class="text-xs text-red-600">configuraciones</span></p>
                     </div>
                 </div>
 
                 <!-- Mensaje de éxito -->
-                <div v-if="success" class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 shadow-lg">
+                <div v-if="success" class="bg-red-50 border border-red-200 rounded-2xl p-6 shadow-lg">
                     <div class="flex items-center gap-3">
                         <span class="text-2xl">✅</span>
-                        <p class="text-emerald-800 font-black text-sm">{{ success }}</p>
-                    </div>
-                </div>
-
-                <!-- Mensaje de éxito -->
-                <div v-if="success" class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 shadow-lg">
-                    <div class="flex items-center gap-3">
-                        <span class="text-2xl">✅</span>
-                        <p class="text-emerald-800 font-black text-sm">{{ success }}</p>
+                        <p class="text-red-800 font-black text-sm">{{ success }}</p>
                     </div>
                 </div>
 
@@ -97,7 +89,7 @@ const submit = () => {
                                     <input 
                                         v-model="form.business_name"
                                         type="text" 
-                                        class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                        class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-red-700 focus:border-red-700 transition-all"
                                         placeholder="Mundo Yacus"
                                     >
                                     <p class="mt-2 text-xs text-slate-500">Nombre que aparecerá en la aplicación</p>
@@ -110,7 +102,7 @@ const submit = () => {
                                     <input 
                                         v-model="form.currency_symbol"
                                         type="text" 
-                                        class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                        class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-red-700 focus:border-red-700 transition-all"
                                         placeholder="S/"
                                         maxlength="5"
                                     >
@@ -154,7 +146,7 @@ const submit = () => {
                                     <input 
                                         v-model="form.yape_number"
                                         type="text" 
-                                        class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                        class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-red-700 focus:border-red-700 transition-all"
                                         placeholder="987654321"
                                     >
                                     <p class="mt-2 text-xs text-slate-500">Número para pagos Yape</p>
@@ -167,7 +159,7 @@ const submit = () => {
                                     <input 
                                         v-model="form.plin_number"
                                         type="text" 
-                                        class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                        class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-red-700 focus:border-red-700 transition-all"
                                         placeholder="987654321"
                                     >
                                     <p class="mt-2 text-xs text-slate-500">Número para pagos Plin</p>
@@ -180,7 +172,7 @@ const submit = () => {
                                     type="checkbox" 
                                     v-model="form.enable_whatsapp"
                                     id="enable_whatsapp"
-                                    class="w-5 h-5 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500"
+                                    class="w-5 h-5 text-red-600 border-slate-300 rounded focus:ring-red-700"
                                 >
                                 <label for="enable_whatsapp" class="flex-1">
                                     <span class="text-sm font-black text-slate-700">Habilitar botones de WhatsApp</span>
@@ -201,7 +193,7 @@ const submit = () => {
                         <button 
                             type="submit"
                             :disabled="form.processing"
-                            class="px-8 py-3 bg-emerald-500 text-slate-900 rounded-xl font-black hover:bg-slate-900 hover:text-emerald-400 transition-all shadow-lg disabled:opacity-50"
+                            class="px-8 py-3 bg-red-700 text-white rounded-xl font-black hover:bg-red-800 transition-all shadow-lg disabled:opacity-50"
                         >
                             <span v-if="form.processing">Guardando...</span>
                             <span v-else>Guardar Cambios</span>

@@ -102,9 +102,9 @@ const submit = () => {
     <Head title="Editar Producto" />
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-950 p-8 rounded-3xl shadow-2xl border-b-8 border-yellow-500">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-950 p-8 rounded-3xl shadow-2xl border-b-8 border-red-700">
                 <div>
-                    <span class="inline-block px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-200 text-[10px] font-black uppercase tracking-widest mb-2 border border-yellow-500/20">
+                    <span class="inline-block px-3 py-1 rounded-full bg-red-700/10 text-red-200 text-[10px] font-black uppercase tracking-widest mb-2 border border-red-700/20">
                         Editor de Productos
                     </span>
                     <h2 class="font-black text-4xl text-white leading-none tracking-tighter">
@@ -112,9 +112,9 @@ const submit = () => {
                     </h2>
                     <p class="text-gray-400 text-sm mt-1">Actualiza la información técnica y comercial.</p>
                 </div>
-                <div class="text-left md:text-right border-l-4 md:border-l-0 md:border-r-4 border-yellow-500 pl-4 md:pl-0 md:pr-4">
+                <div class="text-left md:text-right border-l-4 md:border-l-0 md:border-r-4 border-red-700 pl-4 md:pl-0 md:pr-4">
                     <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">ID del Producto</span>
-                    <p class="text-3xl font-black text-yellow-400 leading-none">#{{ pig.id }}</p>
+                    <p class="text-3xl font-black text-red-400 leading-none">#{{ pig.id }}</p>
                 </div>
             </div>
         </template>
@@ -139,13 +139,13 @@ const submit = () => {
                                     </div>
 
                                     <div class="mt-4">
-                                        <label class="block w-full py-3 px-4 bg-yellow-500 text-gray-950 text-center rounded-xl font-bold cursor-pointer hover:bg-gray-950 hover:text-yellow-400 transition shadow-lg shadow-yellow-500/20">
+                                        <label class="block w-full py-3 px-4 bg-red-700 text-white text-center rounded-xl font-bold cursor-pointer hover:bg-red-800 transition shadow-lg shadow-red-700/20">
                                             {{ image ? 'Cambiar Foto' : 'Subir Nueva Foto' }}
                                             <input type="file" @change="uploadImage" accept="image/*" class="hidden">
                                         </label>
                                     </div>
 
-                                    <div v-if="image" class="mt-6 p-2 bg-white rounded-2xl border-2 border-dashed border-yellow-400 overflow-hidden">
+                                    <div v-if="image" class="mt-6 p-2 bg-white rounded-2xl border-2 border-dashed border-red-400 overflow-hidden">
                                         <cropper
                                             :src="image"
                                             :stencil-props="{
@@ -154,7 +154,7 @@ const submit = () => {
                                             @change="onChange"
                                             class="h-64 w-full"
                                         />
-                                        <p class="text-[10px] text-center text-yellow-600 font-bold mt-2 uppercase">
+                                        <p class="text-[10px] text-center text-red-600 font-bold mt-2 uppercase">
                                             ↔️ Ajusta tu imagen al recuadro
                                         </p>
                                     </div>
@@ -165,36 +165,36 @@ const submit = () => {
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div class="space-y-1">
                                         <label class="block text-xs font-bold text-gray-500 uppercase px-1">Nombre</label>
-                                        <input v-model="form.name" type="text" class="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-yellow-500 shadow-sm" placeholder="Ej: Cuy Premium" required>
+                                        <input v-model="form.name" type="text" class="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-red-700 shadow-sm" placeholder="Ej: Cuy Premium" required>
                                         <p v-if="form.errors.name" class="text-red-500 text-xs mt-1">{{ form.errors.name }}</p>
                                     </div>
 
                                     <div class="space-y-1">
                                         <label class="block text-xs font-bold text-gray-500 uppercase px-1">Categoría</label>
-                                        <div class="flex items-center gap-2 border border-yellow-100 bg-yellow-50/50 rounded-xl px-4 py-3 text-xs text-yellow-700 font-medium italic">
+                                        <div class="flex items-center gap-2 border border-red-100 bg-red-50/50 rounded-xl px-4 py-3 text-xs text-red-700 font-medium italic">
                                             <span>🤖</span> <span class="animate-pulse">Clasificación automática activa</span>
                                         </div>
                                     </div>
 
                                     <div class="space-y-1">
                                         <label class="block text-xs font-bold text-gray-500 uppercase px-1">Raza o Modelo</label>
-                                        <input v-model="form.breed_or_model" type="text" class="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-yellow-500 shadow-sm" placeholder="Ej: Merino, Perú...">
+                                        <input v-model="form.breed_or_model" type="text" class="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-red-700 shadow-sm" placeholder="Ej: Merino, Perú...">
                                     </div>
 
                                     <div class="grid grid-cols-2 gap-4">
                                         <div class="space-y-1">
                                             <label class="block text-xs font-bold text-gray-500 uppercase px-1">Precio (S/.)</label>
-                                            <input v-model="form.price" type="number" step="0.01" class="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-yellow-500 shadow-sm" required>
+                                            <input v-model="form.price" type="number" step="0.01" class="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-red-700 shadow-sm" required>
                                         </div>
                                         <div class="space-y-1">
                                             <label class="block text-xs font-bold text-gray-500 uppercase px-1">Stock</label>
-                                            <input v-model="form.stock" type="number" min="0" class="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-yellow-500 shadow-sm" required>
+                                            <input v-model="form.stock" type="number" min="0" class="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-red-700 shadow-sm" required>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex items-center gap-4">
-                                    <input type="checkbox" v-model="form.active" id="active" class="w-5 h-5 rounded text-yellow-500 focus:ring-yellow-500 border-gray-300">
+                                    <input type="checkbox" v-model="form.active" id="active" class="w-5 h-5 rounded text-red-600 focus:ring-red-700 border-gray-300">
                                     <label for="active" class="text-sm font-semibold text-gray-700 cursor-pointer">
                                         Producto Activo en Tienda
                                         <span class="text-[10px] text-gray-500 block font-normal italic">Si se desmarca, el producto no aparecerá en el catálogo público.</span>
@@ -203,7 +203,7 @@ const submit = () => {
 
                                 <div class="space-y-1">
                                     <label class="block text-xs font-bold text-gray-500 uppercase px-1">Descripción</label>
-                                    <textarea v-model="form.description" rows="4" class="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-yellow-500 shadow-sm" placeholder="Describe las características principales..."></textarea>
+                                    <textarea v-model="form.description" rows="4" class="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-red-700 shadow-sm" placeholder="Describe las características principales..."></textarea>
                                 </div>
 
                                 <div class="space-y-4">
@@ -211,15 +211,15 @@ const submit = () => {
                                         <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center">
                                             <span class="mr-2">📋</span> Ficha Técnica
                                         </h3>
-                                        <button type="button" @click="addAttribute" class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-[10px] font-bold hover:bg-yellow-200 transition">
+                                        <button type="button" @click="addAttribute" class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-[10px] font-bold hover:bg-red-200 transition">
                                             + AGREGAR ATRIBUTO
                                         </button>
                                     </div>
                                     
                                     <div class="space-y-2">
                                         <div v-for="(attr, index) in form.specifications" :key="index" class="flex gap-2 group">
-                                            <input v-model="attr.key" type="text" placeholder="Ej: Peso" class="flex-1 border-gray-200 rounded-xl text-[13px] p-2 focus:ring-yellow-500 shadow-sm">
-                                            <input v-model="attr.value" type="text" placeholder="Ej: 1.2kg" class="flex-1 border-gray-200 rounded-xl text-[13px] p-2 focus:ring-yellow-500 shadow-sm">
+                                            <input v-model="attr.key" type="text" placeholder="Ej: Peso" class="flex-1 border-gray-200 rounded-xl text-[13px] p-2 focus:ring-red-700 shadow-sm">
+                                            <input v-model="attr.value" type="text" placeholder="Ej: 1.2kg" class="flex-1 border-gray-200 rounded-xl text-[13px] p-2 focus:ring-red-700 shadow-sm">
                                             <button type="button" @click="removeAttribute(index)" class="text-gray-300 hover:text-red-500 transition px-2">
                                                 ✕
                                             </button>
@@ -233,13 +233,13 @@ const submit = () => {
                                     </Link>
                                     
                                     <div class="flex gap-3 w-full sm:w-auto">
-                                        <Link :href="`/product/${pig.id}`" class="flex-1 sm:flex-none text-center px-6 py-3 text-yellow-600 hover:text-yellow-700 text-sm font-bold transition">
+                                        <Link :href="`/product/${pig.id}`" class="flex-1 sm:flex-none text-center px-6 py-3 text-red-600 hover:text-red-700 text-sm font-bold transition">
                                             👁️ PREVISUALIZAR
                                         </Link>
                                         
                                         <button type="submit" 
                                                 :disabled="form.processing"
-                                                class="flex-1 sm:flex-none bg-yellow-500 text-gray-950 px-10 py-3 rounded-xl font-black shadow-xl shadow-yellow-500/20 hover:bg-gray-950 hover:text-yellow-400 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 disabled:transform-none">
+                                                class="flex-1 sm:flex-none bg-red-700 text-white px-10 py-3 rounded-xl font-black shadow-xl shadow-red-700/20 hover:bg-red-800 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 disabled:transform-none">
                                             {{ form.processing ? 'GUARDANDO...' : 'GUARDAR CAMBIOS' }}
                                         </button>
                                     </div>

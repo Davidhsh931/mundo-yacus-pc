@@ -173,7 +173,7 @@ function filterByCategory(categoryId) {
                 <!-- Left: identity -->
                 <div>
                     <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-gray-500 tracking-wide mb-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-amber-600 inline-block"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-600 inline-block"></span>
                         {{ selectedCategory ? 'Categoría Seleccionada' : 'Todos los Productos' }}
                     </span>
                     <h2 class="text-2xl font-medium text-gray-900 leading-tight">
@@ -187,11 +187,11 @@ function filterByCategory(categoryId) {
                 </div>
 
                 <!-- Right: altitude -->
-                <div class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 text-right shrink-0">
-                    <p class="text-[11px] font-medium text-amber-700 tracking-wide">Altitud actual</p>
-                    <p class="text-xl font-medium text-amber-900 leading-tight">
+                <div class="bg-red-50 border border-red-200 rounded-xl px-4 py-2.5 text-right shrink-0">
+                    <p class="text-[11px] font-medium text-red-700 tracking-wide">Altitud actual</p>
+                    <p class="text-xl font-medium text-red-900 leading-tight">
                         {{ currentAltitude.toLocaleString() }}
-                        <span class="text-xs text-amber-600">m s. n. m.</span>
+                        <span class="text-xs text-red-600">m s. n. m.</span>
                     </p>
                 </div>
             </div>
@@ -258,7 +258,7 @@ function filterByCategory(categoryId) {
                         <div class="flex items-end">
                             <button
                                 @click="applyFilters"
-                                class="w-full bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors"
+                                class="w-full bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-800 transition-colors"
                             >
                                 Aplicar Filtros
                             </button>
@@ -280,12 +280,12 @@ function filterByCategory(categoryId) {
                     </div>
                 </div>
 
-                <!-- Product grid - Diseño Home.vue -->
-                <div v-if="guineaPigs && guineaPigs.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Product carousel -->
+                <div v-if="guineaPigs && guineaPigs.length > 0" class="flex gap-4 overflow-x-auto pb-6 px-4 sm:px-0 snap-x scrollbar-none">
                     <div
                         v-for="pig in guineaPigs"
                         :key="pig.id"
-                        class="group bg-white border border-gray-100 rounded-2xl overflow-hidden flex flex-col transition-all duration-200 hover:border-gray-200 hover:-translate-y-0.5 hover:shadow-sm"
+                        class="snap-start w-[280px] sm:w-[300px] bg-white border border-gray-100 rounded-2xl overflow-hidden flex flex-col transition-all duration-200 hover:border-gray-200 hover:-translate-y-0.5 hover:shadow-sm flex-shrink-0"
                         :class="{ 'opacity-60': pig.stock <= 0 }"
                     >
                         <!-- Image -->
@@ -301,18 +301,18 @@ function filterByCategory(categoryId) {
                                     @error="(e) => { e.target.removeAttribute('src'); e.target.src = FALLBACK_IMAGE; }"
                                 />
                             </template>
-                            <div v-else class="w-full h-full bg-amber-50 flex flex-col items-center justify-center gap-2">
-                                <svg class="w-8 h-8 text-amber-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                            <div v-else class="w-full h-full bg-red-50 flex flex-col items-center justify-center gap-2">
+                                <svg class="w-8 h-8 text-red-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
                                     <rect x="3" y="3" width="18" height="18" rx="2"/>
                                     <circle cx="8.5" cy="8.5" r="1.5"/>
                                     <path d="M21 15l-5-5L5 21"/>
                                 </svg>
-                                <p class="text-[10px] font-medium text-amber-300 tracking-wide uppercase">Sin imagen</p>
+                                <p class="text-[10px] font-medium text-red-300 tracking-wide uppercase">Sin imagen</p>
                             </div>
 
                             <!-- Origin badge -->
                             <div class="absolute top-2.5 left-2.5">
-                                <span class="bg-amber-50 border border-amber-200 text-amber-800 text-[10px] font-medium px-2 py-0.5 rounded-md">
+                                <span class="bg-red-50 border border-red-200 text-red-800 text-[10px] font-medium px-2 py-0.5 rounded-md">
                                     Directo de Yacus
                                 </span>
                             </div>
@@ -329,7 +329,7 @@ function filterByCategory(categoryId) {
                         <div class="p-4 flex flex-col flex-1 gap-3">
                             <!-- Name & location -->
                             <div>
-                                <h3 class="text-[15px] font-medium text-gray-900 capitalize leading-snug group-hover:text-amber-700 transition-colors">
+                                <h3 class="text-[15px] font-medium text-gray-900 capitalize leading-snug group-hover:text-red-600 transition-colors">
                                     {{ pig.name }}
                                 </h3>
                                 <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
@@ -380,13 +380,13 @@ function filterByCategory(categoryId) {
                                         'w-9 h-9 rounded-lg border flex items-center justify-center transition-all duration-200',
                                         cartAnimating
                                             ? 'bg-gray-900 border-gray-900'
-                                            : 'bg-amber-50 border-amber-200 hover:bg-amber-100'
+                                            : 'bg-red-50 border-red-200 hover:bg-red-100'
                                     ]"
                                     title="Agregar al carrito"
                                 >
                                     <svg
                                         class="w-4 h-4 transition-colors"
-                                        :class="cartAnimating ? 'stroke-amber-400' : 'stroke-amber-700'"
+                                        :class="cartAnimating ? 'stroke-red-400' : 'stroke-red-700'"
                                         viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
                                     >
                                         <circle cx="9" cy="21" r="1"/>
@@ -420,7 +420,7 @@ function filterByCategory(categoryId) {
                     <button 
                         v-if="categoryId"
                         @click="filterByCategory(null)"
-                        class="bg-amber-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-amber-700 transition-colors">
+                        class="bg-red-700 text-white px-6 py-3 rounded-xl font-medium hover:bg-red-800 transition-colors">
                         Ver todos los productos
                     </button>
                 </div>
@@ -444,11 +444,11 @@ function filterByCategory(categoryId) {
             
             <div class="p-4">
                 <div class="flex items-center gap-2 mb-2">
-                    <span class="inline-block text-[10px] font-bold uppercase tracking-widest text-amber-700 bg-amber-50 border border-amber-100 rounded-md px-2 py-1">
+                    <span class="inline-block text-[10px] font-bold uppercase tracking-widest text-red-700 bg-red-50 border border-red-100 rounded-md px-2 py-1">
                         {{ event.formatted_date }}
                     </span>
                 </div>
-                <h3 class="text-sm font-semibold text-gray-800 leading-snug group-hover:text-blue-600 transition-colors">
+                <h3 class="text-sm font-semibold text-gray-800 leading-snug group-hover:text-red-600 transition-colors">
                     {{ event.title }}
                 </h3>
             </div>
@@ -458,10 +458,31 @@ function filterByCategory(categoryId) {
 
                 <!-- Footer -->
                 <footer class="pt-8 border-t border-gray-100 text-center pb-4">
-                    <div class="flex justify-center gap-2 mb-3">
-                        <span class="w-2 h-2 rounded-full bg-red-500"></span>
-                        <span class="w-2 h-2 rounded-full bg-gray-200"></span>
-                        <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                        <!-- Servicio al cliente -->
+                        <div class="text-center md:text-left">
+                            <h4 class="text-sm font-bold text-gray-800 mb-4">Servicio al cliente</h4>
+                            <ul class="space-y-2">
+                                <li><Link href="/contact" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Contacto</Link></li>
+                                <li><Link href="/faq" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Preguntas Frecuentes</Link></li>
+                            </ul>
+                        </div>
+                        <!-- Sobre nosotros -->
+                        <div class="text-center md:text-left">
+                            <h4 class="text-sm font-bold text-gray-800 mb-4">Sobre nosotros</h4>
+                            <ul class="space-y-2">
+                                <li><Link href="/about" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Quiénes somos</Link></li>
+                                <li><Link href="/terms" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Términos y condiciones</Link></li>
+                            </ul>
+                        </div>
+                        <!-- Cómo comprar/vender -->
+                        <div class="text-center md:text-left">
+                            <h4 class="text-sm font-bold text-gray-800 mb-4">Cómo comprar/vender</h4>
+                            <ul class="space-y-2">
+                                <li><Link href="/guide" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Guía de compra</Link></li>
+                                <li><Link href="/seller-guide" class="text-xs text-gray-600 hover:text-red-600 transition-colors">Guía de venta</Link></li>
+                            </ul>
+                        </div>
                     </div>
                     <p class="text-[11px] text-gray-400 tracking-widest uppercase">
                         Mundo Yacus · 25 años · Huánuco · Perú

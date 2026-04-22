@@ -124,19 +124,19 @@ const analizarImagen = (event) => {
         const escenarios = [
             {
                 mensaje: '✨ Excelente foto! Buena iluminación y el producto se ve claramente. Perfecto para Mundo Yacus.',
-                clase: 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                clase: 'bg-red-50 text-red-700 border border-red-100'
             },
             {
                 mensaje: '💡 Tip: La foto se ve un poco oscura. Intenta tomarla cerca de una ventana para que el cuy resalte más.',
-                clase: 'bg-amber-50 text-amber-700 border border-amber-100'
+                clase: 'bg-red-50 text-red-700 border border-red-100'
             },
             {
                 mensaje: '🎨 La imagen podría tener más contraste. Considera usar el modo HDR de tu celular para mejores resultados.',
-                clase: 'bg-amber-50 text-amber-700 border border-amber-100'
+                clase: 'bg-red-50 text-red-700 border border-red-100'
             },
             {
                 mensaje: '📐 Foto aceptable, pero podrías centrar mejor el producto. Recuerda que los clientes compran lo que ven claramente.',
-                clase: 'bg-blue-50 text-blue-700 border border-blue-100'
+                clase: 'bg-red-50 text-red-700 border border-red-100'
             }
         ];
         
@@ -145,7 +145,7 @@ const analizarImagen = (event) => {
         feedbackFoto.value = feedback;
         
         // Si todo está bien, procesar la imagen
-        if (feedback.clase.includes('emerald')) {
+        if (feedback.clase.includes('red')) {
             form.image = file;
             previewUrl.value = URL.createObjectURL(file);
         }
@@ -203,7 +203,7 @@ const submit = () => {
             <span class="mr-2">📸</span> Foto del Producto
           </h3>
           
-          <div class="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-3xl p-8 hover:border-emerald-400 transition-all bg-slate-50">
+          <div class="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-3xl p-8 hover:border-red-400 transition-all bg-slate-50">
             <input type="file" @change="analizarImagen" class="hidden" id="foto-input">
             <label for="foto-input" class="flex flex-col items-center cursor-pointer">
               <span v-if="!analizandoFoto && !feedbackFoto" class="text-4xl mb-3">📷</span>
@@ -214,8 +214,8 @@ const submit = () => {
               </div>
             </label>
 
-            <div v-if="analizandoFoto" class="mt-4 p-3 bg-white rounded-2xl shadow-sm border border-emerald-100 animate-pulse">
-              <p class="text-[10px] text-emerald-600 font-black uppercase text-center">🧠 Analizando iluminación y enfoque...</p>
+            <div v-if="analizandoFoto" class="mt-4 p-3 bg-white rounded-2xl shadow-sm border border-red-100 animate-pulse">
+              <p class="text-[10px] text-red-600 font-black uppercase text-center">🧠 Analizando iluminación y enfoque...</p>
             </div>
 
             <div v-if="feedbackFoto" :class="['mt-4 p-3 rounded-2xl text-[11px] font-medium shadow-sm', feedbackFoto.clase]">
@@ -224,7 +224,7 @@ const submit = () => {
           </div>
           
           <div v-if="!previewUrl" class="mt-4">
-            <label for="foto-input" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer block text-center">
+            <label for="foto-input" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer block text-center">
               O haz clic para seleccionar archivo
             </label>
           </div>
@@ -242,12 +242,12 @@ const submit = () => {
                   v-model="form.name" 
                   type="text" 
                   :class="[
-                    'w-full rounded-xl text-sm focus:ring-emerald-500 pr-20',
-                    camposIALLenados.name ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200'
+                    'w-full rounded-xl text-sm focus:ring-red-700 pr-20',
+                    camposIALLenados.name ? 'border-red-500 bg-red-50' : 'border-gray-200'
                   ]" 
                   placeholder="Ej: Saco de forraje, Cerdo reproductor..."
                 >
-                <span v-if="camposIALLenados.name" class="absolute -top-2 -right-2 text-[9px] text-emerald-600 font-bold animate-pulse bg-white px-2 py-1 rounded-full shadow-md border border-emerald-200 flex items-center gap-1">
+                <span v-if="camposIALLenados.name" class="absolute -top-2 -right-2 text-[9px] text-red-600 font-bold animate-pulse bg-white px-2 py-1 rounded-full shadow-md border border-red-200 flex items-center gap-1">
                   <span>🤖</span> IA
                 </span>
               </div>
@@ -257,12 +257,12 @@ const submit = () => {
               <div class="relative">
                 <div :class="[
                   'flex items-center gap-2 w-full rounded-xl px-4 py-2.5 text-sm font-medium italic',
-                  camposIALLenados.category ? 'border border-emerald-500 bg-emerald-50 text-emerald-700' : 'border border-emerald-100 bg-emerald-50/50 text-emerald-700'
+                  camposIALLenados.category ? 'border border-red-500 bg-red-50 text-red-700' : 'border border-red-100 bg-red-50/50 text-red-700'
                 ]">
                     <span>🏷️</span> 
                     <span>{{ form.species || 'Clasificación automática activa...' }}</span>
                 </div>
-                <span v-if="camposIALLenados.category" class="absolute -top-2 -right-2 text-[9px] text-emerald-600 font-bold animate-pulse bg-white px-2 py-1 rounded-full shadow-md border border-emerald-200 flex items-center gap-1">
+                <span v-if="camposIALLenados.category" class="absolute -top-2 -right-2 text-[9px] text-red-600 font-bold animate-pulse bg-white px-2 py-1 rounded-full shadow-md border border-red-200 flex items-center gap-1">
                   <span>🤖</span> IA
                 </span>
                 <input v-model="form.species" type="hidden">
@@ -284,7 +284,7 @@ const submit = () => {
                                     
                                     <div class="space-y-1">
                                         <label class="block text-xs font-bold text-gray-500 uppercase px-1">Descripción</label>
-                                        <textarea v-model="form.description" rows="4" class="w-full border-yellow-100 bg-yellow-50 rounded-xl text-sm p-3 focus:ring-yellow-500 shadow-sm" placeholder="Describe las características principales..."></textarea>
+                                        <textarea v-model="form.description" rows="4" class="w-full border-red-100 bg-red-50 rounded-xl text-sm p-3 focus:ring-red-700 shadow-sm" placeholder="Describe las características principales..."></textarea>
                                     </div>
                                 </div>
 
@@ -298,10 +298,10 @@ const submit = () => {
                   step="0.10" 
                   :class="[
                     'w-full rounded-xl text-sm',
-                    camposIALLenados.price ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200'
+                    camposIALLenados.price ? 'border-red-500 bg-red-50' : 'border-gray-200'
                   ]"
                 >
-                <span v-if="camposIALLenados.price" class="absolute -top-2 -right-2 text-[9px] text-emerald-600 font-bold animate-pulse bg-white px-2 py-1 rounded-full shadow-md border border-emerald-200 flex items-center gap-1">
+                <span v-if="camposIALLenados.price" class="absolute -top-2 -right-2 text-[9px] text-red-600 font-bold animate-pulse bg-white px-2 py-1 rounded-full shadow-md border border-red-200 flex items-center gap-1">
                   <span>🤖</span> IA
                 </span>
               </div>
@@ -313,7 +313,7 @@ const submit = () => {
             <div>
               <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Estado</label>
               <div class="flex items-center">
-                <input type="checkbox" v-model="form.active" id="active-create" class="rounded text-emerald-500 focus:ring-emerald-500">
+                <input type="checkbox" v-model="form.active" id="active-create" class="rounded text-red-600 focus:ring-red-700">
                 <label for="active-create" class="ml-2 text-sm font-medium text-gray-700">
                   Producto activo
                   <span class="text-xs text-gray-500 block mt-1">
@@ -332,15 +332,15 @@ const submit = () => {
                                         <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center">
                                             <span class="mr-2">📋</span> Ficha Técnica
                                         </h3>
-                                        <button type="button" @click="addAttribute" class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-bold hover:bg-emerald-200 transition">
+                                        <button type="button" @click="addAttribute" class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-[10px] font-bold hover:bg-red-200 transition">
                                             + AGREGAR ATRIBUTO
                                         </button>
                                     </div>
                                     
                                     <div class="space-y-2">
                                         <div v-for="(attr, index) in form.specifications" :key="index" class="flex gap-2 group">
-                                            <input v-model="attr.key" type="text" placeholder="Ej: Peso" class="flex-1 border-gray-200 rounded-xl text-[13px] p-2 focus:ring-emerald-500 shadow-sm">
-                                            <input v-model="attr.value" type="text" placeholder="Ej: 1.2kg" class="flex-1 border-gray-200 rounded-xl text-[13px] p-2 focus:ring-emerald-500 shadow-sm">
+                                            <input v-model="attr.key" type="text" placeholder="Ej: Peso" class="flex-1 border-gray-200 rounded-xl text-[13px] p-2 focus:ring-red-700 shadow-sm">
+                                            <input v-model="attr.value" type="text" placeholder="Ej: 1.2kg" class="flex-1 border-gray-200 rounded-xl text-[13px] p-2 focus:ring-red-700 shadow-sm">
                                             <button type="button" @click="removeAttribute(index)" class="text-gray-300 hover:text-red-500 transition px-2">
                                                 ✕
                                             </button>
@@ -356,7 +356,7 @@ const submit = () => {
                                     <div class="flex gap-3 w-full sm:w-auto">
                                         <button type="submit" 
                                                 :disabled="form.processing"
-                                                class="flex-1 sm:flex-none bg-emerald-600 text-white px-10 py-3 rounded-xl font-bold shadow-xl shadow-emerald-500/20 hover:bg-emerald-700 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 disabled:transform-none">
+                                                class="flex-1 sm:flex-none bg-red-700 text-white px-10 py-3 rounded-xl font-bold shadow-xl shadow-red-700/20 hover:bg-red-800 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 disabled:transform-none">
                                             {{ form.processing ? 'PUBLICANDO...' : 'PUBLICAR EN MUNDO YACUS' }}
                                         </button>
                                     </div>

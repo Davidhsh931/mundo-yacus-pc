@@ -31,8 +31,8 @@ onMounted(() => {
 
     // Crear gradiente de relleno
     const gradient = ctx.createLinearGradient(0, 0, 0, 320);
-    gradient.addColorStop(0, 'rgba(16, 185, 129, 0.3)');  // Esmeralda suave
-    gradient.addColorStop(1, 'rgba(16, 185, 129, 0.01)'); // Transparente
+    gradient.addColorStop(0, 'rgba(217, 16, 35, 0.3)');  // Rojo peruano suave
+    gradient.addColorStop(1, 'rgba(217, 16, 35, 0.01)'); // Transparente
 
     chartInstance = new Chart(ctx, {
         type: 'line',
@@ -41,17 +41,17 @@ onMounted(() => {
             datasets: [{
                 label: 'Ventas de Mundo Yacus',
                 data: testData,
-                borderColor: '#10b981',           // Esmeralda moderno
+                borderColor: '#D91023',           // Rojo peruano
                 backgroundColor: gradient,        // Gradiente de relleno
                 borderWidth: 3,                   // Grosor de línea
                 tension: 0.4,                    // Línea curva suave
                 fill: true,                       // Relleno con gradiente
-                pointBackgroundColor: '#10b981',
+                pointBackgroundColor: '#D91023',
                 pointBorderColor: '#ffffff',
                 pointBorderWidth: 2,
                 pointRadius: 0,                   // Puntos ocultos por defecto
                 pointHoverRadius: 6,             // Puntos visibles en hover
-                pointHoverBackgroundColor: '#10b981',
+                pointHoverBackgroundColor: '#D91023',
                 pointHoverBorderColor: '#ffffff',
                 pointHoverBorderWidth: 3
             }]
@@ -75,7 +75,7 @@ onMounted(() => {
                     backgroundColor: 'rgba(15, 23, 42, 0.9)',
                     titleColor: '#ffffff',
                     bodyColor: '#ffffff',
-                    borderColor: '#10b981',
+                    borderColor: '#D91023',
                     borderWidth: 1,
                     padding: 12,
                     displayColors: false,

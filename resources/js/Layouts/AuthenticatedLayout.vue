@@ -253,11 +253,6 @@ const formatNotificationTime = (date) => {
 
 <template>
     <div>
-        <!-- Banner de Anuncios Urgentes -->
-        <div v-if="$page.props.settings?.banner_active === '1' && $page.props.settings?.banner_text"
-             class="bg-red-600 text-white py-2 px-4 text-center text-sm font-black animate-pulse uppercase tracking-tight">
-            ⚠️ {{ $page.props.settings?.banner_text }}
-        </div>
 
         <!-- Barra Superior de Accesos (Separada) -->
         <div class="bg-gray-50 border-b border-gray-200">
@@ -266,7 +261,7 @@ const formatNotificationTime = (date) => {
                     <!-- Usuario NO logueado -->
                     <div v-if="!$page.props.auth.user" class="relative">
                         <button @click="showingLoginDropdown = !showingLoginDropdown" 
-                                class="text-xs text-gray-600 hover:text-amber-600 transition-colors flex items-center">
+                                class="text-xs text-gray-600 hover:text-red-600 transition-colors flex items-center">
                             Iniciar sesión
                             <svg class="w-3 h-3 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M19 9l-7 7-7-7"/>
@@ -284,7 +279,7 @@ const formatNotificationTime = (date) => {
                             <div class="py-2">
                                 <!-- Opción Principal: Iniciar Sesión -->
                                 <Link href="/login"
-                                      class="block px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors font-medium">
+                                      class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors font-medium">
                                     Iniciar Sesión
                                 </Link>
 
@@ -294,11 +289,11 @@ const formatNotificationTime = (date) => {
                                         Registrarse como
                                     </div>
                                     <Link href="/register/comprador"
-                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
                                         🛒 Comprador
                                     </Link>
                                     <Link href="/register/vendedor"
-                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
                                         🏪 Vendedor
                                     </Link>
                                 </div>
@@ -309,7 +304,7 @@ const formatNotificationTime = (date) => {
                     <!-- Usuario SÍ logueado -->
                     <div v-else class="relative">
                         <button @click="showingProfileDropdown = !showingProfileDropdown" 
-                                class="text-xs text-gray-700 hover:text-amber-600 transition-colors flex items-center">
+                                class="text-xs text-gray-700 hover:text-red-600 transition-colors flex items-center">
                             <span class="text-xs text-gray-700">
                                 Hola, {{ $page.props.auth.user.name }}
                             </span>
@@ -334,27 +329,27 @@ const formatNotificationTime = (date) => {
                                         Panel de Administración
                                     </div>
                                     <Link href="/admin/dashboard" 
-                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
                                         Dashboard
                                     </Link>
                                     <Link href="/admin/guinea-pigs" 
-                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
                                         Productos
                                     </Link>
                                     <Link href="/admin/orders" 
-                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
                                         Pedidos
                                     </Link>
                                     <Link href="/admin/ai-training" 
-                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
                                         IA Training
                                     </Link>
                                     <Link href="/admin/events"
-                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
                                         Eventos
                                     </Link>
                                     <Link href="/admin/users"
-                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
                                         Usuarios
                                     </Link>
 
@@ -363,24 +358,24 @@ const formatNotificationTime = (date) => {
                                 
                                 <!-- Opciones comunes -->
                                 <Link href="/profile" 
-                                      class="block px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors font-medium">
+                                      class="block px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors font-medium">
                                     Mi Perfil
                                 </Link>
                                 
                                 <Link href="/orders" 
-                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
                                     Mis Pedidos
                                 </Link>
                                 
                                 <!-- Configuración según rol -->
                                 <Link v-if="$page.props.auth.user?.role === 'admin'" 
                                       href="/admin/settings" 
-                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
                                     Configuración
                                 </Link>
                                 <Link v-else 
                                       href="/settings" 
-                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
                                     Configuración
                                 </Link>
                                 
@@ -408,14 +403,14 @@ const formatNotificationTime = (date) => {
                         <!-- Izquierda: Logo y Categorías -->
                         <div class="flex items-center space-x-8">
                             <Link href="/" class="flex items-center">
-                                <ApplicationLogo class="h-8 w-auto fill-current text-amber-600" />
+                                <ApplicationLogo class="h-8 w-auto fill-current text-red-600" />
                                 <span class="ml-2 text-xl font-bold text-gray-900">Mundo Yacus</span>
                             </Link>
 
                             <!-- Menú de Categorías con Dropdown -->
                             <div class="relative group hidden md:block">
-                                <button class="text-gray-700 hover:text-amber-600 font-medium transition-colors flex items-center">
-                                    Categoria
+                                <button class="bg-red-600 text-white hover:bg-red-700 font-medium transition-colors flex items-center px-4 py-2 rounded-lg">
+                                    Categorías
                                     <svg class="w-4 h-4 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M19 9l-7 7-7-7"/>
                                     </svg>
@@ -429,7 +424,7 @@ const formatNotificationTime = (date) => {
                                         </div>
                                         <div v-for="category in categories" :key="category.id">
                                             <Link :href="'/products?category=' + category.id"
-                                                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                                                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
                                                 🏷️ {{ category.name }} ({{ category.guinea_pigs_count || 0 }})
                                             </Link>
                                         </div>
@@ -445,7 +440,7 @@ const formatNotificationTime = (date) => {
                                     v-model="searchQuery"
                                     type="text"
                                     placeholder="Buscar productos..."
-                                    class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white"
+                                    class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-red-700 focus:border-red-700 bg-white"
                                     @keyup.enter="performSearch"
                                 />
                                 <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -522,7 +517,7 @@ const formatNotificationTime = (date) => {
                             </div>
 
                             <!-- Carrito (Funcional) -->
-                            <Link href="/cart" class="relative p-2 text-gray-600 hover:text-amber-600 transition-colors">
+                            <Link href="/cart" class="relative p-2 text-gray-600 hover:text-red-600 transition-colors">
                                 <span class="text-lg">🛒</span>
                                 <span v-if="cartCount > 0" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                                     {{ cartCount }}

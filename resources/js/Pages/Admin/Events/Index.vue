@@ -49,9 +49,9 @@ const handleImageUpload = (e) => {
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-12">
                 
                 <!-- Header Personalizado dentro del Layout -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 p-8 rounded-3xl shadow-2xl border-b-4 border-emerald-500">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 p-8 rounded-3xl shadow-2xl border-b-4 border-red-700">
                 <div>
-                    <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-200 text-[10px] font-black uppercase tracking-widest mb-2 border border-emerald-500/20">
+                    <span class="inline-block px-3 py-1 rounded-full bg-red-700/10 text-red-200 text-[10px] font-black uppercase tracking-widest mb-2 border border-red-700/20">
                         Comunicaciones
                     </span>
                     <h2 class="font-black text-4xl text-white leading-none tracking-tighter">
@@ -59,9 +59,9 @@ const handleImageUpload = (e) => {
                     </h2>
                     <p class="text-gray-400 text-sm mt-1">Noticias y comunicados de la comunidad.</p>
                 </div>
-                <div class="text-left md:text-right border-l-4 md:border-l-0 md:border-r-4 border-emerald-500 pl-4 md:pl-0 md:pr-4">
+                <div class="text-left md:text-right border-l-4 md:border-l-0 md:border-r-4 border-red-700 pl-4 md:pl-0 md:pr-4">
                     <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Total</span>
-                    <p class="text-2xl font-black text-emerald-400 leading-none">{{ events?.length || 0 }} <span class="text-xs text-emerald-600">eventos</span></p>
+                    <p class="text-2xl font-black text-red-400 leading-none">{{ events?.length || 0 }} <span class="text-xs text-red-600">eventos</span></p>
                 </div>
             </div>
 
@@ -84,7 +84,7 @@ const handleImageUpload = (e) => {
                                 <div class="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200">
                                     <input type="checkbox" v-model="bannerForm.banner_active" class="sr-only peer">
                                     <div @click="bannerForm.banner_active = !bannerForm.banner_active" 
-                                         :class="bannerForm.banner_active ? 'bg-emerald-500' : 'bg-gray-300'"
+                                         :class="bannerForm.banner_active ? 'bg-red-500' : 'bg-gray-300'"
                                          class="w-11 h-6 rounded-full relative cursor-pointer">
                                         <div :class="bannerForm.banner_active ? 'translate-x-6' : 'translate-x-1'"
                                              class="absolute top-1 h-4 w-4 rounded-full bg-white transition-transform"></div>
@@ -97,14 +97,14 @@ const handleImageUpload = (e) => {
                                 <textarea 
                                     v-model="bannerForm.banner_text" 
                                     rows="3"
-                                    class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                    class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-red-700 focus:border-red-700 transition-all"
                                     placeholder="Ej: ¡Atención! Por feriado local no habrá atención este domingo."
                                 ></textarea>
                             </div>
 
                             <button @click="saveBanner" 
                                     :disabled="bannerForm.processing"
-                                    class="w-full bg-emerald-500 text-slate-900 py-3 px-6 rounded-xl font-black hover:bg-slate-900 hover:text-emerald-400 transition-all shadow-lg disabled:opacity-50">
+                                    class="w-full bg-red-700 text-white py-3 px-6 rounded-xl font-black hover:bg-red-800 transition-all shadow-lg disabled:opacity-50">
                                 <span v-if="bannerForm.processing">Guardando...</span>
                                 <span v-else>Actualizar Aviso</span>
                             </button>
@@ -126,7 +126,7 @@ const handleImageUpload = (e) => {
                                     <input
                                         v-model="form.title"
                                         type="text"
-                                        class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                        class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-red-700 focus:border-red-700 transition-all"
                                         placeholder="Ej: Gran Feria Gastronómica"
                                         required
                                     />
@@ -137,7 +137,7 @@ const handleImageUpload = (e) => {
                                     <input
                                         v-model="form.event_date"
                                         type="date"
-                                        class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                        class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-red-700 focus:border-red-700 transition-all"
                                         required
                                     />
                                 </div>
@@ -147,7 +147,7 @@ const handleImageUpload = (e) => {
                                     <textarea
                                         v-model="form.description"
                                         rows="4"
-                                        class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                        class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-red-700 focus:border-red-700 transition-all"
                                         placeholder="Describe los detalles del evento..."
                                         required
                                     ></textarea>
@@ -159,7 +159,7 @@ const handleImageUpload = (e) => {
                                         type="file"
                                         @change="handleImageUpload"
                                         accept="image/*"
-                                        class="w-full text-sm text-slate-500 border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-black file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
+                                        class="w-full text-sm text-slate-500 border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-red-700 focus:border-red-700 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-black file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
                                     />
                                 </div>
 
@@ -192,7 +192,7 @@ const handleImageUpload = (e) => {
                                     
                                     <div class="flex justify-between items-start">
                                         <div class="flex-1">
-                                            <h3 class="font-black text-slate-900 group-hover:text-emerald-600 transition-colors">{{ event.title }}</h3>
+                                            <h3 class="font-black text-slate-900 group-hover:text-red-600 transition-colors">{{ event.title }}</h3>
                                             <p class="text-sm text-slate-600 mt-2">{{ event.description }}</p>
                                             <p class="text-xs text-slate-500 mt-3">
                                                 📅 {{ event.formatted_date || event.event_date }}
@@ -200,7 +200,7 @@ const handleImageUpload = (e) => {
                                         </div>
                                         
                                         <div class="flex items-center gap-3">
-                                            <span :class="event.is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-800'" 
+                                            <span :class="event.is_active ? 'bg-red-100 text-red-800' : 'bg-slate-100 text-slate-800'" 
                                                   class="px-3 py-1 text-xs font-black uppercase tracking-widest rounded-full">
                                                 {{ event.is_active ? 'Activo' : 'Inactivo' }}
                                             </span>

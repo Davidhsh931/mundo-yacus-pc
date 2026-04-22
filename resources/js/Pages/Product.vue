@@ -113,7 +113,7 @@ const addToCart = () => {
                 <!-- Left: product info -->
                 <div>
                     <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-gray-500 tracking-wide mb-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-amber-600 inline-block"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-600 inline-block"></span>
                         Detalle del Producto
                     </span>
                     <h2 class="text-2xl font-medium text-gray-900 leading-tight">{{ pig.name }}</h2>
@@ -121,9 +121,9 @@ const addToCart = () => {
                 </div>
 
                 <!-- Right: availability -->
-                <div class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 text-right shrink-0">
-                    <p class="text-[11px] font-medium text-amber-700 tracking-wide">Disponibilidad</p>
-                    <p class="text-xl font-medium leading-tight" :class="pig.stock > 0 ? 'text-green-700' : 'text-red-700'">
+                <div class="bg-red-50 border border-red-200 rounded-xl px-4 py-2.5 text-right shrink-0">
+                    <p class="text-[11px] font-medium text-red-700 tracking-wide">Disponibilidad</p>
+                    <p class="text-xl font-medium leading-tight" :class="pig.stock > 0 ? 'text-red-700' : 'text-red-700'">
                         {{ pig.stock > 0 ? pig.stock + ' unidades' : 'AGOTADO' }}
                     </p>
                 </div>
@@ -147,16 +147,16 @@ const addToCart = () => {
                             <div>
                                 <div v-if="isAdmin" class="mb-6">
                                     <Link :href="`/admin/guinea-pigs/${pig.id}/edit`" 
-                                          class="bg-yellow-500 text-gray-950 px-4 sm:px-6 py-3 rounded-xl font-black hover:bg-gray-950 hover:text-yellow-400 transition flex items-center gap-2 w-full sm:w-fit justify-center sm:justify-start">
+                                          class="bg-red-700 text-white px-4 sm:px-6 py-3 rounded-xl font-black hover:bg-red-800 transition flex items-center gap-2 w-full sm:w-fit justify-center sm:justify-start">
                                         ✏️ Editar Producto
                                     </Link>
                                 </div>
                                 
                                 <span 
                                     :class="{
-                                        'bg-green-100 text-green-700 border-green-200': pig.category?.name === 'Animal Vivo',
+                                        'bg-red-100 text-red-700 border-red-200': pig.category?.name === 'Animal Vivo',
                                         'bg-red-100 text-red-700 border-red-200': pig.category?.name === 'Carne Beneficiada',
-                                        'bg-blue-100 text-blue-700 border-blue-200': pig.category?.name === 'Otros/Insumos',
+                                        'bg-red-100 text-red-700 border-red-200': pig.category?.name === 'Otros/Insumos',
                                         'bg-gray-100 text-gray-700 border-gray-200': !pig.category
                                     }" 
                                     class="px-3 sm:px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest border flex items-center gap-2 inline-flex"
@@ -169,7 +169,7 @@ const addToCart = () => {
                                 </span>
                                 
                                 <h1 class="text-3xl font-medium text-gray-900 mt-4 tracking-tight">{{ pig.name }}</h1>
-                                <p class="text-amber-600 font-medium flex items-center mt-2 text-sm">
+                                <p class="text-red-600 font-medium flex items-center mt-2 text-sm">
                                     <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
                                         <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
                                         <circle cx="12" cy="9" r="2.5"/>
@@ -187,8 +187,8 @@ const addToCart = () => {
                                 </p>
                                 
                                 <!-- Descripción del producto -->
-                                <div v-if="pig.description" class="mt-6 p-6 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl border border-yellow-100">
-                                    <h3 class="text-xs font-black text-yellow-700 uppercase tracking-[0.2em] mb-3 flex items-center">
+                                <div v-if="pig.description" class="mt-6 p-6 bg-gradient-to-br from-red-50 to-red-100 rounded-2xl border border-red-100">
+                                    <h3 class="text-xs font-black text-red-700 uppercase tracking-[0.2em] mb-3 flex items-center">
                                         <span class="mr-2">📝</span> Descripción del Producto
                                     </h3>
                                     <p class="text-gray-700 leading-relaxed text-lg">{{ pig.description }}</p>
@@ -224,8 +224,8 @@ const addToCart = () => {
                                 </div>
                                 <button @click="addToCart" 
                                         :disabled="pig.stock <= 0" 
-                                        class="w-10 h-10 rounded-lg border flex items-center justify-center transition-all duration-200 bg-amber-50 border-amber-200 hover:bg-amber-100 disabled:bg-gray-50 disabled:border-gray-100">
-                                    <svg v-if="pig.stock > 0" class="w-4 h-4 stroke-amber-700" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        class="w-10 h-10 rounded-lg border flex items-center justify-center transition-all duration-200 bg-red-50 border-red-200 hover:bg-red-100 disabled:bg-gray-50 disabled:border-gray-100">
+                                    <svg v-if="pig.stock > 0" class="w-4 h-4 stroke-red-700" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="9" cy="21" r="1"/>
                                         <circle cx="20" cy="21" r="1"/>
                                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
@@ -246,7 +246,7 @@ const addToCart = () => {
                 <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
                     <div class="p-6">
                         <h3 class="text-lg font-medium text-gray-900 mb-6 flex items-center gap-3">
-                            <svg class="w-5 h-5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg class="w-5 h-5 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                                 <circle cx="12" cy="9" r="2.5"/>
                             </svg>
@@ -254,7 +254,7 @@ const addToCart = () => {
                         </h3>
 
                         <!-- Formulario para nuevo comentario -->
-                        <div v-if="canComment" class="mb-8 p-4 bg-amber-50 border border-amber-100 rounded-xl">
+                        <div v-if="canComment" class="mb-8 p-4 bg-red-50 border border-red-100 rounded-xl">
                             <h4 class="text-sm font-medium text-gray-900 mb-4">Comparte tu experiencia</h4>
                             <form @submit.prevent="submitComment" class="space-y-4">
                                 <div>
@@ -262,7 +262,7 @@ const addToCart = () => {
                                     <textarea
                                         v-model="form.content"
                                         rows="3"
-                                        class="w-full border-gray-200 rounded-lg p-3 text-sm focus:ring-amber-500 focus:border-amber-500"
+                                        class="w-full border-gray-200 rounded-lg p-3 text-sm focus:ring-red-700 focus:border-red-700"
                                         placeholder="Cuéntanos tu experiencia con este producto..."
                                         required
                                     ></textarea>
@@ -273,14 +273,14 @@ const addToCart = () => {
                                         <button v-for="star in 5" :key="star" type="button" 
                                                 @click="form.rating = star"
                                                 class="text-xl transition-colors"
-                                                :class="star <= form.rating ? 'text-amber-400' : 'text-gray-300'">
+                                                :class="star <= form.rating ? 'text-red-400' : 'text-gray-300'">
                                             🌟
                                         </button>
                                     </div>
                                 </div>
                                 <button type="submit" 
                                         :disabled="form.processing"
-                                        class="bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-amber-700 transition disabled:opacity-50">
+                                        class="bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-800 transition disabled:opacity-50">
                                     {{ form.processing ? 'Enviando...' : 'Enviar Opinión' }}
                                 </button>
                             </form>
@@ -292,7 +292,7 @@ const addToCart = () => {
                                  class="p-4 bg-gray-50 rounded-xl border border-gray-100">
                                 <div class="flex items-start justify-between mb-3">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 text-sm font-medium">
+                                        <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 text-sm font-medium">
                                             {{ comment.user?.name?.substring(0, 2).toUpperCase() || '??' }}
                                         </div>
                                         <div>
@@ -308,7 +308,7 @@ const addToCart = () => {
                                 </div>
 
                                 <div class="mt-2">
-                                    <div class="text-amber-400 text-xs mb-1">
+                                    <div class="text-red-400 text-xs mb-1">
                                         {{ '🌟'.repeat(comment.rating) }}
                                     </div>
                                     <p class="text-gray-700 text-sm leading-relaxed">{{ comment.content }}</p>
