@@ -56,7 +56,7 @@ const refreshProducts = () => {
 // Cargar notificaciones desde el backend
 const loadNotifications = async () => {
     try {
-        const response = await fetch('/admin/notifications', {
+        const response = await fetch('/api/notifications', {
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                 'Accept': 'application/json',
