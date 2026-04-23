@@ -442,3 +442,19 @@ Route::get('/approve-admin/{email}', function ($email) {
 
     return "❌ No se encontró un admin/superadmin con el email {$email}";
 });
+
+// --- RUTA DE RESCATE: CONVERTIR admin@admin.com A SUPERADMIN ---
+Route::get('/setup-superadmin', function () {
+    $user = \App\Models\User::where('email', 'admin@admin.com')->first();
+
+    if (!$user) {
+        return "❌ No se encontró el usuario admin@admin.com";
+    }
+
+    $user->update([
+        'role' => 'superadmin',
+        'is_approved' => true,
+    ]);
+
+    return "✅ Usuario admin@admin.com convertido a superadmin y aprobado. Ahora puede acceder al panel.";
+});
