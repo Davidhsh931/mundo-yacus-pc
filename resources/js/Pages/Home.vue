@@ -40,45 +40,6 @@ const isInvalidImageValue = (value) => {
     return false;
 };
 
-const getProductAltitude = (pig) => {
-    const altitudes = {
-        'Mejorada': 3226,
-        'Andina': 3850,
-        'Criolla': 2800,
-        'Peruana': 3400,
-        'Inti': 3600,
-        'Inca': 3900
-    };
-    const breed = pig?.breed || 'Mejorada';
-    const baseAltitude = altitudes[breed] || 3226;
-    const seed = Number(pig?.id) || 1;
-    const variation = Math.floor((seed * 7) % 200) - 100;
-    return baseAltitude + variation;
-};
-
-const getProductLocation = (pig) => {
-    const locations = [
-        'Comunidad San Cristóbal',
-        'Valle Colorado',
-        'Chacra La Esperanza',
-        'Comunidad Santa Rosa',
-        'Valle del Yacus',
-        'Comunidad San Miguel',
-        'Chacra El Progreso',
-        'Valle Andino'
-    ];
-    const index = (pig?.id || 1) % locations.length;
-    return locations[index];
-};
-
-const currentAltitude = computed(() => {
-    if (props.guineaPigs.length > 0) {
-        return getProductAltitude(props.guineaPigs[0]);
-    }
-    return 3226;
-});
-
-// Helper asset() para generar rutas correctas como en Laravel
 const asset = (path) => {
     if (!path) return FALLBACK_IMAGE;
     if (path.startsWith('http')) return path;
@@ -139,15 +100,6 @@ function addToCart(pig) {
                     </span>
                     <h2 class="text-2xl font-medium text-gray-900 leading-tight">Mercado directo</h2>
                     <p class="text-sm text-gray-400 mt-0.5">Cuyes de chacra, criados en altura.</p>
-                </div>
-
-                <!-- Right: altitude -->
-                <div class="bg-red-50 border border-red-200 rounded-xl px-4 py-2.5 text-right shrink-0">
-                    <p class="text-[11px] font-medium text-red-700 tracking-wide">Altitud actual</p>
-                    <p class="text-xl font-medium text-red-900 leading-tight">
-                        {{ currentAltitude.toLocaleString() }}
-                        <span class="text-xs text-red-600">m s. n. m.</span>
-                    </p>
                 </div>
             </div>
         </template>
@@ -215,18 +167,12 @@ function addToCart(pig) {
 
                             <!-- Body -->
                             <div class="p-4 flex flex-col flex-1 gap-3">
-                                <!-- Name & location -->
+                                <!-- Name & seller -->
                                 <div>
                                     <h3 class="text-[15px] font-medium text-gray-900 capitalize leading-snug group-hover:text-red-600 transition-colors">
                                         {{ pig.name }}
                                     </h3>
-                                    <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
-                                        <svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-                                            <circle cx="12" cy="9" r="2.5"/>
-                                        </svg>
-                                        {{ getProductLocation(pig) }}
-                                        <span class="text-gray-200">·</span>
+                                    <p class="text-xs text-gray-400 mt-0.5">
                                         {{ pig.seller?.name || 'Comunidad Yacus' }}
                                     </p>
                                 </div>

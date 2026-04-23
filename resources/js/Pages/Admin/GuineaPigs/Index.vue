@@ -135,7 +135,7 @@ const toggleActive = (pig) => {
                                                     <span v-else class="px-2 py-0.5 rounded-full text-[10px] font-black bg-gray-100 text-gray-400 uppercase">Oculto</span>
                                                 </div>
                                                 <div class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
-                                                    {{ pig.species }} <span class="mx-1 text-slate-300">•</span> {{ pig.breed_or_model || 'Sin raza' }}
+                                                    {{ pig.species }} <span class="mx-1 text-slate-300">•</span> {{ pig.breed || 'Sin raza' }}
                                                 </div>
                                             </div>
                                         </div>

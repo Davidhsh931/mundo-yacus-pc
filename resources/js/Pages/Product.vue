@@ -169,13 +169,6 @@ const addToCart = () => {
                                 </span>
                                 
                                 <h1 class="text-3xl font-medium text-gray-900 mt-4 tracking-tight">{{ pig.name }}</h1>
-                                <p class="text-red-600 font-medium flex items-center mt-2 text-sm">
-                                    <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-                                        <circle cx="12" cy="9" r="2.5"/>
-                                    </svg>
-                                    Chacras de Yacus, Perú
-                                </p>
                                 <p class="text-gray-400 text-sm flex items-center mt-1">
                                     <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
