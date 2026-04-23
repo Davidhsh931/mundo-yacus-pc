@@ -29,7 +29,7 @@ class CreateSuperAdmin extends Command
      *
      * @var string
      */
-    protected $description = 'Crear un superadmin de emergencia (email: admin@admin.com, rol: admin, aprobado: true)';
+    protected $description = 'Crear un superadmin de emergencia (email: admin@admin.com, rol: superadmin, aprobado: true)';
 
     /**
      * Execute the console command.
@@ -37,11 +37,11 @@ class CreateSuperAdmin extends Command
     public function handle()
     {
         $this->info('🚨 Creando Superadmin de Emergencia');
-        $this->warn('Este comando creará un usuario con email admin@admin.com y rol admin.');
+        $this->warn('Este comando creará un usuario con email admin@admin.com y rol superadmin.');
         $this->warn('Solo usar en emergencias cuando no exista ningún admin aprobado.');
 
         // Verificar si ya existe algún admin aprobado (distinto de admin@admin.com)
-        $existingApprovedAdmin = User::where('role', 'admin')
+        $existingApprovedAdmin = User::where('role', 'superadmin')
             ->where('is_approved', true)
             ->where('email', '!=', 'admin@admin.com')
             ->first();
@@ -68,7 +68,7 @@ class CreateSuperAdmin extends Command
                     $this->info('✅ Superadmin aprobado exitosamente.');
                     $this->info('📧 Email: admin@admin.com');
                     $this->info('👤 Nombre: ' . $existingAdmin->name);
-                    $this->info('🔑 Rol: admin');
+                    $this->info('🔑 Rol: superadmin');
                     $this->info('✅ Aprobado: true');
                     return 0;
                 } else {
@@ -100,14 +100,14 @@ class CreateSuperAdmin extends Command
                 'name' => $name,
                 'email' => 'admin@admin.com',
                 'password' => Hash::make($password),
-                'role' => 'admin',
+                'role' => 'superadmin',
                 'is_approved' => true,
             ]);
 
             $this->info('✅ Superadmin creado exitosamente.');
             $this->info('📧 Email: admin@admin.com');
             $this->info('👤 Nombre: ' . $user->name);
-            $this->info('🔑 Rol: admin');
+            $this->info('🔑 Rol: superadmin');
             $this->info('✅ Aprobado: true');
             $this->warn('⚠️  Guarda la contraseña de forma segura.');
             return 0;
