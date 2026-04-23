@@ -27,7 +27,7 @@ const productsByCategory = computed(() => {
 
 // Obtener nombre de categoría por ID
 const getCategoryName = (categoryId) => {
-    const category = props.categories?.find(c => c.id === categoryId);
+    const category = props.categories?.find(c => c.id == categoryId);
     return category?.name || 'Sin categoría';
 };
 

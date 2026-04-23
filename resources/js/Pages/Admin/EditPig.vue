@@ -6,7 +6,8 @@ import { Cropper } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
 
 const props = defineProps({
-    pig: Object
+    pig: Object,
+    categories: { type: Array, default: () => [] }
 });
 
 // --- 1. ESTADO DEL FORMULARIO ---
@@ -19,7 +20,8 @@ const form = useForm({
     stock: props.pig.stock || 1,
     specifications: [],
     image: null,
-    active: props.pig.active ?? true
+    active: props.pig.active ?? true,
+    category_id: props.pig.category_id || null
 });
 
 const currentImageUrl = ref(null);
@@ -171,9 +173,15 @@ const submit = () => {
 
                                     <div class="space-y-1">
                                         <label class="block text-xs font-bold text-gray-500 uppercase px-1">Categoría</label>
-                                        <div class="flex items-center gap-2 border border-red-100 bg-red-50/50 rounded-xl px-4 py-3 text-xs text-red-700 font-medium italic">
-                                            <span>🤖</span> <span class="animate-pulse">Clasificación automática activa</span>
-                                        </div>
+                                        <select 
+                                            v-model="form.category_id" 
+                                            class="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-red-700 shadow-sm"
+                                        >
+                                            <option value="">Selecciona una categoría</option>
+                                            <option v-for="category in categories" :key="category.id" :value="category.id">
+                                                {{ category.name }}
+                                            </option>
+                                        </select>
                                     </div>
 
                                     <div class="space-y-1">

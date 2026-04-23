@@ -31,7 +31,9 @@ class GuineaPigAdminController extends Controller
 
     public function create()
     {
-        return Inertia::render('Admin/CreateProduct'); 
+        return Inertia::render('Admin/CreateProduct', [
+            'categories' => Category::orderBy('name')->get()
+        ]); 
     }
 
     public function store(Request $request)
@@ -53,44 +55,10 @@ class GuineaPigAdminController extends Controller
 
             // Obtener categorías disponibles dinámicamente
             $categories = Category::all();
-            $rules = $categories->map(fn($c) => "- ID {$c->id}: {$c->training_data}")->implode("\n");
             
             // Fallback automático: usar la primera categoría disponible
             $fallbackCategoryId = $categories->first()->id ?? 1;
-
-            // Clasificación con IA usando jerarquía inteligente
-            $prompt = "Eres un clasificador experto. Analiza el producto con JERARQUÍA:
-
-REGLAS:
-{$rules}
-
-ANÁLISIS JERÁRQUICO:
-1. NOMBRE (Prioridad ALTA): '{$request->name}' - Define la naturaleza principal del producto
-2. DESCRIPCIÓN (Contexto): '{$request->description}' - Da información secundaria
-3. FICHA TÉCNICA (Detalles): '{$request->ai_context}' - Complementa la clasificación
-
-REGLA DE ORO: El NOMBRE define la categoría principal. La descripción solo aclara el uso o contexto, pero no cambia la naturaleza del producto.
-
-Responde SOLO el número del ID:";
-
-            try {
-                $response = Http::withToken(env('OPENAI_API_KEY'))->post('https://api.openai.com/v1/chat/completions', [
-                    'model' => 'gpt-3.5-turbo',
-                    'messages' => [['role' => 'user', 'content' => $prompt]],
-                    'temperature' => 0,
-                ]);
-
-                $responseData = $response->json();
-                $aiResponse = trim($responseData['choices'][0]['message']['content'] ?? '');
-                
-                // Validar que la respuesta sea un ID de categoría existente
-                $categoryId = (int) $aiResponse;
-                if (!$categories->pluck('id')->contains($categoryId)) {
-                    $categoryId = $fallbackCategoryId;
-                }
-            } catch (\Exception $e) {
-                $categoryId = $fallbackCategoryId;
-            }
+            $categoryId = $request->category_id ?? $fallbackCategoryId;
 
             $specificationsArray = json_decode($request->specifications, true) ?: [];
 
@@ -112,8 +80,8 @@ Responde SOLO el número del ID:";
                 'average_weight' => 0,
                 'specifications' => $specificationsArray,
                 'ia_verification' => json_encode([
-                    'status' => 'classified',
-                    'confidence' => 'high',
+                    'status' => 'manual',
+                    'confidence' => 'n/a',
                     'date' => now()
                 ])
             ]);
@@ -144,7 +112,10 @@ Responde SOLO el número del ID:";
     public function edit($id)
     {
         $pig = GuineaPig::with('images')->findOrFail($id);
-        return Inertia::render('Admin/EditPig', ['pig' => $pig]);
+        return Inertia::render('Admin/EditPig', [
+            'pig' => $pig,
+            'categories' => Category::orderBy('name')->get()
+        ]);
     }
 
     public function update(Request $request, $id) 
@@ -158,6 +129,7 @@ Responde SOLO el número del ID:";
         $pig->stock = $request->stock;
         $pig->active = $request->active == "1" ? true : false;
         $pig->description = $request->description;
+        $pig->category_id = $request->category_id ?? $pig->category_id;
         
         // 2. Manejo de Specifications (Decodificar el JSON que llega como string)
         $pig->specifications = json_decode($request->specifications, true);

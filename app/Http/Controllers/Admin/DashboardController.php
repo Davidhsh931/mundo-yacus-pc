@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\GuineaPig;
 use App\Models\User;
+use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -42,7 +43,8 @@ class DashboardController extends Controller
                 'chart_data' => $salesData
             ],
             'lowStockCount' => $lowStockCount,
-            'recentProducts' => $recentProducts
+            'recentProducts' => $recentProducts,
+            'categories' => Category::orderBy('name')->get()
         ]);
     }
     

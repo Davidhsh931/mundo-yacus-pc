@@ -553,6 +553,7 @@ const formatNotificationTime = (date) => {
                         <ResponsiveNavLink href="/dashboard"> 📊 Dashboard </ResponsiveNavLink>
                         <ResponsiveNavLink href="/admin/orders"> 💰 Gestión de Ventas </ResponsiveNavLink>
                         <ResponsiveNavLink href="/admin/guinea-pigs"> 🐹 Gestión de Productos </ResponsiveNavLink>
+                        <ResponsiveNavLink href="/admin/ai-training"> 🧠 Gestión de Categorías </ResponsiveNavLink>
                     </div>
                 </template>
 

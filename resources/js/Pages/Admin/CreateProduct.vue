@@ -2,9 +2,10 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { useForm, Link } from '@inertiajs/vue3';
 
-// Props para recibir datos de la IA
+// Props para recibir datos de la IA y categorías
 const props = defineProps({
-    prefillData: { type: Object, default: () => ({}) }
+    prefillData: { type: Object, default: () => ({}) },
+    categories: { type: Array, default: () => [] }
 });
 
 // --- Estado del Formulario Universal ---
@@ -19,6 +20,7 @@ const form = useForm({
   specifications: [{ key: '', value: '' }], // Para datos técnicos
   image: null,
   active: true, // Por defecto activo
+  category_id: null, // Categoría seleccionada manualmente
   ia_verification: { 
     status: 'pending', 
     requested_at: new Date().toISOString() 
@@ -252,21 +254,17 @@ const submit = () => {
                 </span>
               </div>
             </div>
-            <div class="relative">
-              <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Categoría / Tipo</label>
-              <div class="relative">
-                <div :class="[
-                  'flex items-center gap-2 w-full rounded-xl px-4 py-2.5 text-sm font-medium italic',
-                  camposIALLenados.category ? 'border border-red-500 bg-red-50 text-red-700' : 'border border-red-100 bg-red-50/50 text-red-700'
-                ]">
-                    <span>🏷️</span> 
-                    <span>{{ form.species || 'Clasificación automática activa...' }}</span>
-                </div>
-                <span v-if="camposIALLenados.category" class="absolute -top-2 -right-2 text-[9px] text-red-600 font-bold animate-pulse bg-white px-2 py-1 rounded-full shadow-md border border-red-200 flex items-center gap-1">
-                  <span>🤖</span> IA
-                </span>
-                <input v-model="form.species" type="hidden">
-              </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Categoría</label>
+              <select 
+                v-model="form.category_id" 
+                class="w-full border-gray-200 rounded-xl text-sm p-2.5 focus:ring-red-700"
+              >
+                <option value="">Selecciona una categoría</option>
+                <option v-for="category in categories" :key="category.id" :value="category.id">
+                  {{ category.name }}
+                </option>
+              </select>
             </div>
           </div>
 

@@ -167,62 +167,18 @@ class GuineaPigController extends Controller
     ]);
 
     try {
-        // --- 🤖 FASE 1: CLASIFICACIÓN INTELIGENTE (IA) ---
-        $categories = Category::all();
-        $fallbackCategoryId = 3; // ID para 'Otros'
-        $categoryId = $fallbackCategoryId;
-
-        if (env('OPENAI_API_KEY')) {
-            $rules = $categories->map(fn($c) => "- ID {$c->id}: {$c->training_data}")->implode("\n");
-            
-            $prompt = "Eres un clasificador experto de productos para 'Mundo Yacus'.
-            Analiza el producto y responde ÚNICAMENTE el número del ID de categoría que le corresponde.
-            
-            REGLAS:
-            {$rules}
-            
-            PRODUCTO:
-            Nombre: '{$request->name}'
-            Descripción: '{$request->description}'
-            Contexto: '{$request->ai_context}'
-            
-            REGLA DE ORO: Responde SOLO el número del ID.";
-
-            try {
-                $response = Http::withToken(env('OPENAI_API_KEY'))
-                    ->timeout(5) // Para que no bloquee tu app si la API tarda
-                    ->post('https://api.openai.com/v1/chat/completions', [
-                        'model' => 'gpt-3.5-turbo',
-                        'messages' => [['role' => 'user', 'content' => $prompt]],
-                        'temperature' => 0,
-                    ]);
-
-                if ($response->successful()) {
-                    $aiResponse = trim($response->json()['choices'][0]['message']['content'] ?? '');
-                    $predictedId = (int) $aiResponse;
-                    
-                    // Validamos que el ID entregado por la IA realmente exista en nuestra DB
-                    if ($categories->pluck('id')->contains($predictedId)) {
-                        $categoryId = $predictedId;
-                    }
-                }
-            } catch (\Exception $e) {
-                \Log::warning("IA Falló: Usando fallback - " . $e->getMessage());
-            }
-        }
-
-        // --- 🛠️ FASE 2: PROCESAMIENTO DE DATOS ---
+        // --- 🛠️ PROCESAMIENTO DE DATOS ---
         $specs = $request->specifications;
         if (is_string($specs)) {
             $specs = json_decode($specs, true);
         }
 
-        // --- FASE 3: CREACIÓN Y GUARDADO ---
+        // --- FASE 2: CREACIÓN Y GUARDADO ---
         $pig = \App\Models\GuineaPig::create([
             'user_id'         => auth()->id() ?? 1,
             'name'            => $request->name,
             'description'     => $request->description,
-            'category_id'     => $categoryId, // ID ASIGNADO POR IA O FALLBACK
+            'category_id'     => $request->category_id ?? 3, // ID seleccionado manualmente o fallback a 'Otros'
             'species'         => $request->species,
             'price'           => $request->price,
             'product_state'   => $request->product_state,
@@ -230,8 +186,8 @@ class GuineaPigController extends Controller
             'active'          => true,
             'specifications'  => $specs,
             'ia_verification' => json_encode([
-                'status' => 'automatic',
-                'confidence' => 'high',
+                'status' => 'manual',
+                'confidence' => 'n/a',
                 'date' => now()->toDateTimeString()
             ]), 
         ]);

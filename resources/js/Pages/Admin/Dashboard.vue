@@ -132,7 +132,7 @@
                                 <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest border border-gray-200 px-2 py-1 rounded">Manual Entry</span>
                             </div>
                             <div ref="formularioSeccion" class="p-8">
-                                <CreateProductForm :prefillData="iaFormSuggestions" />
+                                <CreateProductForm :prefillData="iaFormSuggestions" :categories="categories" />
                             </div>
                         </div>
 
@@ -269,7 +269,8 @@ const props = defineProps({
     latestProducts: { type: Array, default: () => [] },
     lowStockProducts: { type: Array, default: () => [] },
     events: { type: Array, default: () => [] },
-    lowStockCount: { type: Number, default: 0 }
+    lowStockCount: { type: Number, default: 0 },
+    categories: { type: Array, default: () => [] }
 });
 
 // Arreglar ReferenceError chartCanvas
