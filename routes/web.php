@@ -420,3 +420,15 @@ Route::get('/rescue-admin', function () {
 
     return "ERROR: No se encontró al usuario con el correo {$email} en la base de datos de Railway.";
 });
+
+// --- RUTA DE APROBACIÓN DE ADMIN / SUPERADMIN ---
+Route::get('/approve-admin/{email}', function ($email) {
+    $user = \App\Models\User::where('email', $email)->first();
+
+    if ($user && in_array($user->role, ['admin', 'superadmin'])) {
+        $user->update(['is_approved' => true]);
+        return "✅ {$user->role} {$email} ha sido aprobado. Ahora puede acceder al panel.";
+    }
+
+    return "❌ No se encontró un admin/superadmin con el email {$email}";
+});
