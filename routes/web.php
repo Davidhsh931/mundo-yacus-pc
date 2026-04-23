@@ -415,18 +415,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
 });
 
-// --- RUTA TEMPORAL DE RESCATE PARA ADMIN ---
-Route::get('/rescue-admin', function () {
-    // Pon aquí el correo con el que intentas entrar
-    $email = 'tu-correo@admin.com'; 
-    
+// --- RUTA TEMPORAL DE RESCATE PARA ADMIN (DEVELOPMENT ONLY) ---
+Route::get('/approve-admin/{email}', function ($email) {
     $user = \App\Models\User::where('email', $email)->first();
 
-    if ($user) {
-        $user->role = 'admin'; // Forzamos el rol exacto
-        $user->save();
-        return "ÉXITO: El usuario {$email} ahora tiene rol 'admin'. Prueba loguear.";
+    if ($user && $user->role === 'admin') {
+        $user->update(['is_approved' => true]);
+        return "✅ Admin {$email} ha sido aprobado. Ahora puede acceder al panel.";
     }
 
-    return "ERROR: No se encontró al usuario con el correo {$email} en la base de datos de Railway.";
+    return "❌ No se encontró un admin con el email {$email}";
 });
