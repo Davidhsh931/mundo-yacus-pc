@@ -16,17 +16,17 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // 🛑 GUARDIÁN: Si no está autenticado o no es admin, lo expulsa
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
+        // 🛑 GUARDIÁN: Si no está autenticado o no es admin/superadmin, lo expulsa
+        if (!Auth::check() || !in_array(Auth::user()->role, ['admin', 'superadmin'])) {
             return redirect('/')->with('error', 'Acceso denegado: Área exclusiva para administradores.');
         }
 
-        // 🛑 Si es admin pero no está aprobado, redirige con mensaje específico
+        // 🛑 Solo los admins regulares necesitan aprobación; los superadmins pasan directo
         if (Auth::user()->role === 'admin' && !Auth::user()->is_approved) {
             return redirect('/')->with('error', 'Tu cuenta de administrador está pendiente de aprobación por el propietario.');
         }
 
-        // ✅ Si es admin y está aprobado, deja pasar
+        // ✅ Si es admin aprobado o superadmin, deja pasar
         return $next($request);
     }
 }
