@@ -23,7 +23,6 @@ class DatabaseSeeder extends Seeder
         // 2. Crear Categoría
         $cat = Category::create([
             'name' => 'Cuy Peruano',
-            'description' => 'Cuyes de raza pura'
         ]);
 
         // 3. Crear Cuy

@@ -165,12 +165,12 @@
                         <div class="bg-slate-900 rounded-3xl p-1 shadow-2xl shadow-red-900/10">
                             <div class="bg-white p-7 rounded-[calc(1.5rem-2px)] border border-slate-100">
                                 <div class="flex items-center gap-3 mb-4">
-                                    <div class="p-2 bg-red-50 rounded-lg text-red-600 text-xl font-bold">ML</div>
-                                    <h3 class="font-black text-slate-900 text-sm uppercase tracking-tight">Machine Learning</h3>
+                                    <div class="p-2 bg-red-50 rounded-lg text-red-600 text-xl font-bold">GC</div>
+                                    <h3 class="font-black text-slate-900 text-sm uppercase tracking-tight">Gestión de Categorías</h3>
                                 </div>
-                                <p class="text-gray-500 text-xs mb-6 leading-relaxed">Entrena el algoritmo con nuevos parámetros para mejorar la predicción de stock.</p>
-                                <Link :href="route('ai-training.index')" class="group flex items-center justify-center gap-2 w-full bg-slate-900 text-white py-3.5 rounded-2xl font-bold text-xs hover:bg-red-700 transition-all duration-300 shadow-lg shadow-slate-200 hover:shadow-red-200">
-                                    GESTIONAR CEREBRO
+                                <p class="text-gray-500 text-xs mb-6 leading-relaxed">Administra las categorías disponibles para clasificar productos.</p>
+                                <Link :href="route('categories.index')" class="group flex items-center justify-center gap-2 w-full bg-slate-900 text-white py-3.5 rounded-2xl font-bold text-xs hover:bg-red-700 transition-all duration-300 shadow-lg shadow-slate-200 hover:shadow-red-200">
+                                    GESTIONAR CATEGORÍAS
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                                 </Link>
                             </div>

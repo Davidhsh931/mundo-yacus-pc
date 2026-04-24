@@ -14,7 +14,7 @@ const props = defineProps({
 const form = useForm({
     name: props.pig.name,
     species: props.pig.species || '',
-    breed_or_model: props.pig.breed || '',
+    breed: props.pig.breed || '',
     description: '',
     price: props.pig.price || 0,
     stock: props.pig.stock || 1,
@@ -185,8 +185,8 @@ const submit = () => {
                                     </div>
 
                                     <div class="space-y-1">
-                                        <label class="block text-xs font-bold text-gray-500 uppercase px-1">Raza o Modelo</label>
-                                        <input v-model="form.breed_or_model" type="text" class="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-red-700 shadow-sm" placeholder="Ej: Merino, Perú...">
+                                        <label class="block text-xs font-bold text-gray-500 uppercase px-1">Raza/Modelo/Marca/Tipo</label>
+                                        <input v-model="form.breed" type="text" class="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-red-700 shadow-sm" placeholder="Ej: Merino, Perú...">
                                     </div>
 
                                     <div class="grid grid-cols-2 gap-4">

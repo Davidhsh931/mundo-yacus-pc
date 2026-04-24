@@ -7,7 +7,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class AiTrainingController extends Controller
+class CategoryController extends Controller
 {
     public function index()
     {
@@ -16,7 +16,7 @@ class AiTrainingController extends Controller
         // Categorías en la papelera (ordenadas)
         $trashed = Category::onlyTrashed()->orderBy('deleted_at', 'desc')->get();
         
-        return Inertia::render('Admin/AiTraining', [
+        return Inertia::render('Admin/Categorias', [
             'categories' => $categories,
             'trashed' => $trashed
         ]);
@@ -30,7 +30,6 @@ class AiTrainingController extends Controller
 
         Category::create([
             'name' => $request->name,
-            'training_data' => 'palabra clave inicial', // Un valor por defecto
         ]);
 
         return back()->with('message', '¡Nueva categoría creada!');
@@ -40,7 +39,6 @@ class AiTrainingController extends Controller
     {
         $category->update([
             'name' => $request->name,
-            'training_data' => $request->training_data
         ]);
 
         return back()->with('message', '¡Categoría actualizada!');

@@ -48,7 +48,7 @@ class GuineaPigAdminController extends Controller
                 'description' => 'nullable|string',
                 'price' => 'required|numeric|min:0',
                 'stock' => 'required|integer|min:0',
-                'breed_or_model' => 'nullable|string|max:255',
+                'breed' => 'nullable|string|max:255',
                 'image' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif,bmp,tiff|max:2048',
                 'specifications' => 'nullable|string'
             ]);
@@ -64,7 +64,6 @@ class GuineaPigAdminController extends Controller
 
             // 3. Forzar valores si están vacíos
             $description = !empty($request->description) ? $request->description : 'Producto de alta calidad';
-            $species = !empty($request->species) ? $request->species : 'Animales en Pie';
             $product_state = !empty($request->product_state) ? $request->product_state : 'Disponible';
             
             // 3. Intenta crear el registro
@@ -74,9 +73,8 @@ class GuineaPigAdminController extends Controller
                 'category_id' => $categoryId, 
                 'price' => $request->price,
                 'stock' => $request->stock,
-                'species' => $species,
                 'product_state' => $product_state,
-                'breed' => $request->breed_or_model ?? 'No especificada',
+                'breed' => $request->breed ?? 'No especificada',
                 'average_weight' => 0,
                 'specifications' => $specificationsArray,
                 'ia_verification' => json_encode([
@@ -124,7 +122,7 @@ class GuineaPigAdminController extends Controller
 
         // 1. Mapeo manual de campos (Para que coincidan con tu BD)
         $pig->name = $request->name;
-        $pig->breed = $request->breed_or_model; 
+        $pig->breed = $request->breed; 
         $pig->price = $request->price;
         $pig->stock = $request->stock;
         $pig->active = $request->active == "1" ? true : false;

@@ -7,6 +7,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\VisionController;
 use App\Http\Controllers\VisionComentController;
 use App\Http\Controllers\Admin\GuineaPigAdminController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\CustomerOrderController;
 use App\Http\Controllers\Admin\OrderAdminController;
 use App\Http\Controllers\Admin\EventController;
@@ -100,13 +101,13 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function(){
     Route::get('/guinea-pigs/{id}/edit', [GuineaPigAdminController::class, 'edit'])->name('guinea-pigs.edit');
     Route::delete('/guinea-pigs/{id}', [GuineaPigAdminController::class, 'destroy'])->name('guinea-pigs.destroy');
     
-    // Centro de Entrenamiento IA
-Route::get('/ai-training', [AiTrainingController::class, 'index'])->name('ai-training.index');
-Route::post('/ai-training', [AiTrainingController::class, 'store'])->name('ai-training.store');
-Route::post('/ai-training/{category}', [AiTrainingController::class, 'update'])->name('ai-training.update');
-Route::delete('/admin/ai-training/{category}', [AiTrainingController::class, 'destroy'])->name('ai-training.destroy');
-Route::post('/admin/ai-training/{id}/restore', [AiTrainingController::class, 'restore'])->name('ai-training.restore');
-Route::delete('/admin/ai-training/{id}/force', [AiTrainingController::class, 'forceDelete'])->name('ai-training.force-delete');
+    // Categorías
+Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+Route::post('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+Route::post('/admin/categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
+Route::delete('/admin/categories/{id}/force', [CategoryController::class, 'forceDelete'])->name('categories.force-delete');
 
     // Papelera
     Route::get('/guinea-pigs/trashed', [GuineaPigAdminController::class, 'trashed'])->name('guinea-pigs.trashed');

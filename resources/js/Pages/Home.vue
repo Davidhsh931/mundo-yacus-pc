@@ -179,8 +179,12 @@ function addToCart(pig) {
 
                                 <!-- Specs -->
                                 <div class="grid grid-cols-2 gap-1.5">
+                                    <div v-if="pig.breed" class="bg-gray-50 rounded-lg px-2.5 py-2">
+                                        <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">Tipo</p>
+                                        <p class="text-xs font-medium text-gray-800 truncate">{{ pig.breed }}</p>
+                                    </div>
                                     <div
-                                        v-for="(attr, index) in pig.specifications?.slice(0, 2)"
+                                        v-for="(attr, index) in pig.specifications?.slice(0, pig.breed ? 1 : 2)"
                                         :key="index"
                                         class="bg-gray-50 rounded-lg px-2.5 py-2"
                                     >

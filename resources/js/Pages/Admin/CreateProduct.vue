@@ -12,18 +12,18 @@ const props = defineProps({
 const form = useForm({
   name: '',              // Alineado con el controlador
   species: '',           // Alineado con el controlador (category)
-  breed_or_model: '',    // Para referencia visual
+  breed: '',             // Campo real de la base de datos
   description: '',       // Para guardar en specifications
   price: '',
-  stock: 1, 
+  stock: 1,
   product_state: 'Disponible',  // Campo requerido por backend
   specifications: [{ key: '', value: '' }], // Para datos técnicos
   image: null,
   active: true, // Por defecto activo
   category_id: null, // Categoría seleccionada manualmente
-  ia_verification: { 
-    status: 'pending', 
-    requested_at: new Date().toISOString() 
+  ia_verification: {
+    status: 'pending',
+    requested_at: new Date().toISOString()
   },
 });
 
@@ -49,15 +49,6 @@ const camposIALLenados = computed(() => {
     
     return deteccion;
 });
-
-// Obtener nombre de categoría por ID
-const getCategoryName = (categoryId) => {
-    const categories = {
-        1: 'Animales en Pie',
-        2: 'Forraje y Alimento'
-    };
-    return categories[categoryId] || '';
-};
 
 // Watch para aplicar prefillData cuando cambie
 watch(() => props.prefillData, (newData) => {
@@ -179,11 +170,10 @@ const submit = () => {
       ai_context: `PRODUCTO: ${data.name}. 
                    DESCRIPCIÓN: ${data.description}. 
                    FICHA TÉCNICA: ${technicalData}. 
-                   RAZA/MODELO: ${data.breed_or_model}.`,
+                   RAZA/MODELO: ${data.breed}.`,
       
       specifications: JSON.stringify([
-        ...data.specifications.filter(attr => attr.key && attr.value && attr.key.toLowerCase() !== 'descripción'),
-        { key: 'raza_o_modelo', value: data.breed_or_model || '' }
+        ...data.specifications.filter(attr => attr.key && attr.value && attr.key.toLowerCase() !== 'descripción')
       ]),
     }
   }).post(route('guinea-pigs.store'), {
@@ -269,8 +259,8 @@ const submit = () => {
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Raza, Marca o Modelo (Opcional)</label>
-            <input v-model="form.breed_or_model" type="text" class="w-full border-gray-200 rounded-xl text-sm" placeholder="Ej: Raza Andana, Marca Molitalia...">
+            <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Raza/Modelo/Marca/Tipo(Opcional)</label>
+            <input v-model="form.breed" type="text" class="w-full border-gray-200 rounded-xl text-sm" placeholder="Ej: Raza Andana, Marca Molitalia...">
           </div>
 
           <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">

@@ -340,9 +340,9 @@ const formatNotificationTime = (date) => {
                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
                                         Pedidos
                                     </Link>
-                                    <Link href="/admin/ai-training" 
+                                    <Link href="/admin/categories" 
                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
-                                        IA Training
+                                        Categorías
                                     </Link>
                                     <Link href="/admin/events"
                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
@@ -553,7 +553,7 @@ const formatNotificationTime = (date) => {
                         <ResponsiveNavLink href="/dashboard"> 📊 Dashboard </ResponsiveNavLink>
                         <ResponsiveNavLink href="/admin/orders"> 💰 Gestión de Ventas </ResponsiveNavLink>
                         <ResponsiveNavLink href="/admin/guinea-pigs"> 🐹 Gestión de Productos </ResponsiveNavLink>
-                        <ResponsiveNavLink href="/admin/ai-training"> 🧠 Gestión de Categorías </ResponsiveNavLink>
+                        <ResponsiveNavLink href="/admin/categories"> 🧠 Gestión de Categorías </ResponsiveNavLink>
                     </div>
                 </template>
 

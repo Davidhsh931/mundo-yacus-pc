@@ -12,8 +12,6 @@ class Category extends Model
     protected $fillable = [
         'id',
         'name',
-        'description',
-        'training_data'
     ];
 
     public function guineaPigs()

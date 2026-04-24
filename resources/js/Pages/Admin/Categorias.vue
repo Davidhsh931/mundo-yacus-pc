@@ -11,7 +11,7 @@ const newCategoryForm = useForm({
 });
 
 const createCategory = () => {
-    newCategoryForm.post(route('ai-training.store'), {
+    newCategoryForm.post(route('categories.store'), {
         onSuccess: () => {
             newCategoryForm.reset();
             showNewCategoryForm.value = false;
@@ -20,11 +20,10 @@ const createCategory = () => {
 };
 
 const saveTraining = (category) => {
-  const form = useForm({ 
+  const form = useForm({
     name: category.name,
-    training_data: category.training_data 
-  });
-  form.post(route('ai-training.update', category.id), {
+});
+  form.post(route('categories.update', category.id), {
     preserveScroll: true,
     onSuccess: () => alert('🧠 ¡Categoría actualizada: ' + category.name + '!')
   });
@@ -32,25 +31,24 @@ const saveTraining = (category) => {
 
 const deleteCategory = (id) => {
     if (confirm('¿Enviar a la papelera? Los productos de esta categoría no se borrarán.')) {
-        router.delete(route('ai-training.destroy', id));
+        router.delete(route('categories.destroy', id));
     }
 };
 
 const restoreCategory = (id) => {
-    router.post(route('ai-training.restore', id));
+    router.post(route('categories.restore', id));
 };
 
-// Lógica de eliminación definitiva
 const permanentDelete = (id) => {
     if (confirm('⚠️ ¿ESTÁS SEGURO? Esta acción no se puede deshacer y la categoría desaparecerá de la base de datos.')) {
-        router.delete(route('ai-training.force-delete', id));
+        router.delete(route('categories.force-delete', id));
     }
 };
 </script>
 
 <template>
     <AuthenticatedLayout :categories="categories">
-        <Head title="IA Training" />
+        <Head title="Gestión de Categorías" />
         
         <div class="max-w-7xl mx-auto p-6 sm:p-10 bg-slate-50 min-h-screen font-sans selection:bg-red-100 selection:text-red-700">
             
@@ -59,11 +57,11 @@ const permanentDelete = (id) => {
                 <div class="space-y-2">
                     <div class="flex items-center gap-4">
                         <div class="p-3 bg-gradient-to-br from-red-600 to-red-700 rounded-2xl text-white text-2xl shadow-xl shadow-red-200/50 rotate-3 group-hover:rotate-0 transition-transform">
-                            <span class="block drop-shadow-md">🧠</span>
+                            <span class="block drop-shadow-md">📂</span>
                         </div>
                         <div>
-                            <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight leading-none">Neural Core</h1>
-                            <p class="text-slate-500 text-sm font-medium mt-1">Entrenamiento de semántica para <span class="text-red-600 font-bold">Mundo Yacus</span></p>
+                            <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight leading-none">Gestión de Categorías</h1>
+                            <p class="text-slate-500 text-sm font-medium mt-1">Administración de categorías para clasificar productos de <span class="text-red-600 font-bold">Mundo Yacus</span></p>
                         </div>
                     </div>
                 </div>
@@ -90,13 +88,13 @@ const permanentDelete = (id) => {
                     <div class="absolute top-0 left-0 w-2 h-full bg-red-600"></div>
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold text-xs">01</div>
-                        <h3 class="font-black uppercase tracking-widest text-xs text-slate-400">Configuración de Nuevo Descriptor</h3>
+                        <h3 class="font-black uppercase tracking-widest text-xs text-slate-400">Nueva Categoría</h3>
                     </div>
                     <div class="flex flex-col md:flex-row gap-4">
                         <div class="flex-1">
                             <input 
                                 v-model="newCategoryForm.name"
-                                placeholder="Ej: Reproductores Machos Elite"
+                                placeholder="Ej: Animales, Carne, Forraje"
                                 class="w-full px-6 py-4 bg-slate-100/50 border-transparent rounded-2xl focus:ring-4 focus:ring-red-500/10 focus:bg-white focus:border-red-500 transition-all font-bold text-slate-700 placeholder-slate-400"
                                 @keyup.enter="createCategory"
                             />
@@ -106,7 +104,7 @@ const permanentDelete = (id) => {
                             :disabled="newCategoryForm.processing"
                             class="bg-red-600 hover:bg-red-700 text-white px-10 py-4 rounded-2xl font-black shadow-lg shadow-red-200 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-3"
                         >
-                            DESPLEGAR NODO
+                            Guardar Categoría
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586L-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
                             </svg>
@@ -128,7 +126,7 @@ const permanentDelete = (id) => {
 
         <div class="p-8 pb-4 flex justify-between items-start relative z-10">
             <div class="flex-1 pr-10">
-                <span class="text-[10px] font-black text-red-500 tracking-[0.3em] uppercase block mb-2 px-1">Clasificación Semántica</span>
+                <span class="text-[10px] font-black text-red-500 tracking-[0.3em] uppercase block mb-2 px-1">Categorización</span>
                 <input 
                     v-model="category.name" 
                     class="text-2xl font-black text-slate-800 border-b-2 border-transparent focus:border-red-500 focus:ring-0 bg-transparent w-full p-1 transition-colors"
@@ -142,28 +140,7 @@ const permanentDelete = (id) => {
             </button>
         </div>
 
-        <div class="px-8 flex-1 relative z-10">
-            <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100 focus-within:bg-white focus-within:ring-4 focus-within:ring-red-500/5 focus-within:border-red-200 transition-all">
-                <div class="flex items-center justify-between mb-3 opacity-60">
-                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span> Keywords Dataset
-                    </label>
-                    <span class="text-[9px] font-mono bg-white px-2 py-1 rounded-lg border border-slate-200 shadow-sm">ARRAY_TYPE</span>
-                </div>
-                <textarea 
-                  v-model="category.training_data" 
-                  rows="4" 
-                  class="w-full bg-transparent border-none focus:ring-0 text-sm font-semibold text-slate-600 placeholder-slate-300 resize-none leading-relaxed"
-                  placeholder="vivos, cuyes, reproductores, jovenes..."
-                ></textarea>
-            </div>
-        </div>
-
         <div class="p-8 pt-6 flex items-center justify-between relative z-10">
-            <div class="flex -space-x-2">
-                <div class="w-8 h-8 rounded-full border-2 border-white bg-slate-200 flex items-center justify-center text-[10px] font-bold">IA</div>
-                <div class="w-8 h-8 rounded-full border-2 border-white bg-red-100 flex items-center justify-center text-[10px] font-bold text-red-600">✓</div>
-            </div>
             <button 
               @click="saveTraining(category)"
               class="bg-slate-900 text-white hover:bg-red-600 px-6 py-3 rounded-xl text-xs font-black transition-all flex items-center gap-3 shadow-lg shadow-slate-200 active:scale-95"
@@ -171,7 +148,7 @@ const permanentDelete = (id) => {
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
               </svg>
-              SINCRONIZAR MODELO
+              ACTUALIZAR CATEGORÍA
             </button>
         </div>
       </div>
@@ -180,7 +157,7 @@ const permanentDelete = (id) => {
     <div v-if="trashed.length > 0" class="mt-24 pb-20">
       <div class="flex items-center gap-6 mb-10">
           <h3 class="text-slate-400 font-black uppercase text-[12px] tracking-[0.4em] whitespace-nowrap">
-            Zona de Depuración
+            Papelera
           </h3>
           <div class="h-[2px] flex-1 bg-gradient-to-r from-slate-200 to-transparent"></div>
       </div>
