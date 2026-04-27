@@ -28,6 +28,17 @@ Route::match(['post', 'put'], '/admin/guinea-pigs/{id}', [GuineaPigAdminControll
 |--------------------------------------------------------------------------
 */
 
+// --- SERVE IMAGES FROM PERSISTENT STORAGE ---
+Route::get('/storage/images/{filename}', function ($filename) {
+    $path = storage_path('app/public/images/' . $filename);
+
+    if (!file_exists($path)) {
+        abort(404);
+    }
+
+    return response()->file($path);
+})->where('filename', '.*');
+
 // --- 1. INTELIGENCIA ARTIFICIAL (IA) ---
 Route::post('/vision/analyze', [VisionController::class, 'analyze']);
 Route::post('/vision/analyze/coment', [VisionComentController::class, 'analyze']);
