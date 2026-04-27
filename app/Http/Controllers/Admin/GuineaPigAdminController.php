@@ -178,4 +178,3 @@ class GuineaPigAdminController extends Controller
     {
         return Inertia::render('Admin/CreatePigComent'); 
     }
-}
