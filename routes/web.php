@@ -30,7 +30,13 @@ Route::match(['post', 'put'], '/admin/guinea-pigs/{id}', [GuineaPigAdminControll
 
 // --- SERVE IMAGES FROM PERSISTENT STORAGE ---
 Route::get('/storage/images/{filename}', function ($filename) {
+    // Try images folder first
     $path = storage_path('app/public/images/' . $filename);
+
+    // If not found, try productos folder
+    if (!file_exists($path)) {
+        $path = storage_path('app/public/productos/' . $filename);
+    }
 
     if (!file_exists($path)) {
         abort(404);
