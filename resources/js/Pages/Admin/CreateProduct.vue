@@ -28,8 +28,6 @@ const form = useForm({
 });
 
 const previewUrl = ref(null);
-const feedbackFoto = ref(null);
-const analizandoFoto = ref(false);
 
 // Detectar qué campos fueron llenados por la IA
 const camposIALLenados = computed(() => {
@@ -75,74 +73,13 @@ watch(() => props.prefillData, (newData) => {
     }
 }, { immediate: true });
 
-// Función para analizar imagen con IA
-const analizarImagen = (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    
-    analizandoFoto.value = true;
-    feedbackFoto.value = null;
-    
-    // Validar tipo de archivo
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/bmp', 'image/tiff'];
-    const fileName = file.name.toLowerCase();
-    const isImageFile = fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png') || fileName.endsWith('.webp') || fileName.endsWith('.gif') || fileName.endsWith('.bmp') || fileName.endsWith('.tiff');
-    
-    if (!allowedTypes.includes(file.type) && !isImageFile) {
-        feedbackFoto.value = {
-            mensaje: 'Formato no permitido. Usa: JPG, PNG, WebP, GIF, BMP o TIFF.',
-            clase: 'bg-rose-50 text-rose-700 border border-rose-100'
-        };
-        analizandoFoto.value = false;
-        event.target.value = '';
-        return;
-    }
-    
-    // Validar tamaño (2MB)
-    if (file.size > 2 * 1024 * 1024) {
-        feedbackFoto.value = {
-            mensaje: 'La imagen no puede pesar más de 2MB.',
-            clase: 'bg-rose-50 text-rose-700 border border-rose-100'
-        };
-        analizandoFoto.value = false;
-        event.target.value = '';
-        return;
-    }
-    
-    // Simulamos el análisis de IA
-    setTimeout(() => {
-        analizandoFoto.value = false;
-        
-        // Escenarios aleatorios de feedback
-        const escenarios = [
-            {
-                mensaje: '✨ Excelente foto! Buena iluminación y el producto se ve claramente. Perfecto para Mundo Yacus.',
-                clase: 'bg-red-50 text-red-700 border border-red-100'
-            },
-            {
-                mensaje: '💡 Tip: La foto se ve un poco oscura. Intenta tomarla cerca de una ventana para que el cuy resalte más.',
-                clase: 'bg-red-50 text-red-700 border border-red-100'
-            },
-            {
-                mensaje: '🎨 La imagen podría tener más contraste. Considera usar el modo HDR de tu celular para mejores resultados.',
-                clase: 'bg-red-50 text-red-700 border border-red-100'
-            },
-            {
-                mensaje: '📐 Foto aceptable, pero podrías centrar mejor el producto. Recuerda que los clientes compran lo que ven claramente.',
-                clase: 'bg-red-50 text-red-700 border border-red-100'
-            }
-        ];
-        
-        // Seleccionar un escenario aleatorio (70% positivo, 30% sugerencia)
-        const feedback = Math.random() > 0.3 ? escenarios[0] : escenarios[Math.floor(Math.random() * escenarios.length)];
-        feedbackFoto.value = feedback;
-        
-        // Si todo está bien, procesar la imagen
-        if (feedback.clase.includes('red')) {
-            form.image = file;
-            previewUrl.value = URL.createObjectURL(file);
-        }
-    }, 1500);
+// Función para subir imagen directa
+const uploadImage = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    form.image = file;
+    previewUrl.value = URL.createObjectURL(file);
+  }
 };
 
 const addAttribute = () => form.specifications.push({ key: '', value: '' });
@@ -195,29 +132,15 @@ const submit = () => {
             <span class="mr-2">📸</span> Foto del Producto
           </h3>
           
-          <div class="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-3xl p-8 hover:border-red-400 transition-all bg-slate-50">
-            <input type="file" @change="analizarImagen" class="hidden" id="foto-input">
-            <label for="foto-input" class="flex flex-col items-center cursor-pointer">
-              <span v-if="!analizandoFoto && !feedbackFoto" class="text-4xl mb-3">📷</span>
-              <p v-if="!analizandoFoto && !feedbackFoto" class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Sube una foto clara</p>
+          <div class="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-3xl hover:border-red-400 transition-all bg-slate-50" :class="previewUrl ? 'p-0' : 'p-8'">
+            <input type="file" @change="uploadImage" class="hidden" id="foto-input">
+            <label for="foto-input" class="flex flex-col items-center cursor-pointer" :class="previewUrl ? 'h-full' : ''">
+              <span v-if="!previewUrl" class="text-5xl mb-3">📷</span>
+              <p v-if="!previewUrl" class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Sube una foto</p>
               
-              <div v-if="previewUrl" class="w-full aspect-square rounded-xl overflow-hidden">
-                <img :src="previewUrl" class="w-full h-full object-cover" />
+              <div v-if="previewUrl" class="w-full h-full">
+                <img :src="previewUrl" class="w-full h-full object-cover rounded-3xl" />
               </div>
-            </label>
-
-            <div v-if="analizandoFoto" class="mt-4 p-3 bg-white rounded-2xl shadow-sm border border-red-100 animate-pulse">
-              <p class="text-[10px] text-red-600 font-black uppercase text-center">🧠 Analizando iluminación y enfoque...</p>
-            </div>
-
-            <div v-if="feedbackFoto" :class="['mt-4 p-3 rounded-2xl text-[11px] font-medium shadow-sm', feedbackFoto.clase]">
-              {{ feedbackFoto.mensaje }}
-            </div>
-          </div>
-          
-          <div v-if="!previewUrl" class="mt-4">
-            <label for="foto-input" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer block text-center">
-              O haz clic para seleccionar archivo
             </label>
           </div>
         </div>

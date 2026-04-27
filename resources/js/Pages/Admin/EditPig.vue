@@ -2,8 +2,6 @@
 import { ref, onMounted } from 'vue';
 import { useForm, Link, Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Cropper } from 'vue-advanced-cropper';
-import 'vue-advanced-cropper/dist/style.css';
 
 const props = defineProps({
     pig: Object,
@@ -25,8 +23,6 @@ const form = useForm({
 });
 
 const currentImageUrl = ref(null);
-const image = ref(null);
-const croppedImage = ref(null);
 
 // --- 2. CICLO DE VIDA / CARGA INICIAL ---
 onMounted(() => {
@@ -53,26 +49,13 @@ onMounted(() => {
 const addAttribute = () => form.specifications.push({ key: '', value: '' });
 const removeAttribute = (index) => form.specifications.splice(index, 1);
 
-// --- 4. MANEJO DE IMAGEN Y RECORTA ---
+// --- 4. MANEJO DE IMAGEN ---
 const uploadImage = (event) => {
   const file = event.target.files[0];
   if (file) {
-    image.value = URL.createObjectURL(file);
+    form.image = file;
+    currentImageUrl.value = URL.createObjectURL(file);
   }
-};
-
-const onChange = ({ canvas }) => {
-  const resizedCanvas = document.createElement('canvas');
-  resizedCanvas.width = 703;   // Ancho exacto
-  resizedCanvas.height = 450;  // Alto exacto
-  
-  const ctx = resizedCanvas.getContext('2d');
-  ctx.drawImage(canvas, 0, 0, 703, 450);
-
-  resizedCanvas.toBlob((blob) => {
-    form.image = blob;
-    croppedImage.value = resizedCanvas.toDataURL('image/jpeg');
-  }, 'image/jpeg', 0.9);
 };
 
 // --- 4. ENVÍO DEL FORMULARIO ---
@@ -133,32 +116,16 @@ const submit = () => {
                                         <span class="mr-2">🖼️</span> Foto del Producto
                                     </h3>
                                     
-                                    <div v-if="currentImageUrl && !image" class="mb-4 text-center">
-                                        <p class="text-[10px] font-bold text-gray-400 uppercase mb-2 text-left">Imagen en servidor</p>
-                                        <div class="w-full aspect-square bg-gray-50 rounded-xl overflow-hidden border-2 border-gray-100 shadow-inner">
-                                            <img :src="currentImageUrl" class="w-full h-full object-cover" alt="Actual" />
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-4">
-                                        <label class="block w-full py-3 px-4 bg-red-700 text-white text-center rounded-xl font-bold cursor-pointer hover:bg-red-800 transition shadow-lg shadow-red-700/20">
-                                            {{ image ? 'Cambiar Foto' : 'Subir Nueva Foto' }}
-                                            <input type="file" @change="uploadImage" accept="image/*" class="hidden">
+                                    <div class="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-3xl hover:border-red-400 transition-all bg-slate-50" :class="currentImageUrl ? 'p-0' : 'p-8'">
+                                        <input type="file" @change="uploadImage" accept="image/*" class="hidden" id="foto-input">
+                                        <label for="foto-input" class="flex flex-col items-center cursor-pointer" :class="currentImageUrl ? 'h-full' : ''">
+                                            <span v-if="!currentImageUrl" class="text-5xl mb-3">📷</span>
+                                            <p v-if="!currentImageUrl" class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Sube una foto</p>
+                                            
+                                            <div v-if="currentImageUrl" class="w-full h-full">
+                                                <img :src="currentImageUrl" class="w-full h-full object-cover rounded-3xl" alt="Actual" />
+                                            </div>
                                         </label>
-                                    </div>
-
-                                    <div v-if="image" class="mt-6 p-2 bg-white rounded-2xl border-2 border-dashed border-red-400 overflow-hidden">
-                                        <cropper
-                                            :src="image"
-                                            :stencil-props="{
-                                                aspectRatio: 703/450 
-                                            }" 
-                                            @change="onChange"
-                                            class="h-64 w-full"
-                                        />
-                                        <p class="text-[10px] text-center text-red-600 font-bold mt-2 uppercase">
-                                            ↔️ Ajusta tu imagen al recuadro
-                                        </p>
                                     </div>
                                 </div>
                             </div>

@@ -2,6 +2,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import yapeImage from '@/assets/images/yape.png';
+import plinImage from '@/assets/images/plin.jpg';
 
 const props = defineProps({
     order: Object,
@@ -107,12 +109,12 @@ const sendWhatsApp = (order) => {
                                 <!-- Información de Pago Específico -->
                                 <div class="mt-4">
                                     <div v-if="order.payment_method === 'yape'" class="bg-red-50 p-4 rounded-lg border border-red-100 text-center">
-                                        <span class="text-2xl">🟣</span>
+                                        <img :src="yapeImage" alt="Yape" class="w-16 h-16 object-contain mx-auto mb-2" />
                                         <p class="font-medium text-red-700 mt-2">Pagar con Yape</p>
                                         <p class="text-sm text-red-600">{{ yapeNumber }}</p>
                                     </div>
                                     <div v-else-if="order.payment_method === 'plin'" class="bg-red-50 p-4 rounded-lg border border-red-100 text-center">
-                                        <span class="text-2xl">🟢</span>
+                                        <img :src="plinImage" alt="Plin" class="w-16 h-16 object-contain mx-auto mb-2" />
                                         <p class="font-medium text-red-700 mt-2">Pagar con Plin</p>
                                         <p class="text-sm text-red-600">{{ plinNumber }}</p>
                                     </div>

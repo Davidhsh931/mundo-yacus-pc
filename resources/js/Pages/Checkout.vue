@@ -1,7 +1,9 @@
 <script setup>
-import { ref } from 'vue'; // <-- IMPORTANTE: Importar ref
+import { ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useForm, Head } from '@inertiajs/vue3';
+import yapeImage from '@/assets/images/yape.png';
+import plinImage from '@/assets/images/plin.jpg';
 
 const props = defineProps({
     cart: Object,
@@ -76,6 +78,14 @@ const getPaymentMethodName = (method) => {
         'cash': 'Efectivo 💵'
     };
     return methods[method] || method;
+};
+
+const getPaymentImage = (method) => {
+    const images = {
+        'yape': yapeImage,
+        'plin': plinImage
+    };
+    return images[method] || null;
 };
 </script>
 
@@ -186,33 +196,37 @@ const getPaymentMethodName = (method) => {
                                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                                     <label :class="{'border-red-600 bg-red-50': form.payment_method === 'yape'}" 
                                         @click="validateField('payment_method', 'yape')"
-                                        class="border border-gray-200 p-3 rounded-lg cursor-pointer transition-all flex flex-col items-center hover:border-red-300">
+                                        class="border border-gray-200 p-4 rounded-xl cursor-pointer transition-all flex flex-col items-center hover:border-red-300 hover:shadow-md">
                                         <input type="radio" v-model="form.payment_method" value="yape" class="hidden" />
-                                        <span class="text-xl mb-1"></span>
+                                        <div class="w-12 h-12 mb-2 flex items-center justify-center">
+                                            <img :src="yapeImage" alt="Yape" class="w-full h-full object-contain" />
+                                        </div>
                                         <span class="font-medium text-sm text-gray-700">Yape</span>
                                     </label>
 
                                     <label :class="{'border-red-600 bg-red-50': form.payment_method === 'plin'}" 
                                         @click="validateField('payment_method', 'plin')"
-                                        class="border border-gray-200 p-3 rounded-lg cursor-pointer transition-all flex flex-col items-center hover:border-red-300">
+                                        class="border border-gray-200 p-4 rounded-xl cursor-pointer transition-all flex flex-col items-center hover:border-red-300 hover:shadow-md">
                                         <input type="radio" v-model="form.payment_method" value="plin" class="hidden" />
-                                        <span class="text-xl mb-1"></span>
+                                        <div class="w-12 h-12 mb-2 flex items-center justify-center">
+                                            <img :src="plinImage" alt="Plin" class="w-full h-full object-contain" />
+                                        </div>
                                         <span class="font-medium text-sm text-gray-700">Plin</span>
                                     </label>
 
                                     <label :class="{'border-red-600 bg-red-50': form.payment_method === 'cash'}" 
                                         @click="validateField('payment_method', 'cash')"
-                                        class="border border-gray-200 p-3 rounded-lg cursor-pointer transition-all flex flex-col items-center hover:border-red-300">
+                                        class="border border-gray-200 p-4 rounded-xl cursor-pointer transition-all flex flex-col items-center hover:border-red-300 hover:shadow-md">
                                         <input type="radio" v-model="form.payment_method" value="cash" class="hidden" />
-                                        <span class="text-xl mb-1"></span>
+                                        <span class="text-2xl mb-2">💵</span>
                                         <span class="font-medium text-sm text-gray-700">Efectivo</span>
                                     </label>
 
                                     <label :class="{'border-red-600 bg-red-50': form.payment_method === 'transfer'}" 
                                         @click="validateField('payment_method', 'transfer')"
-                                        class="border border-gray-200 p-3 rounded-lg cursor-pointer transition-all flex flex-col items-center hover:border-red-300">
+                                        class="border border-gray-200 p-4 rounded-xl cursor-pointer transition-all flex flex-col items-center hover:border-red-300 hover:shadow-md">
                                         <input type="radio" v-model="form.payment_method" value="transfer" class="hidden" />
-                                        <span class="text-xl mb-1"></span>
+                                        <span class="text-2xl mb-2">🏦</span>
                                         <span class="font-medium text-sm text-gray-700">Transferencia</span>
                                     </label>
                                 </div>
@@ -294,7 +308,11 @@ const getPaymentMethodName = (method) => {
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-red-500">✓</span>
-                    <span class="text-gray-700">Método de pago: {{ getPaymentMethodName(form.payment_method) }}</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-700">Método de pago:</span>
+                        <img v-if="getPaymentImage(form.payment_method)" :src="getPaymentImage(form.payment_method)" :alt="form.payment_method" class="w-8 h-8 object-contain" />
+                        <span v-else class="text-gray-700">{{ getPaymentMethodName(form.payment_method) }}</span>
+                    </div>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-red-500">✓</span>
