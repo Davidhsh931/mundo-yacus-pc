@@ -240,8 +240,13 @@ public function add($id) {
             ]);
 
             foreach($cart as $id => $item){
-                // Validar stock ANTES de procesar
-                $pig = GuineaPig::findOrFail($id);
+                // Usar lockForUpdate para evitar condiciones de carrera
+                $pig = GuineaPig::where('id', $id)->lockForUpdate()->first();
+                
+                if(!$pig){
+                    throw new \Exception("Producto no encontrado con ID: {$id}");
+                }
+
                 if($pig->stock < $item['quantity']){
                     throw new \Exception("Stock insuficiente para '{$pig->name}'. Solo hay {$pig->stock} unidades disponibles.");
                 }
@@ -253,13 +258,8 @@ public function add($id) {
                     'unit_price' => $item['price']
                 ]);
 
-                $pig = GuineaPig::find($id);
+                // Decrementar stock directamente en el mismo objeto bloqueado
                 $pig->stock -= $item['quantity'];
-
-                if($pig->stock < 0){
-                    throw new \Exception("Stock insuficiente para el cuy: " . $pig->name);
-                }
-
                 $pig->save();
             }
 

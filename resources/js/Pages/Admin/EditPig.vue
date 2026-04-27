@@ -15,7 +15,7 @@ const form = useForm({
     name: props.pig.name,
     species: props.pig.species || '',
     breed: props.pig.breed || '',
-    description: '',
+    description: props.pig.description || '',  // ✅ Carga la descripción existente
     price: props.pig.price || 0,
     stock: props.pig.stock || 1,
     specifications: [],

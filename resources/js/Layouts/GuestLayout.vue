@@ -12,7 +12,7 @@ defineProps({
 </script>
 
 <template>
-    <div class="min-h-screen bg-white">
+    <div class="min-h-screen bg-gray-100">
         <!-- Header Estilo Peru Marketplace -->
         <header class="bg-white border-b border-gray-200 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -80,7 +80,7 @@ defineProps({
         </header>
 
         <!-- Main Content -->
-        <main>
+        <main class="flex items-center justify-center min-h-[calc(100vh-4rem)]">
             <slot />
         </main>
     </div>
