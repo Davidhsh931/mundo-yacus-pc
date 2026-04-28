@@ -275,3 +275,16 @@ function addToCart(pig) {
 </template>
 
 
+<style scoped>
+.scrollbar-thin {
+    scrollbar-width: thin;
+}
+.scrollbar-thumb-red-300::-webkit-scrollbar-thumb {
+    background-color: #fca5a5;
+    border-radius: 20px;
+}
+.scrollbar-track-gray-100::-webkit-scrollbar-track {
+    background-color: #f3f4f6;
+    border-radius: 20px;
+}
+</style>
