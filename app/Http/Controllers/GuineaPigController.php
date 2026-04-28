@@ -237,4 +237,3 @@ class GuineaPigController extends Controller
             'data'   => $data,
         ]);
     }
-}
