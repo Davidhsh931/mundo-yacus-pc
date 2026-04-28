@@ -24,15 +24,12 @@ const submit = () => {
     <GuestLayout>
         <Head title="Registro de Vendedor" />
 
-        <div class="mb-6 text-center">
-            <h2 class="text-2xl font-bold text-gray-900">Registro de Vendedor</h2>
-            <p class="text-gray-600 mt-2">Únete como vendedor y vende tus productos en nuestra plataforma</p>
-            <div class="mt-3 inline-flex items-center px-4 py-2 bg-red-50 border border-red-200 rounded-lg">
-                <span class="text-red-800 text-sm">🏪 Tu correo será: <strong class="text-red-900">{{ username ? username + '@admin.com' : 'usuario@admin.com' }}</strong></span>
-            </div>
-        </div>
-
         <form @submit.prevent="submit">
+            <div class="mb-6 text-center">
+                <h2 class="text-2xl font-bold text-gray-900">Registro de Vendedor</h2>
+                <p class="text-gray-600 mt-2">Únete como vendedor y vende tus productos en nuestra plataforma</p>
+            </div>
+
             <div>
                 <InputLabel for="name" value="Nombre Completo" />
 

@@ -12,7 +12,7 @@ defineProps({
 </script>
 
 <template>
-    <div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div class="min-h-screen bg-gray-100">
         <!-- Header Estilo Peru Marketplace -->
         <header class="bg-white border-b border-gray-200 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
