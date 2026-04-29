@@ -5,6 +5,7 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import ChatWidget from '@/Components/ChatWidget.vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -617,5 +618,8 @@ const formatNotificationTime = (date) => {
                 </div>
             </footer>
         </div>
+
+        <!-- Chat Widget -->
+        <ChatWidget />
     </div>
 </template>
