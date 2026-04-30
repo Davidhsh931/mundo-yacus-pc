@@ -12,9 +12,6 @@ use App\Http\Controllers\CustomerOrderController;
 use App\Http\Controllers\Admin\OrderAdminController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\CommentController;
-use App\Http\Controllers\ChatTestController;
-use App\Http\Controllers\ChatTestControllerNew;
-use App\Http\Controllers\ChatTestController50;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -453,9 +450,3 @@ Route::get('/approve-admin/{email}', function ($email) {
 
     return "❌ No se encontró un admin/superadmin con el email {$email}";
 });
-
-// --- RUTAS DE PRUEBAS AUTOMÁTICAS DEL CHAT (SOLO DESARROLLO) ---
-Route::get('/chat-test/run', [ChatTestController::class, 'runTests'])->name('chat.test.run');
-Route::get('/chat-test/quick', [ChatTestControllerNew::class, 'quickTest'])->name('chat.test.quick');
-Route::get('/chat-test/complete', [ChatTestController50::class, 'runCompleteTest'])->name('chat.test.complete');
-Route::get('/chat-test/report', [ChatTestController::class, 'getLastTestReport'])->name('chat.test.report');

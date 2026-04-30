@@ -1,5 +1,5 @@
 <script setup>
-import { ref, nextTick } from 'vue';
+import { ref, nextTick, onMounted } from 'vue';
 
 const isOpen = ref(false);
 const message = ref('');
@@ -10,6 +10,7 @@ const isLoading = ref(false);
 const messagesContainer = ref(null);
 const sessionId = ref(null);
 const messageInput = ref(null);
+const quickReplies = ref([]);
 
 const scrollToBottom = async () => {
     await nextTick();
@@ -33,20 +34,26 @@ const toggleChat = () => {
     }
 };
 
-const sendMessage = async () => {
-    if (!message.value.trim() || isLoading.value) return;
+const sendMessage = async (quickReplyValue = null) => {
+    // Forzar validación segura con conversión explícita a string
+    const messageText = String(quickReplyValue || message.value || '').trim();
+    
+    if (!messageText || isLoading.value) return;
 
     // Add user message
     const userMessage = {
         id: Date.now(),
         type: 'user',
-        text: message.value
+        text: messageText
     };
     messages.value.push(userMessage);
     await scrollToBottom();
 
-    const userText = message.value;
-    message.value = '';
+    // Clear input and set loading
+    if (!quickReplyValue) {
+        message.value = '';
+    }
+    quickReplies.value = [];
     isLoading.value = true;
 
     try {
@@ -57,7 +64,7 @@ const sendMessage = async () => {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
             },
             body: JSON.stringify({ 
-                message: userText,
+                message: messageText,
                 session_id: sessionId.value 
             }),
         });
@@ -77,8 +84,15 @@ const sendMessage = async () => {
         messages.value.push({
             id: Date.now() + 1,
             type: 'bot',
-            text: data.response
+            text: data.reply,
+            timestamp: Date.now()
         });
+        
+        // Add quick replies if provided
+        if (data.quick_replies && data.quick_replies.length > 0) {
+            quickReplies.value = data.quick_replies;
+        }
+        
         await scrollToBottom();
         await focusInput();
     } catch (error) {
@@ -87,13 +101,43 @@ const sendMessage = async () => {
         messages.value.push({
             id: Date.now() + 1,
             type: 'bot',
-            text: 'Lo siento, hubo un error. Por favor intenta nuevamente.'
+            text: 'Lo siento, hubo un error. Por favor intenta nuevamente.',
+            timestamp: Date.now()
         });
         await scrollToBottom();
         await focusInput();
+    } finally {
+        isLoading.value = false;
+        await focusInput();
     }
-    isLoading.value = false;
 };
+
+const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+};
+
+const formatMessage = (text) => {
+    // Convertir **texto** a <strong>texto</strong>
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>');
+    
+    // Convertir - texto a viñetas con formato
+    text = text.replace(/^- (.+)$/gm, '<li class="ml-2 text-gray-700">• $1</li>');
+    
+    // Convertir múltiples <li> a <ul>
+    text = text.replace(/(<li[^>]*>.*?<\/li>\s*)+/gs, match => {
+        return '<ul class="list-none space-y-1">' + match + '</ul>';
+    });
+    
+    return text;
+};
+
+// Efecto de escritura para mensajes del bot
+const typingEffect = ref(false);
+const displayedText = ref('');
+const currentMessage = ref('');
 
 </script>
 
@@ -114,78 +158,102 @@ const sendMessage = async () => {
         </button>
 
         <!-- Chat Window -->
-        <div v-if="isOpen" class="fixed bottom-20 right-4 w-full max-w-sm md:w-96 h-[500px] md:h-[600px] bg-white rounded-lg shadow-2xl flex flex-col z-50 border border-gray-200">
+        <div 
+            v-if="isOpen" 
+            class="fixed bottom-20 right-4 w-full max-w-sm md:w-96 h-[500px] md:h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-200 overflow-hidden transition-all duration-300 ease-out"
+            :class="{ 'scale-95 opacity-0': !isOpen, 'scale-100 opacity-100': isOpen }"
+        >
             <!-- Header -->
-            <div class="bg-red-600 text-white p-3 sm:p-4 rounded-t-lg flex items-center justify-between shrink-0">
-                <div class="flex items-center gap-2 sm:gap-3">
-                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center">
-                        <span class="text-red-600 font-bold text-sm sm:text-base"></span>
+            <div class="bg-gradient-to-r from-red-600 to-red-700 text-white p-4 rounded-t-2xl flex items-center justify-between shrink-0 shadow-lg">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">
+                        <span class="text-red-600 font-bold text-lg">🐹</span>
                     </div>
                     <div>
-                        <h3 class="font-semibold text-sm sm:text-base">Chat Mundo Yacus</h3>
-                        <p class="text-xs sm:text-sm opacity-90">Asistente</p>
+                        <h3 class="font-bold text-base">Mundo Yacus</h3>
+                        <div class="flex items-center gap-2">
+                            <p class="text-xs opacity-90">Asistente Virtual</p>
+                            <div class="flex items-center gap-1">
+                                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                                <span class="text-xs text-green-100 hidden sm:inline">En línea</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <button
                     @click="toggleChat"
-                    class="w-6 h-6 sm:w-8 sm:h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-colors"
+                    class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 transform hover:scale-110"
                     title="Cerrar chat"
                 >
-                    <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
             </div>
 
             <!-- Messages Container -->
-            <div ref="messagesContainer" class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 bg-gray-50">
+            <div ref="messagesContainer" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50 to-white">
                 <div
                     v-for="msg in messages"
                     :key="msg.id"
-                    class="space-y-2"
+                    class="space-y-2 animate-fade-in"
                 >
                     <div v-if="msg.type === 'user'" class="flex justify-end">
-                        <div class="bg-red-600 text-white p-2 sm:p-3 rounded-2xl rounded-tr-md shadow-sm max-w-[70%] sm:max-w-[80%] break-words">
-                            <p class="text-sm sm:text-base">{{ msg.text }}</p>
-                            <span class="text-xs opacity-75 block mt-1">{{ new Date(msg.timestamp || Date.now()).toLocaleTimeString() }}</span>
+                        <div class="bg-gradient-to-r from-red-600 to-red-700 text-white p-3 rounded-2xl rounded-tr-md shadow-lg max-w-[80%] sm:max-w-[85%] break-words transform transition-all duration-200 hover:shadow-xl">
+                            <p class="text-sm font-medium">{{ msg.text }}</p>
+                            <span class="text-xs opacity-75 block mt-1">{{ new Date(msg.timestamp || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }}</span>
                         </div>
                     </div>
                     <div v-else class="flex justify-start">
-                        <div class="bg-white text-gray-800 p-2 sm:p-3 rounded-2xl rounded-bl-md shadow-sm max-w-[70%] sm:max-w-[80%] break-words">
-                            <p class="text-sm sm:text-base">{{ msg.text }}</p>
-                            <span class="text-xs opacity-75 block mt-1">{{ new Date(msg.timestamp || Date.now()).toLocaleTimeString() }}</span>
+                        <div class="bg-white text-gray-800 p-3 rounded-2xl rounded-bl-md shadow-lg max-w-[80%] sm:max-w-[85%] break-words border border-gray-100 transform transition-all duration-200 hover:shadow-xl">
+                            <div class="text-sm leading-relaxed whitespace-pre-line" v-html="formatMessage(msg.text)"></div>
+                            <span class="text-xs text-gray-500 block mt-2">{{ new Date(msg.timestamp || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }}</span>
+                            
+                            <!-- Quick Replies para el último mensaje del bot -->
+                            <div v-if="msg === messages[messages.length - 1] && msg.type === 'bot' && quickReplies.length > 0" class="mt-3 grid grid-cols-2 gap-2">
+                                <button
+                                    v-for="reply in quickReplies"
+                                    :key="reply.text"
+                                    @click="sendMessage(reply.value)"
+                                    class="p-2 text-xs bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 rounded-xl transition-all duration-200 text-gray-700 hover:text-gray-900 border border-gray-200 hover:border-gray-300 hover:shadow-md transform hover:scale-105"
+                                    :disabled="isLoading"
+                                >
+                                    {{ reply.text }}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <div v-if="isLoading" class="bg-white text-gray-800 p-2 sm:p-3 rounded-2xl rounded-bl-md shadow-sm max-w-[70%] sm:max-w-[80%]">
-                    <div class="flex gap-1">
-                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                <div v-if="isLoading" class="bg-white text-gray-800 p-3 rounded-2xl rounded-bl-md shadow-lg max-w-[80%] sm:max-w-[85%] border border-gray-100">
+                    <div class="flex gap-2 items-center">
+                        <div class="w-2 h-2 bg-red-500 rounded-full animate-bounce"></div>
+                        <div class="w-2 h-2 bg-red-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                        <div class="w-2 h-2 bg-red-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                        <span class="text-xs text-gray-500 ml-2">Escribiendo...</span>
                     </div>
                 </div>
             </div>
 
             <!-- Input -->
-            <div class="p-3 sm:p-4 bg-white border-t border-gray-200">
-                <div class="flex items-center gap-1 sm:gap-2">
+            <div class="p-4 bg-gradient-to-r from-white to-gray-50 border-t border-gray-200">
+                <div class="flex items-center gap-2">
                     <input
                         ref="messageInput"
                         v-model="message"
                         @keypress="handleKeyPress"
                         type="text"
                         placeholder="Escribe tu mensaje..."
-                        class="flex-1 px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500"
+                        class="flex-1 px-4 py-3 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 shadow-sm"
                         :disabled="isLoading"
                     />
                     
                     <button
-                        @click="sendMessage"
+                        @click="sendMessage()"
                         :disabled="isLoading || !message.trim()"
-                        class="p-1.5 sm:p-2 bg-red-600 text-white rounded-full hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                        class="p-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-full hover:from-red-700 hover:to-red-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-110 shadow-lg hover:shadow-xl"
                     >
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                         </svg>
                     </button>
@@ -194,3 +262,20 @@ const sendMessage = async () => {
         </div>
     </div>
 </template>
+
+<style scoped>
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+}
+</style>
