@@ -27,7 +27,7 @@ Route::get('/cuy/sugerir-stock/{id}', [GuineaPigController::class, 'sugerirStock
 
 // Rutas de chat básicas
 Route::prefix('chat')->group(function () {
-    Route::post('/message', [ChatBasicController::class, 'sendMessage'])->name('api.chat.message');
+    Route::post('/message', [ChatController::class, 'sendMessage'])->name('api.chat.message');
     Route::post('/track-button', [ChatBasicController::class, 'trackButtonClick'])->name('api.chat.track-button');
     Route::get('/history/{sessionId}', [ChatBasicController::class, 'getConversationHistory'])->name('api.chat.history');
     
