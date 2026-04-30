@@ -14,6 +14,88 @@ class ChatController extends Controller
         $userMessage = $request->input('message');
         $sessionId = $request->input('session_id');
 
+        // BLOQUEO ABSOLUTO - Si detecta CUALQUIER palabra admin, termina aquí
+        $messageLower = strtolower($userMessage);
+        
+        // LOG para debug
+        \Log::info('Mensaje recibido: ' . $userMessage);
+        \Log::info('Mensaje lower: ' . $messageLower);
+        
+        // Excepción: Solo permitir preguntas sobre cómo crear cuenta admin
+        if (str_contains($messageLower, '@admin') || str_contains($messageLower, 'admin') || str_contains($messageLower, 'cuenta admin') || str_contains($messageLower, 'ser admin') || str_contains($messageLower, 'crear cuenta admin')) {
+            \Log::info('Detectada pregunta sobre crear cuenta admin');
+            return response()->json([
+                'reply' => 'Para crear una cuenta administrativa en Mundo Yacus:
+
+• 📝 **Registro**: Ve a la página de registro y selecciona "Vendedor"
+• 📋 **Formulario**: Completa tus datos y información de tu granja
+• ✅ **Aprobación**: Nuestro equipo revisará y aprobará tu cuenta
+• 🔐 **Acceso**: Obtendrás acceso a las funcionalidades de vendedor
+
+• 📱 **WhatsApp**: Contacta directamente para acelerar el proceso
+• ⏰ **Tiempo**: La aprobación toma 24-48 horas
+• 📄 **Documentos**: Ten listos tu DNI e información de tu granja
+
+¿Necesitas el contacto de WhatsApp?',
+                'session_id' => $sessionId,
+                'quick_replies' => [
+                    ['text' => 'Sí, dame el WhatsApp', 'value' => '¿Cuál es el WhatsApp de Mundo Yacus?'],
+                    ['text' => 'Ver productos', 'value' => '¿Qué productos tienen disponibles?']
+                ]
+            ]);
+        }
+        
+        // BLOQUEO ESPECÍFICO PARA LAS 6 SECCIONES DEL PANEL DE ADMINISTRACIÓN
+        $panelSections = [
+            // DASHBOARD y todo su contenido
+            'dashboard', 'panel', 'estadísticas', 'métricas', 'analytics', 'performance', 'monitoreo', 'centro de control', 'panel administrativo', 'población total', 'reportes', 'gráficos', 'ventas totales', 'ingresos', 'número de usuarios',
+            
+            // PRODUCTOS y todo su contenido
+            'productos', 'producto', 'crear producto', 'crear productos', 'subir producto', 'publicar producto', 'vender producto', 'gestionar productos', 'editar producto', 'eliminar producto', 'createproduct', 'create pig', 'edit pig', 'cuy', 'guinea pig', 'especie', 'raza', 'breed', 'specifications', 'verification', 'ia verification', 'stock', 'precio', 'categoría de producto', 'imagen de producto', 'descripción de producto',
+            
+            // PEDIDOS y todo su contenido
+            'pedidos', 'pedido', 'gestionar pedidos', 'ver pedidos', 'actualizar pedido', 'cancelar pedido', 'editar pedido', 'orders', 'order', 'delivery type', 'shipping cost', 'status', 'pending', 'paid', 'shipped', 'delivered', 'canceled', 'historial de pedidos', 'detalles de pedido', 'items del pedido', 'factura', 'envío', 'costo de envío', 'dirección de envío', 'seguimiento', 'tracking',
+            
+            // CATEGORÍAS y todo su contenido
+            'categorías', 'categoría', 'crear categoría', 'crear categorias', 'gestionar categorias', 'editar categoria', 'eliminar categoria', 'organizar categorías', 'category', 'types', 'clasificación', 'orden de categorías', 'nombre de categoría',
+            
+            // EVENTOS y todo su contenido
+            'eventos', 'evento', 'crear evento', 'crear eventos', 'gestionar eventos', 'publicar evento', 'editar evento', 'eliminar evento', 'banner', 'banner text', 'event date', 'title', 'description', 'fecha de evento', 'lugar de evento', 'inscripciones', 'precio de evento', 'imagen de evento', 'calendario', 'agenda',
+            
+            // USUARIOS y todo su contenido
+            'usuarios', 'usuario', 'gestionar usuarios', 'ver usuarios', 'editar usuario', 'eliminar usuario', 'approve user', 'reject user', 'change role', 'user role', 'approve', 'reject', 'role', 'perfil de usuario', 'datos personales', 'permisos', 'accesos', 'registro de usuarios', 'lista de usuarios', 'activar usuario', 'desactivar usuario', 'información de contacto', 'historial de usuario',
+            
+            // General del panel
+            'administración', 'administrativo', 'gestión', 'configuración', 'settings', 'ajustes', 'sistema', 'backoffice', 'cms', 'sistema admin', 'control total', 'alta rendimiento', 'integral', 'base de datos', 'bd', 'database', 'logs', 'security', 'seguridad', 'backup', 'respaldo'
+        ];
+        
+        // BLOQUEO TOTAL DEL PANEL - Si encuentra CUALQUIER cosa del panel, redirige a crear cuenta admin
+        foreach ($panelSections as $section) {
+            if (str_contains($messageLower, $section)) {
+                \Log::info('BLOQUEADA sección del panel: ' . $section);
+                return response()->json([
+                    'reply' => 'Esa información pertenece al Panel de Administración. Si quieres acceder a estas funciones, primero necesitas crear una cuenta administrativa:
+
+• 📝 **Registro**: Ve a la página de registro y selecciona "Vendedor"
+• 📋 **Formulario**: Completa tus datos y información de tu granja  
+• ✅ **Aprobación**: Nuestro equipo revisará y aprobará tu cuenta
+• 🔐 **Acceso**: Obtendrás acceso completo al Panel de Administración
+
+• 📱 **WhatsApp**: Contacta directamente para acelerar el proceso
+• ⏰ **Tiempo**: La aprobación toma 24-48 horas
+
+¿Necesitas el contacto de WhatsApp para crear tu cuenta administrativa?',
+                    'session_id' => $sessionId,
+                    'quick_replies' => [
+                        ['text' => 'Sí, quiero el WhatsApp', 'value' => '¿Cuál es el WhatsApp de Mundo Yacus?'],
+                        ['text' => 'Ver productos disponibles', 'value' => '¿Qué productos tienen disponibles?']
+                    ]
+                ]);
+            }
+        }
+        
+        \Log::info('PASÓ el bloqueo - continuando a la IA');
+
         // Generar o recuperar sesión
         if (!$sessionId) {
             $sessionId = 'session_' . Str::random(10);
@@ -60,20 +142,13 @@ CONOCES TODAS LAS FUNCIONALIDADES DE LA TIENDA:
 - Para consultas complejas que requieran atención humana del equipo de Mundo Yacus
 - Siempre invita al cliente a contactar por WhatsApp cuando necesites consultar con el equipo
 
-�📊 ESTADOS DE PEDIDO:
+�� ESTADOS DE PEDIDO:
 - pending: Pendiente de Pago
 - paid: Pago Confirmado  
 - shipped: En Camino
 - delivered: Entregado
 - canceled: Cancelado
 
-🎛️ PANEL ADMINISTRATIVO:
-- Dashboard: Control total de la tienda
-- Gestión de productos: Crear, editar, eliminar
-- Gestión de categorías: Organizar productos
-- Gestión de pedidos: Ver y actualizar estados
-- Analytics: Estadísticas y métricas
-- Configuración: Ajustes del sistema
 
 REGLAS EXTREMADAMENTE ESTRICTAS:
 1. USA EXCLUSIVAMENTE los datos reales de 'Datos actuales'
@@ -81,6 +156,9 @@ REGLAS EXTREMADAMENTE ESTRICTAS:
 3. SI ALGO NO ESTÁ EN LA LISTA, NO EXISTE
 4. RESPONDE SOLO CON DATOS REALES DE LA BASE DE DATOS
 5. CONOCE TODAS LAS FUNCIONALIDADES MENCIONADAS ARRIBA
+6. NUNCA MENCIONES INFORMACIÓN SOBRE ADMINISTRADORES O USUARIOS @admin
+7. SI ALGUIEN PREGUNTA POR ADMINISTRADORES, DI QUE NO PUEDES PROPORCIONAR ESA INFORMACIÓN POR SEGURIDAD
+8. NO HABLES DE CUENTAS DE ADMINISTRACIÓN, USUARIOS INTERNOS O DATOS SENSIBLES DEL SISTEMA
 
 FORMATO OBLIGATORIO:
 - Usa listas con viñetas (-) y saltos de línea
