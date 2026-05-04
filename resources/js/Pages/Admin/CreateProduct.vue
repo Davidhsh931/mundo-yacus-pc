@@ -27,7 +27,8 @@ const form = useForm({
   },
 });
 
-const previewUrl = ref(null);
+const previewUrls = ref([]);
+const selectedImages = ref([]);
 
 // Detectar qué campos fueron llenados por la IA
 const camposIALLenados = computed(() => {
@@ -73,13 +74,22 @@ watch(() => props.prefillData, (newData) => {
     }
 }, { immediate: true });
 
-// Función para subir imagen directa
-const uploadImage = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    form.image = file;
-    previewUrl.value = URL.createObjectURL(file);
+// Función para subir múltiples imágenes
+const uploadImages = (event) => {
+  const files = event.target.files;
+  if (files) {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      selectedImages.value.push(file);
+      previewUrls.value.push(URL.createObjectURL(file));
+    }
   }
+};
+
+// Función para eliminar una imagen específica
+const removeImage = (index) => {
+  selectedImages.value.splice(index, 1);
+  previewUrls.value.splice(index, 1);
 };
 
 const addAttribute = () => form.specifications.push({ key: '', value: '' });
@@ -94,25 +104,33 @@ const submit = () => {
   // Transformar datos antes de enviar, especialmente specifications a JSON
   form.transform((data) => {
     console.log('TRANSFORM DATA:', data);
-    
+    console.log('Selected images:', selectedImages.value);
+
     // Creamos un resumen de todo lo que el usuario llenó
     const technicalData = data.specifications
       .filter(attr => attr.key && attr.value)
       .map(attr => `${attr.key}: ${attr.value}`)
       .join(', ');
 
-    return {
+    const transformedData = {
       ...data,
       // Este es el "súper contexto" que enviamos al servidor
-      ai_context: `PRODUCTO: ${data.name}. 
-                   DESCRIPCIÓN: ${data.description}. 
-                   FICHA TÉCNICA: ${technicalData}. 
+      ai_context: `PRODUCTO: ${data.name}.
+                   DESCRIPCIÓN: ${data.description}.
+                   FICHA TÉCNICA: ${technicalData}.
                    RAZA/MODELO: ${data.breed}.`,
-      
+
       specifications: JSON.stringify([
         ...data.specifications.filter(attr => attr.key && attr.value && attr.key.toLowerCase() !== 'descripción')
       ]),
+    };
+
+    // Agregar imágenes múltiples si hay
+    if (selectedImages.value.length > 0) {
+      transformedData.images = selectedImages.value;
     }
+
+    return transformedData;
   }).post(route('guinea-pigs.store'), {
     forceFormData: true,
     onError: (errors) => {
@@ -132,14 +150,17 @@ const submit = () => {
             <span class="mr-2">📸</span> Foto del Producto
           </h3>
           
-          <div class="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-3xl hover:border-red-400 transition-all bg-slate-50" :class="previewUrl ? 'p-0' : 'p-8'">
-            <input type="file" @change="uploadImage" class="hidden" id="foto-input">
-            <label for="foto-input" class="flex flex-col items-center cursor-pointer" :class="previewUrl ? 'h-full' : ''">
-              <span v-if="!previewUrl" class="text-5xl mb-3">📷</span>
-              <p v-if="!previewUrl" class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Sube una foto</p>
-              
-              <div v-if="previewUrl" class="w-full h-full">
-                <img :src="previewUrl" class="w-full h-full object-cover rounded-3xl" />
+          <div class="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-3xl hover:border-red-400 transition-all bg-slate-50" :class="previewUrls.length > 0 ? 'p-0' : 'p-8'">
+            <input type="file" @change="uploadImages" multiple class="hidden" id="foto-input">
+            <label for="foto-input" class="flex flex-col items-center cursor-pointer" :class="previewUrls.length > 0 ? 'h-full' : ''">
+              <span v-if="previewUrls.length === 0" class="text-5xl mb-3">📷</span>
+              <p v-if="previewUrls.length === 0" class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Sube fotos (múltiples)</p>
+
+              <div v-if="previewUrls.length > 0" class="w-full h-full p-4 grid grid-cols-2 gap-2">
+                <div v-for="(url, index) in previewUrls" :key="index" class="relative">
+                  <img :src="url" class="w-full h-32 object-cover rounded-xl" />
+                  <button @click.prevent="removeImage(index)" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600">×</button>
+                </div>
               </div>
             </label>
           </div>

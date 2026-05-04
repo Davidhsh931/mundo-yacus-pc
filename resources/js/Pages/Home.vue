@@ -204,12 +204,13 @@ function addToCart(pig) {
                                         <p class="text-xs font-medium text-gray-800 truncate">{{ pig.breed }}</p>
                                     </div>
                                     <div
-                                        v-for="(attr, index) in pig.specifications?.slice(0, pig.breed ? 1 : 2)"
-                                        :key="index"
+                                        v-for="(value, key, index) in pig.specifications"
+                                        v-if="index < (pig.breed ? 1 : 2)"
+                                        :key="key"
                                         class="bg-gray-50 rounded-lg px-2.5 py-2"
                                     >
-                                        <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">{{ attr.key }}</p>
-                                        <p class="text-xs font-medium text-gray-800 truncate">{{ attr.value }}</p>
+                                        <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">{{ key }}</p>
+                                        <p class="text-xs font-medium text-gray-800 truncate">{{ value }}</p>
                                     </div>
                                 </div>
 

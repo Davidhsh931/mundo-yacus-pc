@@ -13,38 +13,44 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Crear Usuario
+        // 1. Crear Usuario Admin
         User::create([
             'name' => 'David',
             'email' => 'admin@admin.com',
             'password' => Hash::make('12345678'),
+            'role' => 'admin',
+            'is_approved' => true,
         ]);
 
-        // 2. Crear Categoría
-        $cat = Category::create([
-            'name' => 'Cuy Peruano',
+        // 2. Crear Usuario Cliente
+        User::create([
+            'name' => 'Cliente Demo',
+            'email' => 'cliente@cliente.com',
+            'password' => Hash::make('12345678'),
+            'role' => 'cliente',
+            'is_approved' => true,
         ]);
 
-        // 3. Crear Cuy
-        $pig = GuineaPig::create([
-            'name' => 'Yacu Real',
-            'breed' => 'Americano',
-            'average_weight' => 950.00,
-            'price' => 55.00,
-            'stock' => 15,
-            'description' => 'Un ejemplar magnífico para Mundo Yacus',
-            'category_id' => $cat->id,
-            'active' => true
-        ]);
+        // 3. Crear Categorías profesionales
+        $categories = [
+            ['name' => 'Animales'],
+            ['name' => 'Alfalfas'],
+            ['name' => 'Accesorios'],
+        ];
 
-        // 4. Imagen
-        GuineaPigImage::create([
-            'guinea_pig_id' => $pig->id,
-            'image_path' => '/images/images.jpeg',
-            'position' => 1
-        ]);
+        foreach ($categories as $category) {
+            Category::firstOrCreate($category);
+        }
+
+        // 4. Crear productos profesionales usando el seeder
+        $this->call(GuineaPigSeeder::class);
 
         // 5. Crear eventos de ejemplo
         $this->call(EventSeeder::class);
+
+        // 6. Crear configuración del sistema
+        $this->call(SettingsSeeder::class);
+
+        $this->command->info('✅ Base de datos poblada con datos profesionales.');
     }
 }

@@ -44,10 +44,17 @@ const isInvalidImageValue = (value) => {
 
 const filteredSpecifications = computed(() => {
     // Filtrar especificaciones para eliminar la duplicada de 'descripción'
-    if (!props.pig.specifications || props.pig.specifications.length === 0) {
+    if (!props.pig.specifications) {
         return [];
     }
-    return props.pig.specifications.filter(attr =>
+    
+    // Convertir objeto a array de objetos para compatibilidad
+    const specsArray = Object.entries(props.pig.specifications).map(([key, value]) => ({
+        key: key,
+        value: value
+    }));
+    
+    return specsArray.filter(attr =>
         attr.key && attr.key.toLowerCase() !== 'descripción'
     );
 });
@@ -78,8 +85,10 @@ const formattedImages = computed(() => {
 
     return props.pig.images.map(img => {
         let path = img.image_path;
+        console.log('Path original:', path);
         if (isInvalidImageValue(path)) path = FALLBACK_IMAGE;
         else path = asset(path);
+        console.log('Path final:', path);
         return { ...img, image_path: path };
     });
 });

@@ -49,7 +49,8 @@ class GuineaPigAdminController extends Controller
                 'price' => 'required|numeric|min:0',
                 'stock' => 'required|integer|min:0',
                 'breed' => 'nullable|string|max:255',
-                'image' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif,bmp,tiff|max:2048',
+                'images' => 'nullable|array',
+'images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif,bmp,tiff|max:5120',
                 'specifications' => 'nullable|string'
             ]);
 
@@ -84,11 +85,23 @@ class GuineaPigAdminController extends Controller
                 ])
             ]);
 
-            if ($request->hasFile('image')) {
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $index => $image) {
+                    $imageName = time() . '_' . $index . '_' . $image->getClientOriginalName();
+                    $imagePath = $image->storeAs('images', $imageName, 'public');
+
+                    GuineaPigImage::create([
+                        'guinea_pig_id' => $guineaPig->id,
+                        'image_path' => $imagePath,
+                        'position' => $index,
+                    ]);
+                }
+            } elseif ($request->hasFile('image')) {
+                // Compatibilidad con el campo 'image' individual (antiguo)
                 $image = $request->file('image');
                 $imageName = time() . '_' . $image->getClientOriginalName();
                 $imagePath = $image->storeAs('images', $imageName, 'public');
-                
+
                 GuineaPigImage::create([
                     'guinea_pig_id' => $guineaPig->id,
                     'image_path' => $imagePath,
@@ -132,10 +145,38 @@ class GuineaPigAdminController extends Controller
         // 2. Manejo de Specifications (Decodificar el JSON que llega como string)
         $pig->specifications = json_decode($request->specifications, true);
 
-        // 3. Manejo de Imagen (Si llega una nueva)
-        if ($request->hasFile('image')) {
+        // 3. Eliminar imágenes especificadas
+        if ($request->has('images_to_delete')) {
+            $imagesToDelete = $request->input('images_to_delete');
+            if (is_array($imagesToDelete)) {
+                foreach ($imagesToDelete as $imageId) {
+                    $image = GuineaPigImage::find($imageId);
+                    if ($image && $image->guinea_pig_id == $pig->id) {
+                        // Eliminar archivo físico
+                        Storage::disk('public')->delete($image->image_path);
+                        // Eliminar registro
+                        $image->delete();
+                    }
+                }
+            }
+        }
+
+        // 4. Manejo de Imágenes (Si llegan nuevas)
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $index => $image) {
+                $imageName = time() . '_' . $index . '_' . $image->getClientOriginalName();
+                $imagePath = $image->storeAs('images', $imageName, 'public');
+
+                GuineaPigImage::create([
+                    'guinea_pig_id' => $pig->id,
+                    'image_path' => $imagePath,
+                    'position' => $pig->images()->count() + $index,
+                ]);
+            }
+        } elseif ($request->hasFile('image')) {
+            // Compatibilidad con el campo 'image' individual (antiguo)
             $path = $request->file('image')->store('images', 'public');
-            
+
             // Actualizar o crear la relación de imagen
             $pig->images()->updateOrCreate(
                 ['guinea_pig_id' => $pig->id],

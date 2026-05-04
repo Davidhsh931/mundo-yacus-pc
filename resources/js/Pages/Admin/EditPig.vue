@@ -22,13 +22,20 @@ const form = useForm({
     category_id: props.pig.category_id || null
 });
 
-const currentImageUrl = ref(null);
+const currentImageUrls = ref([]);
+const selectedImages = ref([]);
+const imagesToDelete = ref([]); // IDs de imágenes a eliminar
 
 // --- 2. CICLO DE VIDA / CARGA INICIAL ---
 onMounted(() => {
-    // Cargar imagen actual si existe
+    // Cargar todas las imágenes existentes
     if (props.pig.images?.length > 0) {
-        currentImageUrl.value = `/storage/${props.pig.images[0].image_path}`;
+        currentImageUrls.value = props.pig.images.map(img => {
+            const path = img.image_path;
+            if (path.startsWith('images/')) return '/' + path;
+            if (path.startsWith('/storage/')) return path;
+            return '/storage/' + path;
+        });
     }
 
     // Procesar especificaciones: Separar 'Descripción' del resto
@@ -49,13 +56,28 @@ onMounted(() => {
 const addAttribute = () => form.specifications.push({ key: '', value: '' });
 const removeAttribute = (index) => form.specifications.splice(index, 1);
 
-// --- 4. MANEJO DE IMAGEN ---
-const uploadImage = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    form.image = file;
-    currentImageUrl.value = URL.createObjectURL(file);
+// --- 4. MANEJO DE IMÁGENES ---
+const uploadImages = (event) => {
+  const files = event.target.files;
+  if (files) {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      selectedImages.value.push(file);
+      currentImageUrls.value.push(URL.createObjectURL(file));
+    }
   }
+};
+
+const removeImage = (index) => {
+  // Si es una imagen existente (tiene ID), agregar a lista de eliminación
+  if (props.pig.images[index] && props.pig.images[index].id) {
+    imagesToDelete.value.push(props.pig.images[index].id);
+  }
+  // Si es una imagen nueva seleccionada, eliminar de selectedImages
+  if (index < selectedImages.value.length) {
+    selectedImages.value.splice(index, 1);
+  }
+  currentImageUrls.value.splice(index, 1);
 };
 
 // --- 4. ENVÍO DEL FORMULARIO ---
@@ -71,11 +93,25 @@ const submit = () => {
         .map(attr => `${attr.key}: ${attr.value}`)
         .join(', ');
 
-    form.transform((data) => ({
-        ...data,
-        specifications: JSON.stringify(specsToSubmit),
-    })).put(`/admin/guinea-pigs/${props.pig.id}`, { // <--- Cambiado a .put y quitado _method
-        forceFormData: true, 
+    form.transform((data) => {
+        const transformedData = {
+            ...data,
+            specifications: JSON.stringify(specsToSubmit),
+        };
+
+        // Agregar imágenes múltiples si hay
+        if (selectedImages.value.length > 0) {
+            transformedData.images = selectedImages.value;
+        }
+
+        // Agregar IDs de imágenes a eliminar
+        if (imagesToDelete.value.length > 0) {
+            transformedData.images_to_delete = imagesToDelete.value;
+        }
+
+        return transformedData;
+    }).put(`/admin/guinea-pigs/${props.pig.id}`, {
+        forceFormData: true,
         preserveScroll: true,
         onSuccess: () => alert("¡Éxito!"),
         onError: (e) => console.log("Errores:", e)
@@ -116,14 +152,17 @@ const submit = () => {
                                         <span class="mr-2">🖼️</span> Foto del Producto
                                     </h3>
                                     
-                                    <div class="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-3xl hover:border-red-400 transition-all bg-slate-50" :class="currentImageUrl ? 'p-0' : 'p-8'">
-                                        <input type="file" @change="uploadImage" accept="image/*" class="hidden" id="foto-input">
-                                        <label for="foto-input" class="flex flex-col items-center cursor-pointer" :class="currentImageUrl ? 'h-full' : ''">
-                                            <span v-if="!currentImageUrl" class="text-5xl mb-3">📷</span>
-                                            <p v-if="!currentImageUrl" class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Sube una foto</p>
-                                            
-                                            <div v-if="currentImageUrl" class="w-full h-full">
-                                                <img :src="currentImageUrl" class="w-full h-full object-cover rounded-3xl" alt="Actual" />
+                                    <div class="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-3xl hover:border-red-400 transition-all bg-slate-50" :class="currentImageUrls.length > 0 ? 'p-0' : 'p-8'">
+                                        <input type="file" @change="uploadImages" multiple accept="image/*" class="hidden" id="foto-input">
+                                        <label for="foto-input" class="flex flex-col items-center cursor-pointer" :class="currentImageUrls.length > 0 ? 'h-full' : ''">
+                                            <span v-if="currentImageUrls.length === 0" class="text-5xl mb-3">📷</span>
+                                            <p v-if="currentImageUrls.length === 0" class="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Sube fotos (múltiples)</p>
+
+                                            <div v-if="currentImageUrls.length > 0" class="w-full h-full p-4 grid grid-cols-2 gap-2">
+                                                <div v-for="(url, index) in currentImageUrls" :key="index" class="relative">
+                                                    <img :src="url" class="w-full h-32 object-cover rounded-xl" alt="Imagen" />
+                                                    <button @click.prevent="removeImage(index)" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600">×</button>
+                                                </div>
                                             </div>
                                         </label>
                                     </div>
