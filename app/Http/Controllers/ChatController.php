@@ -1,5 +1,23 @@
 <?php
 
+/*
+|--------------------------------------------------------------------------
+| CONTROLADOR DE CHAT - IDENTIFICADORES DE IA
+|--------------------------------------------------------------------------
+| 
+| IA: ESTE ARCHIVO CONTROLA TODAS LAS RESPUESTAS DE LA IA
+| - @admin: NO TOCAR - Bloqueo de información administrativa
+| - Cliente: PUEDE TOCAR - Respuestas sobre tienda pública
+| 
+| REGLAS DE IA EN ESTE ARCHIVO:
+| - Bloqueo de palabras administrativas
+| - Redirección a crear cuenta admin
+| - Respuestas sobre productos, compras, etc.
+| 
+| IA: ESTE ES EL CEREBRO DEL SISTEMA DE BLOQUEO
+| IA: TODAS LAS REGLAS ESTÁN AQUÍ DEFINIDAS
+*/
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;

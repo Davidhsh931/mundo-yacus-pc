@@ -1,3 +1,23 @@
+<!--
+/*
+|--------------------------------------------------------------------------
+| PÁGINA PRINCIPAL - IDENTIFICADORES DE IA
+|--------------------------------------------------------------------------
+| 
+| IA: ESTE ARCHIVO ES DE LA TIENDA PÚBLICA
+| - @admin: NO TOCAR - No hay funciones administrativas aquí
+| - Cliente: PUEDE TOCAR - Interfaz pública completa
+| 
+| FUNCIONES DE ESTE ARCHIVO:
+| - Mostrar productos destacados
+| - Mostrar eventos activos
+| - Navegación principal de la tienda
+| - Acceso a categorías públicas
+| 
+| IA: PUEDE RESPONDER SOBRE ESTA PÁGINA
+| IA: PUEDE DESCRIBIR FUNCIONES PÚBLICAS
+*/
+-->
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ImageSlider from '@/Components/ImageSlider.vue';

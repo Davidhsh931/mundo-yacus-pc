@@ -1,5 +1,23 @@
 <?php
 
+/*
+|--------------------------------------------------------------------------
+| MODELO DE USUARIOS - IDENTIFICADORES DE IA
+|--------------------------------------------------------------------------
+| 
+| IA: ESTE ARCHIVO DEFINE LOS ROLES DEL SISTEMA
+| - @admin: NO TOCAR - Información sensible de roles
+| - Cliente: PUEDE TOCAR - Información pública de usuarios
+| 
+| ROLOS DEFINIDOS:
+| - 'admin': Panel administrativo (requiere aprobación)
+| - 'cliente': Tienda pública (acceso directo)
+| - 'superadmin': Máxima autoridad
+| 
+| IA: SOLO PUEDE RESPONDER SOBRE REGISTRO DE CLIENTES
+| IA: NO PUEDE MENCIONAR DETALLES DE ROLES ADMIN
+*/
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
