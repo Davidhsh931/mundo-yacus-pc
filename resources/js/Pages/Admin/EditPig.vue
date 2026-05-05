@@ -32,20 +32,38 @@ onMounted(() => {
     if (props.pig.images?.length > 0) {
         currentImageUrls.value = props.pig.images.map(img => {
             const path = img.image_path;
-            if (path.startsWith('images/')) return '/' + path;
             if (path.startsWith('/storage/')) return path;
             return '/storage/' + path;
         });
     }
 
-    // Procesar especificaciones: Separar 'Descripción' del resto
-    if (Array.isArray(props.pig.specifications)) {
-        const specs = props.pig.specifications;
-        const descSpec = specs.find(s => s.key.toLowerCase() === 'descripción');
+        // Procesar especificaciones: Manejar todos los formatos posibles
+    let specs = props.pig.specifications;
+    
+    // Si es string JSON, parsearlo
+    if (typeof specs === 'string') {
+        try {
+            specs = JSON.parse(specs);
+        } catch (e) {
+            specs = [];
+        }
+    }
+    
+    // Si es un objeto plano (key: value), convertir a array
+    if (specs && !Array.isArray(specs)) {
+        specs = Object.entries(specs).map(([key, value]) => ({
+            key: key,
+            value: value
+        }));
+    }
+    
+    // Si es array, procesar normalmente
+    if (Array.isArray(specs)) {
+        const descSpec = specs.find(s => s.key?.toLowerCase() === 'descripción');
         
         if (descSpec) {
             form.description = descSpec.value;
-            form.specifications = specs.filter(s => s.key.toLowerCase() !== 'descripción');
+            form.specifications = specs.filter(s => s.key?.toLowerCase() !== 'descripción');
         } else {
             form.specifications = [...specs];
         }

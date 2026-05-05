@@ -104,6 +104,20 @@ function addToCart(pig) {
         },
     });
 }
+// Refs para los carruseles
+const carouselRefs = ref({});
+
+// Método para hacer scroll
+const scrollCarousel = (categoryId, direction) => {
+    const container = carouselRefs.value[categoryId];
+    if (container) {
+        const scrollAmount = 320; // Ancho de card + gap
+        container.scrollBy({
+            left: direction === 'left' ? -scrollAmount : scrollAmount,
+            behavior: 'smooth'
+        });
+    }
+};
 </script>
 
 <template>
@@ -140,8 +154,33 @@ function addToCart(pig) {
                         <span class="text-xs text-gray-400">{{ products.length }} producto{{ products.length !== 1 ? 's' : '' }}</span>
                     </div>
 
-                    <!-- Product carousel por categoría -->
-                    <div class="flex gap-4 overflow-x-auto pb-6 px-4 sm:px-0 snap-x scrollbar-none">
+                    <!-- Product carousel por categoría con flechas -->
+<div class="relative group">
+    <!-- Flecha izquierda -->
+    <button 
+        @click="scrollCarousel(categoryId, 'left')"
+        class="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white hover:scale-110"
+    >
+        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+    </button>
+    
+    <!-- Flecha derecha -->
+    <button 
+        @click="scrollCarousel(categoryId, 'right')"
+        class="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white hover:scale-110"
+    >
+        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+    </button>
+
+    <!-- Carrusel con ref -->
+    <div 
+        :ref="el => { if (el) carouselRefs[categoryId] = el }"
+        class="flex gap-4 overflow-x-auto pb-6 px-4 sm:px-0 snap-x scrollbar-none scroll-smooth"
+    >
                         <div
                             v-for="pig in products"
                             :key="pig.id"
@@ -257,7 +296,8 @@ function addToCart(pig) {
                             </div>
                         </div>
                     </div>
-                </template>
+                </div>
+     </template>
 
                 <!-- Events -->
                 <section v-if="events && events.length > 0" class="mt-8"> <div class="flex items-center justify-between mb-4 px-4 sm:px-0">
@@ -297,6 +337,13 @@ function addToCart(pig) {
 
 
 <style scoped>
+.scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+    display: none;
+}
 .scrollbar-thin {
     scrollbar-width: thin;
 }

@@ -43,19 +43,34 @@ const isInvalidImageValue = (value) => {
 };
 
 const filteredSpecifications = computed(() => {
-    // Filtrar especificaciones para eliminar la duplicada de 'descripción'
     if (!props.pig.specifications) {
         return [];
     }
     
-    // Convertir objeto a array de objetos para compatibilidad
-    const specsArray = Object.entries(props.pig.specifications).map(([key, value]) => ({
-        key: key,
-        value: value
-    }));
+    let specs = props.pig.specifications;
     
-    return specsArray.filter(attr =>
-        attr.key && attr.key.toLowerCase() !== 'descripción'
+    // Si es string JSON, parsearlo
+    if (typeof specs === 'string') {
+        try {
+            specs = JSON.parse(specs);
+        } catch (e) {
+            return [];
+        }
+    }
+    
+    // Si es un objeto plano (key: value), convertir a array
+    if (!Array.isArray(specs)) {
+        specs = Object.entries(specs).map(([key, value]) => ({
+            key: key,
+            value: value
+        }));
+    }
+    
+    // Filtrar descripción y valores vacíos
+    return specs.filter(attr => 
+        attr.key && 
+        attr.key.toLowerCase() !== 'descripción' &&
+        attr.value
     );
 });
 

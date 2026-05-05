@@ -162,6 +162,19 @@ function filterByCategory(categoryId) {
     const url = categoryId ? `/products?category=${categoryId}` : '/products';
     router.visit(url);
 }
+
+// Ref para el carrusel de productos
+const carouselRef = ref(null);
+
+const scrollCarousel = (direction) => {
+    if (carouselRef.value) {
+        const scrollAmount = 320;
+        carouselRef.value.scrollBy({
+            left: direction === 'left' ? -scrollAmount : scrollAmount,
+            behavior: 'smooth'
+        });
+    }
+};
 </script>
 
 <template>
@@ -281,9 +294,34 @@ function filterByCategory(categoryId) {
                 </div>
 
                 <!-- Product carousel -->
-                <div v-if="guineaPigs && guineaPigs.length > 0" class="flex gap-4 overflow-x-auto pb-6 px-4 sm:px-0 snap-x scrollbar-none">
+                <div v-if="guineaPigs && guineaPigs.length > 0" class="relative group">
+                    <!-- Flecha izquierda -->
+                    <button
+                        @click="scrollCarousel('left')"
+                        class="absolute left-2 top-[26.75%] -translate-y-1/2 z-10 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white hover:scale-110"
+                    >
+                        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+
+                    <!-- Flecha derecha -->
+                    <button
+                        @click="scrollCarousel('right')"
+                        class="absolute right-2 top-[26.75%] -translate-y-1/2 z-10 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white hover:scale-110"
+                    >
+                        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+
+                    <!-- Carrusel con ref -->
                     <div
-                        v-for="pig in guineaPigs"
+                        ref="carouselRef"
+                        class="flex gap-4 overflow-x-auto pb-6 px-4 sm:px-0 snap-x scrollbar-none scroll-smooth"
+                    >
+                        <div
+                            v-for="pig in guineaPigs"
                         :key="pig.id"
                         class="snap-start w-[280px] sm:w-[300px] bg-white border border-gray-100 rounded-2xl overflow-hidden flex flex-col transition-all duration-200 hover:border-gray-200 hover:-translate-y-0.5 hover:shadow-sm flex-shrink-0"
                         :class="{ 'opacity-60': pig.stock <= 0 }"
@@ -409,7 +447,7 @@ function filterByCategory(categoryId) {
                 </div>
 
                 <!-- Mensaje si no hay productos -->
-                <div v-else class="text-center py-20 bg-white rounded-[2rem] shadow-sm border border-gray-100">
+                <div v-if="!(guineaPigs && guineaPigs.length > 0)" class="text-center py-20 bg-white rounded-[2rem] shadow-sm border border-gray-100">
                     <div class="text-6xl mb-4">📦</div>
                     <h3 class="text-2xl font-medium text-gray-900 mb-2">No hay productos disponibles</h3>
                     <p class="text-gray-600 mb-6">
@@ -458,5 +496,16 @@ function filterByCategory(categoryId) {
 
             </div>
         </div>
+        </div>
     </AuthenticatedLayout>
 </template>
+
+<style scoped>
+.scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+    display: none;
+}
+</style>

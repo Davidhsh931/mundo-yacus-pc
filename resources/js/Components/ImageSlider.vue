@@ -4,7 +4,7 @@ import { ref, onMounted } from 'vue';
 const slides = ref([
     {
         id: 1,
-        image: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=1920&h=600&fit=crop&crop=entropy&auto=format',
+        image: 'https://i.postimg.cc/tRx0FJfH/Cuy-publicidad.png',
         title: 'Cuyes de Alta Calidad',
         subtitle: 'Los mejores reproductores para tu chacra',
         cta: 'Ver Productos',
@@ -12,7 +12,7 @@ const slides = ref([
     },
     {
         id: 2,
-        image: 'https://images.unsplash.com/photo-1586201375795-eb5a233474e5?w=1920&h=600&fit=crop&crop=entropy&auto=format',
+        image: 'https://i.postimg.cc/LskKg882/carne-publicidad.jpg',
         title: 'Carne Beneficiada',
         subtitle: 'Lista para consumo con certificación sanitaria',
         cta: 'Comprar Ahora',
@@ -20,8 +20,8 @@ const slides = ref([
     },
     {
         id: 3,
-        image: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=1920&h=600&fit=crop&crop=entropy&auto=format',
-        title: 'Insumos y Accesorios',
+        image: 'https://i.postimg.cc/J0PnWQkK/Productos-agricolas-y-mas-publicacion.webp',
+        title: 'Productos Agrícolas y más',
         subtitle: 'Todo lo que necesitas para tu producción',
         cta: 'Explorar',
         link: '/products'
@@ -57,7 +57,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="relative w-full h-96 md:h-[500px] overflow-hidden bg-gradient-to-br from-red-50 to-orange-50">
+    <div class="relative group w-full h-96 md:h-[500px] overflow-hidden bg-gradient-to-br from-red-50 to-orange-50">
         <!-- Slides -->
         <div class="relative w-full h-full">
             <div 
@@ -100,19 +100,19 @@ onMounted(() => {
         <!-- Navigation Arrows -->
         <button 
             @click="prevSlide"
-            class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-3 rounded-full shadow-lg transition-all duration-300 z-30 group"
+            class="absolute left-2 top-1/2 -translate-y-1/2 z-40 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white hover:scale-110"
         >
-            <svg class="w-6 h-6 group-hover:-translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M15 18l-6-6 6-6"/>
+            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>
         </button>
         
         <button 
             @click="nextSlide"
-            class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-3 rounded-full shadow-lg transition-all duration-300 z-30 group"
+            class="absolute right-2 top-1/2 -translate-y-1/2 z-40 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white hover:scale-110"
         >
-            <svg class="w-6 h-6 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 18l6-6-6-6"/>
+            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
         </button>
 
@@ -127,20 +127,6 @@ onMounted(() => {
             />
         </div>
 
-        <!-- Auto-play Toggle -->
-        <button 
-            @click="toggleAutoPlay"
-            class="absolute top-4 right-4 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg transition-all duration-300 z-30"
-            :title="isAutoPlaying ? 'Pausar' : 'Reproducir'"
-        >
-            <svg v-if="isAutoPlaying" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="6" y="4" width="4" height="16"/>
-                <rect x="14" y="4" width="4" height="16"/>
-            </svg>
-            <svg v-else class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M5 3l14 9-14 9V3z"/>
-            </svg>
-        </button>
     </div>
 </template>
 
